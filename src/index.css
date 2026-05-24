@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cream font-sans text-neutral-800 antialiased;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Glassmorphism card base */
+  .card-glass {
+    @apply bg-white/60 backdrop-blur-sm rounded-3xl shadow-soft border border-white/80;
+  }
+
+  /* Solid white card */
+  .card-solid {
+    @apply bg-white rounded-3xl shadow-soft border border-neutral-100;
+  }
+
+  /* Gradient pill badge */
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  /* Page section wrapper */
+  .page-section {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10;
+  }
+
+  /* Section heading */
+  .section-heading {
+    @apply text-2xl sm:text-3xl font-semibold text-neutral-800 mb-2;
+  }
+
+  /* Section subheading */
+  .section-sub {
+    @apply text-neutral-500 mb-8 text-sm sm:text-base;
+  }
+}
+
+/* Scrollbar styling for concern panels */
+.panel-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.panel-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.panel-scroll::-webkit-scrollbar-thumb {
+  background: #fbcfe8;
+  border-radius: 2px;
+}
