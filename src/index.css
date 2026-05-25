@@ -133,22 +133,27 @@
   /* ─── Max mode — colourful accents only when isMax ─────────────── */
   .max-rainbow-bar {
     position: fixed;
-    top: 0;
     left: 0;
     right: 0;
-    height: 3px;
+    height: 4px;
     z-index: 100;
     background: linear-gradient(
       90deg,
       #C8654A 0%,
-      #D4A744 20%,
-      #5A6B5D 40%,
-      #C9B3E8 60%,
-      #E8B4B8 80%,
+      #D4A744 17%,
+      #5A6B5D 34%,
+      #6BAEEF 50%,
+      #C9B3E8 67%,
+      #E8B4B8 84%,
       #C8654A 100%
     );
     background-size: 200% 100%;
-    animation: rainbow-flow 12s linear infinite;
+    animation: rainbow-flow 10s linear infinite;
+  }
+  .max-rainbow-bar--top { top: 0; }
+  .max-rainbow-bar--bottom {
+    bottom: 0;
+    animation-direction: reverse;
   }
 
   @keyframes rainbow-flow {
@@ -209,14 +214,117 @@
   /* Editorial labels in clay get a subtle hue shift */
   .max-mode .editorial-label.text-clay,
   .max-mode .text-clay.editorial-num,
-  .max-mode .editorial-num.text-clay {
-    background: linear-gradient(120deg, #C8654A, #D4A744, #5A6B5D, #C9B3E8, #C8654A);
+  .max-mode .editorial-num.text-clay,
+  .max-mode .num-display.text-clay {
+    background: linear-gradient(120deg, #C8654A, #D4A744, #5A6B5D, #6BAEEF, #C9B3E8, #C8654A);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: gradient-shift 10s ease infinite;
+  }
+
+  /* ── More rainbow accents in Max mode ── */
+
+  /* Big editorial numbers (.editorial-num) get the gradient */
+  .max-mode .editorial-num {
+    background: linear-gradient(120deg, #C8654A, #D4A744, #5A6B5D, #6BAEEF, #C9B3E8, #C8654A);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: gradient-shift 14s ease infinite;
+  }
+
+  /* Marquee separators (the ✺ ✿ stars between phrases) rotate hues */
+  .max-mode .text-clay,
+  .max-mode .text-gold {
+    /* Only colour-shift text — not backgrounds */
+  }
+
+  /* Card borders pick up a faint flowing gradient */
+  .max-mode .card-paper {
+    position: relative;
+  }
+  .max-mode .card-paper::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    padding: 1px;
+    background: linear-gradient(120deg, #C8654A33, #D4A74433, #5A6B5D33, #C9B3E833, #C8654A33);
+    background-size: 300% 300%;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+    animation: gradient-shift 16s ease infinite;
+    z-index: 0;
+  }
+
+  /* Favorite heart, when filled, becomes a gradient */
+  .max-mode button[aria-pressed="true"] .display-italic {
+    background: linear-gradient(120deg, #E8B4B8, #C8654A, #D4A744, #C9B3E8, #E8B4B8);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: gradient-shift 6s ease infinite;
+  }
+
+  /* Section title accent — the italic word — already covered above.
+     Add the underline-grow link colour to flow too. */
+  .max-mode .link-underline::after {
+    background: linear-gradient(90deg, #C8654A, #D4A744, #5A6B5D, #C9B3E8, #C8654A);
+    background-size: 200% 100%;
+    animation: rainbow-flow 6s linear infinite;
+  }
+
+  /* The Quill logo wordmark in the navbar gets the gradient */
+  .max-mode .font-display.text-3xl.text-ink,
+  .max-mode .font-display.md\:text-4xl.text-ink {
+    background: linear-gradient(120deg, #1A1410, #C8654A, #D4A744, #5A6B5D, #C9B3E8, #1A1410);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: gradient-shift 14s ease infinite;
+  }
+
+  /* The big oversized SplitText headlines on hero get a subtle hue under the ink */
+  .max-mode h1 .display-italic,
+  .max-mode h2 .display-italic,
+  .max-mode h3 .display-italic {
+    background: linear-gradient(120deg, #C8654A, #D4A744, #5A6B5D, #6BAEEF, #C9B3E8, #C8654A);
     background-size: 300% 300%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
     animation: gradient-shift 12s ease infinite;
+  }
+
+  /* Section bottom borders get a faint gradient line */
+  .max-mode .border-b.border-ink\/15 {
+    border-bottom-color: transparent;
+    position: relative;
+  }
+  .max-mode .border-b.border-ink\/15::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, #C8654A33, #D4A74455, #5A6B5D55, #C9B3E855, #C8654A33);
+    background-size: 200% 100%;
+    animation: rainbow-flow 14s linear infinite;
+    pointer-events: none;
   }
 
   /* ─── Pro mode treatment ───────────────────────────────────────── */

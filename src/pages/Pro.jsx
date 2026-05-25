@@ -10,22 +10,30 @@ import CheckoutModal from '../components/CheckoutModal.jsx'
 
 const features = [
   { num: '01', icon: '∞', title: 'Saved favorites', free: 'Three', pro: 'Unlimited', max: 'Unlimited' },
-  { num: '02', icon: '☉', title: 'Tip library', free: '~5 per category', pro: 'All 60+', max: 'All 60+' },
-  { num: '03', icon: '✺', title: 'Personalized home', free: 'Generic', pro: 'Goal-tailored', max: 'Coach-reviewed' },
-  { num: '04', icon: '♆', title: 'Per-answer routine', free: '—', pro: 'Included', max: 'Included' },
-  { num: '05', icon: '☽', title: 'Diet tracker (live)', free: '—', pro: 'Included', max: 'Included' },
-  { num: '06', icon: '☄', title: 'Custom meal plan', free: '—', pro: 'Templates', max: 'RD-built, refreshed quarterly' },
-  { num: '07', icon: '⊕', title: 'Training cycle', free: '—', pro: 'Single routine', max: 'PT-written, 12 weeks' },
-  { num: '08', icon: '✾', title: 'Family seats', free: '1', pro: '1', max: '4' },
-  { num: '09', icon: '⚘', title: 'Quill AI assistant', free: '—', pro: '—', max: 'Knows your full history' },
-  { num: '10', icon: '✶', title: 'Priority support', free: '—', pro: 'Standard', max: '< 12h response' },
-  { num: '11', icon: '☓', title: 'Early access', free: '—', pro: '—', max: '30-day head start' },
+  { num: '02', icon: '☉', title: 'Tip library', free: '~5 per category', pro: 'All 60+', max: 'All 60+ · audio version' },
+  { num: '03', icon: '✺', title: 'Personalized home', free: 'Generic', pro: 'Goal-tailored', max: 'Coach-reviewed monthly' },
+  { num: '04', icon: '♆', title: 'Per-answer routine', free: '—', pro: 'Included', max: 'Included + AI-revised' },
+  { num: '05', icon: '☽', title: 'Diet tracker', free: '—', pro: 'Live · suggestions', max: 'Live · barcode + photo + voice' },
+  { num: '06', icon: '☄', title: 'Custom meal plan', free: '—', pro: '7-day templates', max: 'RD-built · refreshed quarterly' },
+  { num: '07', icon: '⊕', title: 'Training cycle', free: '—', pro: 'Single routine', max: 'PT-written · 12 weeks · progression' },
+  { num: '08', icon: '✾', title: 'Family seats', free: '1', pro: '1', max: '4 — share with household' },
+  { num: '09', icon: '⚘', title: 'Quill AI assistant', free: '—', pro: '—', max: 'Memory + 24/7 chat' },
+  { num: '10', icon: '✦', title: 'Cycle-aware protocols', free: '—', pro: '—', max: 'Auto-adjusts to hormonal phase' },
+  { num: '11', icon: '◈', title: 'Wearable sync', free: '—', pro: '—', max: 'Apple Health · Oura · Whoop' },
+  { num: '12', icon: '◐', title: 'Sleep & focus audio', free: '—', pro: '—', max: 'Stories · breathwork · soundscapes' },
+  { num: '13', icon: '☓', title: 'Monthly coach call', free: '—', pro: '—', max: '30-min 1:1 with a wellness coach' },
+  { num: '14', icon: '✺', title: 'Expert chat', free: '—', pro: '—', max: 'Derm · RD · PT, async < 24h' },
+  { num: '15', icon: '✸', title: 'Annual health report', free: '—', pro: '—', max: 'PDF year-in-review, every Dec' },
+  { num: '16', icon: '☷', title: 'Grocery automation', free: '—', pro: '—', max: 'Meal plan → list → checkout' },
+  { num: '17', icon: '♁', title: 'Print issue', free: '—', pro: '—', max: 'Quarterly magazine, posted' },
+  { num: '18', icon: '✶', title: 'Priority support', free: '—', pro: 'Standard', max: '< 12h response, human' },
+  { num: '19', icon: '◇', title: 'Early access', free: '—', pro: '—', max: '30-day head start' },
 ]
 
 const testimonials = [
   { name: 'Maya, 17', role: 'Student', plan: 'Pro', quote: 'I actually open Quill every morning now. The daily tip + my saved routines are everything I want from a wellness app.' },
-  { name: 'Anya, 21', role: 'Designer', plan: 'Max', quote: 'The custom meal plan + AI assistant is basically having a dietitian on call. Worth it twice over.' },
-  { name: 'Lila, 19', role: 'Athlete', plan: 'Max', quote: 'My PT-written cycle and the family seat for my mum sold me on Max. Recovery and training in one place.' },
+  { name: 'Anya, 21', role: 'Designer', plan: 'Max', quote: 'My Oura data flows in, the AI catches what I miss, and the monthly coach call keeps me honest. It feels like the wellness app finally caught up.' },
+  { name: 'Lila, 19', role: 'Athlete', plan: 'Max', quote: 'Cycle-aware training is the killer feature for me. Programming that knows my hormones means I stop overtraining the second week of every month.' },
 ]
 
 const proValue = [
@@ -71,18 +79,21 @@ const tiers = [
   {
     key: 'max',
     label: 'Max',
-    sub: 'Concierge-grade wellness, on a quarterly rhythm.',
+    sub: 'Concierge wellness — real coaches, real plans, real data.',
     price: 13,
     crossedPrice: 20,
     period: 'month',
     accent: 'gold',
     bullets: [
       'Everything in Pro',
-      'Custom seasonal meal plan — RD-built',
-      'Custom 12-week training cycle — by a PT',
-      'Four family seats included',
-      'Quill AI assistant — full history aware',
-      'Priority support + early access',
+      'Monthly 30-min 1:1 with a wellness coach',
+      'Custom seasonal meal plan — RD-built, with grocery list',
+      'PT-written 12-week training cycle with progression',
+      'Cycle-aware protocols + wearable sync (Apple Health · Oura · Whoop)',
+      'Quill AI assistant — full history, 24/7 chat',
+      'Async expert chat: derm, RD, PT — under 24h',
+      'Sleep stories + breathwork audio library',
+      'Four family seats · quarterly print issue · annual health report',
     ],
   },
 ]
@@ -353,7 +364,7 @@ export default function Pro({ onNavigate }) {
         <div className="border-b border-ink/15">
           {[
             { q: 'Is this a real subscription?', a: 'No — Quill is a prototype. The checkout looks real but no payment is taken; your card details stay in your browser.' },
-            { q: 'What\'s the difference between Pro and Max?', a: 'Pro unlocks the full software (tips, tracker, routines). Max adds concierge services: a real RD-built meal plan and PT-written training cycle quarterly, plus four family seats and the Quill AI assistant.' },
+            { q: 'What\'s the difference between Pro and Max?', a: 'Pro unlocks the full software (tips, tracker, routines, per-answer plans). Max is the concierge layer: a real human wellness coach you meet monthly, plans built by a registered dietitian and certified PT, cycle-aware protocols that flex with your hormones, wearable data integration, and async chat with experts. Plus four family seats, a quarterly print issue, and an annual health-review PDF.' },
             { q: 'Can I cancel anytime?', a: 'Yes — monthly with no commitment. In this prototype, cancel from My Quill or the hero CTA above.' },
             { q: 'Do you store my data?', a: 'Everything stays in your browser via localStorage. No account, no servers, no tracking — even on Max.' },
             { q: 'Is content medically reviewed?', a: 'All in-app content is general wellness guidance, evidence-informed but not medical advice. Max-tier custom plans are built by registered professionals.' },

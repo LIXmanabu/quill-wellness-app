@@ -54,7 +54,12 @@ function AppShell() {
 
   return (
     <div className={`min-h-screen font-sans bg-cream text-ink ${isMax ? 'max-mode' : ''}`}>
-      {isMax && <div className="max-rainbow-bar" aria-hidden="true" />}
+      {isMax && (
+        <>
+          <div className="max-rainbow-bar max-rainbow-bar--top" aria-hidden="true" />
+          <div className="max-rainbow-bar max-rainbow-bar--bottom" aria-hidden="true" />
+        </>
+      )}
       <NoiseOverlay />
       <CustomCursor />
       <Navbar activePage={activePage} onNavigate={handleNavigate} />
