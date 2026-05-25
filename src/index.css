@@ -226,6 +226,17 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
+  /* ─── Checkout form inputs ─────────────────────────────────────── */
+  .checkout-field input,
+  .checkout-field select {
+    @apply w-full bg-cream border border-ink/20 px-3 py-2.5 text-sm text-ink placeholder-ink-softer focus:outline-none focus:border-ink transition-colors;
+    font-family: inherit;
+  }
+  .checkout-field input:disabled,
+  .checkout-field select:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
   /* ─── Magazine masthead ────────────────────────────────────────── */
   .masthead {
     @apply flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] text-ink-soft border-b border-ink/15 py-2;

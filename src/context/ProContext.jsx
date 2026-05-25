@@ -1,29 +1,50 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 
-const ProContext = createContext({ isPro: false, togglePro: () => {} })
-const STORAGE_KEY = 'quill.isPro'
+const STORAGE_KEY = 'quill.tier'
+const TIERS = ['free', 'pro', 'max']
+
+const ProContext = createContext({
+  tier: 'free',
+  isPro: false,
+  isMax: false,
+  setTier: () => {},
+  togglePro: () => {},
+})
 
 export function ProProvider({ children }) {
-  const [isPro, setIsPro] = useState(() => {
+  const [tier, setTierState] = useState(() => {
     try {
-      return localStorage.getItem(STORAGE_KEY) === 'true'
-    } catch {
-      return false
-    }
+      // Back-compat: read old boolean flag
+      const legacy = localStorage.getItem('quill.isPro')
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved && TIERS.includes(saved)) return saved
+      if (legacy === 'true') return 'pro'
+    } catch {}
+    return 'free'
   })
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, String(isPro))
-    } catch {}
-  }, [isPro])
+    try { localStorage.setItem(STORAGE_KEY, tier) } catch {}
+  }, [tier])
 
-  function togglePro() {
-    setIsPro((v) => !v)
+  function setTier(next) {
+    if (TIERS.includes(next)) setTierState(next)
   }
 
+  function togglePro() {
+    setTierState((t) => (t === 'free' ? 'pro' : 'free'))
+  }
+
+  const value = useMemo(() => ({
+    tier,
+    isPro: tier === 'pro' || tier === 'max',
+    isMax: tier === 'max',
+    setTier,
+    togglePro,
+  }), [tier])
+
   return (
-    <ProContext.Provider value={{ isPro, togglePro, setIsPro }}>
+    <ProContext.Provider value={value}>
       {children}
     </ProContext.Provider>
   )

@@ -20,7 +20,8 @@ export default function Navbar({ activePage, onNavigate }) {
   const [scrolled, setScrolled] = useState(false)
   const [hoverKey, setHoverKey] = useState(null)
   const [indicator, setIndicator] = useState({ left: 0, width: 0, opacity: 0 })
-  const { isPro } = usePro()
+  const { tier } = usePro()
+  const tierLabel = tier === 'max' ? 'Max Edition' : tier === 'pro' ? 'Pro Edition' : 'Free Edition'
   const { profile } = useUser()
   const favCount = profile.favorites.length
 
@@ -80,7 +81,7 @@ export default function Navbar({ activePage, onNavigate }) {
         <div className="masthead">
           <span>Quill — Wellness Quarterly</span>
           <span>Issue 01 · {date}</span>
-          <span>{isPro ? 'Pro Edition' : 'Free Edition'}</span>
+          <span>{tierLabel}</span>
         </div>
       </div>
 
@@ -199,7 +200,7 @@ export default function Navbar({ activePage, onNavigate }) {
               className="mt-4 flex items-center justify-between px-4 py-4 bg-ink text-cream text-sm font-medium"
             >
               <span className="flex items-center gap-2">
-                <span className="display-italic text-base">{isPro ? 'Manage' : 'Try'} Pro</span>
+                <span className="display-italic text-base">{tier === 'free' ? 'Try' : 'Manage'} Pro</span>
               </span>
               <span>→</span>
             </button>
