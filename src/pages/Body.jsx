@@ -3,21 +3,34 @@ import BodyMap from '../components/BodyMap.jsx'
 import ConcernPanel from '../components/ConcernPanel.jsx'
 import { bodyData } from '../data/bodyData.js'
 import { usePro } from '../context/ProContext.jsx'
+import SplitText from '../components/interactive/SplitText.jsx'
+import Reveal from '../components/interactive/Reveal.jsx'
+import Marquee from '../components/interactive/Marquee.jsx'
+import SpotlightCard from '../components/interactive/SpotlightCard.jsx'
 
 const regionList = [
-  { id: 'face', label: 'Face', icon: '✨' },
-  { id: 'head', label: 'Head', icon: '🧠' },
-  { id: 'neck', label: 'Neck', icon: '🧣' },
-  { id: 'shoulders', label: 'Shoulders', icon: '💪' },
-  { id: 'arms', label: 'Arms', icon: '🦾' },
-  { id: 'hands', label: 'Hands', icon: '🤲' },
-  { id: 'chest', label: 'Chest', icon: '🫀' },
-  { id: 'stomach', label: 'Stomach', icon: '🌀' },
-  { id: 'back', label: 'Back', icon: '🧘' },
-  { id: 'hips', label: 'Hips', icon: '🌸' },
-  { id: 'legs', label: 'Legs', icon: '🦵' },
-  { id: 'knees', label: 'Knees', icon: '🦿' },
-  { id: 'feet', label: 'Feet', icon: '🦶' },
+  { id: 'face', label: 'Face' },
+  { id: 'head', label: 'Head' },
+  { id: 'neck', label: 'Neck' },
+  { id: 'shoulders', label: 'Shoulders' },
+  { id: 'arms', label: 'Arms' },
+  { id: 'hands', label: 'Hands' },
+  { id: 'chest', label: 'Chest' },
+  { id: 'stomach', label: 'Stomach' },
+  { id: 'back', label: 'Back' },
+  { id: 'hips', label: 'Hips' },
+  { id: 'legs', label: 'Legs' },
+  { id: 'knees', label: 'Knees' },
+  { id: 'feet', label: 'Feet' },
+]
+
+const relatedPairs = [
+  { areas: 'Neck · Shoulders · Head', tip: 'Tension headaches usually start in upper traps. Stretch shoulders before chasing the headache.' },
+  { areas: 'Hips · Lower back · Knees', tip: 'Tight hip flexors yank the lumbar spine and shift knee tracking. Foam-roll hips first.' },
+  { areas: 'Stomach · Mood · Sleep', tip: 'The gut-brain axis is real. Bloating + low mood + bad sleep often share a root: stress + diet.' },
+  { areas: 'Feet · Calves · Lower back', tip: 'Tight calves shorten stride and tilt the pelvis. Daily 30s calf stretch can help low-back pain.' },
+  { areas: 'Face · Hydration · Sleep', tip: 'Dull skin + dark circles correlate more with sleep + water than with any product. Fix those first.' },
+  { areas: 'Chest · Posture · Breathing', tip: 'Slouched posture compresses the diaphragm. Sit tall to breathe deeper — and feel calmer.' },
 ]
 
 export default function Body({ onNavigate }) {
@@ -25,227 +38,236 @@ export default function Body({ onNavigate }) {
   const [view, setView] = useState('front')
   const [selectedRegion, setSelectedRegion] = useState(null)
 
-  function closePanel() {
-    setSelectedRegion(null)
-  }
+  function closePanel() { setSelectedRegion(null) }
 
   return (
-    <div className="page-section">
-      {/* Page header */}
-      <div className="mb-8 animate-fade-up">
-        <div className="inline-flex items-center gap-2 bg-blush/60 text-pink-700 text-xs font-semibold px-4 py-1.5 rounded-full mb-4 border border-blush-dark/30">
-          🌸 Interactive Body Map
+    <div className="bg-cream">
+      {/* HERO */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-10">
+        <div className="border-b border-ink/15 pb-3 mb-10 flex items-center justify-between">
+          <span className="editorial-label">Chapter 01 · Atlas</span>
+          <span className="editorial-label hidden sm:inline">{regionList.length} regions</span>
         </div>
-        <h1 className="section-heading">Your body, your guide</h1>
-        <p className="section-sub max-w-xl">
-          Tap any area on the body map to explore wellness tips, self-care suggestions, and gentle guidance for that part of your body.
-        </p>
-      </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          <div className="lg:col-span-9">
+            <h1 className="font-display text-[14vw] sm:text-[10vw] lg:text-[8vw] text-ink leading-[0.9] tracking-tight">
+              <SplitText byChar stagger={28}>Your body,</SplitText>
+              <br />
+              <span className="display-italic text-clay"><SplitText byChar stagger={28} startDelay={400}>your atlas.</SplitText></span>
+            </h1>
+            <Reveal delay={1200} className="mt-8 max-w-md">
+              <p className="text-lg text-ink-soft leading-relaxed">
+                Tap any area on the body map to explore wellness tips, self-care suggestions, and gentle guidance for that part of your body.
+              </p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Left column: body map */}
-        <div className="lg:w-80 xl:w-96 flex-shrink-0">
-          <div className="card-solid p-6 sticky top-20">
-            {/* Front / Back toggle */}
-            <div className="flex items-center justify-center mb-5">
-              <div className="inline-flex bg-blush/30 rounded-2xl p-1 gap-1">
-                <button
-                  onClick={() => setView('front')}
-                  className={`px-5 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                    view === 'front'
-                      ? 'bg-white text-pink-700 shadow-soft'
-                      : 'text-neutral-500 hover:text-pink-600'
-                  }`}
-                >
-                  Front
-                </button>
-                <button
-                  onClick={() => setView('back')}
-                  className={`px-5 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                    view === 'back'
-                      ? 'bg-white text-pink-700 shadow-soft'
-                      : 'text-neutral-500 hover:text-pink-600'
-                  }`}
-                >
-                  Back
-                </button>
+      {/* Marquee */}
+      <section className="bg-ink text-cream py-4 border-y border-ink overflow-hidden">
+        <Marquee
+          items={['Head', 'Shoulders', 'Knees', 'Toes', 'And every soft thing in between', 'No part of you is wrong']}
+          separator="◐"
+          speed="slow"
+          itemClassName="font-display text-2xl sm:text-3xl"
+          separatorClassName="text-clay text-xl"
+        />
+      </section>
+
+      {/* Body map + regions */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left: body map */}
+          <div className="lg:col-span-4 xl:col-span-4">
+            <div className="card-paper p-6 sticky top-28">
+              <div className="flex items-center justify-between mb-5">
+                <p className="editorial-label">The map</p>
+                <div className="inline-flex border border-ink/20">
+                  <button
+                    onClick={() => setView('front')}
+                    className={`px-4 py-1.5 text-xs font-medium tracking-wide transition-colors ${
+                      view === 'front' ? 'bg-ink text-cream' : 'bg-transparent text-ink-soft hover:text-ink'
+                    }`}
+                  >
+                    Front
+                  </button>
+                  <button
+                    onClick={() => setView('back')}
+                    className={`px-4 py-1.5 text-xs font-medium tracking-wide transition-colors ${
+                      view === 'back' ? 'bg-ink text-cream' : 'bg-transparent text-ink-soft hover:text-ink'
+                    }`}
+                  >
+                    Back
+                  </button>
+                </div>
               </div>
+
+              <BodyMap
+                view={view}
+                selectedRegion={selectedRegion}
+                onRegionClick={(region) => setSelectedRegion(region === selectedRegion ? null : region)}
+              />
+
+              {selectedRegion && (
+                <div className="mt-4 p-3 bg-cream-dark border border-ink/15 text-center">
+                  <p className="editorial-label">Selected</p>
+                  <p className="font-display text-xl text-ink mt-1">{bodyData[selectedRegion]?.label}</p>
+                </div>
+              )}
             </div>
+          </div>
 
-            {/* SVG body map */}
-            <BodyMap
-              view={view}
-              selectedRegion={selectedRegion}
-              onRegionClick={(region) => setSelectedRegion(region === selectedRegion ? null : region)}
-            />
+          {/* Right column */}
+          <div className="lg:col-span-8 xl:col-span-8 min-w-0">
+            {selectedRegion ? (
+              <Reveal>
+                <div className="card-paper overflow-hidden">
+                  <div className="bg-bone px-6 py-5 border-b border-ink/15 flex items-center justify-between">
+                    <div>
+                      <p className="editorial-label">Region</p>
+                      <h2 className="font-display text-3xl text-ink leading-tight mt-1">{bodyData[selectedRegion]?.label}</h2>
+                    </div>
+                    <button onClick={closePanel} className="w-9 h-9 flex items-center justify-center border border-ink/20 hover:border-ink hover:bg-ink hover:text-cream transition-all text-lg display-italic">
+                      ✕
+                    </button>
+                  </div>
 
-            {/* Selected region indicator */}
-            {selectedRegion && (
-              <div className="mt-4 p-3 rounded-2xl bg-blush/30 border border-blush text-center">
-                <p className="text-sm font-medium text-pink-700">
-                  {bodyData[selectedRegion]?.icon} {bodyData[selectedRegion]?.label} selected
-                </p>
-                <p className="text-xs text-neutral-500 mt-0.5">See panel on the right ↗</p>
-              </div>
+                  <div className="p-6 space-y-3">
+                    {bodyData[selectedRegion]?.concerns.map((concern, i) => (
+                      <ConcernAccordionItem key={i} concern={concern} defaultOpen={i === 0} num={String(i + 1).padStart(2, '0')} />
+                    ))}
+
+                    <div className="pt-3 border-t border-ink/10">
+                      <p className="text-xs text-ink-softer italic leading-relaxed">
+                        {bodyData[selectedRegion]?.generalDisclaimer}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Reveal>
+            ) : (
+              <Reveal>
+                <div>
+                  <p className="editorial-label mb-6">Or, jump straight to a region</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    {regionList.map((r, i) => (
+                      <button
+                        key={r.id}
+                        onClick={() => setSelectedRegion(r.id)}
+                        className="card-paper card-paper-hover p-4 text-left group"
+                      >
+                        <span className="editorial-num text-2xl text-ink-softer group-hover:text-clay transition-colors">
+                          {String(i + 1).padStart(2, '0')}
+                        </span>
+                        <p className="font-display text-xl text-ink mt-1 leading-none">{r.label}</p>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="mt-10 p-6 border border-ink/15 bg-cream-light">
+                    <p className="editorial-label mb-2">Important</p>
+                    <p className="text-sm text-ink-soft leading-relaxed">
+                      This body map provides general wellness and self-care suggestions only. It does not diagnose conditions or replace medical advice. If you experience severe, sudden, persistent, or worsening symptoms, please seek medical attention.
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
             )}
           </div>
         </div>
+      </section>
 
-        {/* Right column: region quick links or placeholder */}
-        <div className="flex-1 min-w-0">
-          {selectedRegion ? (
-            /* Inline panel for desktop — not a fixed overlay */
-            <div className="card-solid overflow-hidden animate-fade-up">
-              {/* Panel header */}
-              <div className={`flex items-center justify-between px-5 py-4 border-b border-blush/30 ${bodyData[selectedRegion]?.color || 'bg-blush/20'}`}>
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{bodyData[selectedRegion]?.icon}</span>
-                  <div>
-                    <h2 className="font-semibold text-neutral-800 text-lg">{bodyData[selectedRegion]?.label}</h2>
-                    <p className="text-xs text-neutral-500">Wellness & self-care tips</p>
-                  </div>
-                </div>
-                <button
-                  onClick={closePanel}
-                  className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-blush/50 transition-colors text-neutral-400"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {/* Concerns accordion */}
-              <div className="p-5 space-y-3">
-                {bodyData[selectedRegion]?.concerns.map((concern, i) => (
-                  <ConcernAccordionItem key={i} concern={concern} defaultOpen={i === 0} />
-                ))}
-
-                {/* Disclaimer */}
-                <div className="pt-3 border-t border-blush/30">
-                  <p className="text-xs text-neutral-400 italic leading-relaxed">
-                    {bodyData[selectedRegion]?.generalDisclaimer}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            /* No region selected — show clickable region list */
-            <div className="animate-fade-up">
-              <p className="text-sm text-neutral-500 mb-5">
-                Or tap a body area below to jump straight to its wellness tips:
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                {regionList.map((r) => (
-                  <button
-                    key={r.id}
-                    onClick={() => setSelectedRegion(r.id)}
-                    className="card-solid p-4 flex flex-col items-center gap-2 hover:shadow-soft-hover hover:-translate-y-0.5 transition-all duration-200 text-center"
-                  >
-                    <span className="text-2xl">{r.icon}</span>
-                    <span className="text-xs font-medium text-neutral-700">{r.label}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Medical disclaimer */}
-              <div className="mt-8 p-5 rounded-3xl bg-blush/20 border border-blush/40">
-                <p className="text-xs text-neutral-500 leading-relaxed">
-                  <span className="font-semibold text-neutral-700">Important:</span> This body map provides general wellness and self-care suggestions only.
-                  It does not diagnose conditions or replace medical advice. If you experience severe, sudden, persistent, or worsening symptoms, please seek medical attention.
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Mobile slide-in panel (overlay) — only on small screens */}
+      {/* Mobile overlay panel */}
       {selectedRegion && (
         <div className="lg:hidden">
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-30 bg-black/20 backdrop-blur-sm animate-fade-in"
-            onClick={closePanel}
-          />
-          <ConcernPanel
-            region={selectedRegion}
-            data={bodyData[selectedRegion]}
-            onClose={closePanel}
-          />
+          <div className="fixed inset-0 z-30 bg-ink/30 backdrop-blur-sm animate-fade-in" onClick={closePanel} />
+          <ConcernPanel region={selectedRegion} data={bodyData[selectedRegion]} onClose={closePanel} />
         </div>
       )}
 
-      {/* Pro section: related areas reference */}
-      {isPro ? (
-        <section className="mt-12 animate-fade-up">
-          <div className="flex items-center gap-3 mb-2">
-            <h2 className="text-xl font-semibold text-neutral-800">Related areas cheat-sheet</h2>
-            <span className="pro-badge">Pro</span>
-          </div>
-          <p className="text-sm text-neutral-500 mb-6">When one area complains, others often need attention too. Cross-references for the most common pairings.</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              { areas: 'Neck ⇄ Shoulders ⇄ Head', tip: 'Tension headaches usually start in upper traps. Stretch shoulders before chasing the headache.' },
-              { areas: 'Hips ⇄ Lower back ⇄ Knees', tip: 'Tight hip flexors yank the lumbar spine and shift knee tracking. Foam-roll hips first.' },
-              { areas: 'Stomach ⇄ Mood ⇄ Sleep', tip: 'The gut-brain axis is real. Bloating + low mood + bad sleep often share a root: stress + diet.' },
-              { areas: 'Feet ⇄ Calves ⇄ Lower back', tip: 'Tight calves shorten stride and tilt the pelvis. Daily 30s calf stretch can help low-back pain.' },
-              { areas: 'Face ⇄ Hydration ⇄ Sleep', tip: 'Dull skin + dark circles correlate more with sleep + water than with any product. Fix those first.' },
-              { areas: 'Chest ⇄ Posture ⇄ Breathing', tip: 'Slouched posture compresses the diaphragm. Sit tall to breathe deeper — and feel calmer.' },
-            ].map((r, i) => (
-              <div key={r.areas} className="pro-card p-5 rounded-3xl animate-fade-up" style={{ animationDelay: `${i * 50}ms` }}>
-                <p className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-2">{r.areas}</p>
-                <p className="text-sm text-neutral-600 leading-relaxed">{r.tip}</p>
+      {/* Pro: Related areas */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {isPro ? (
+          <>
+            <Reveal>
+              <div className="mb-10 pb-4 border-b border-ink/15">
+                <span className="editorial-label flex items-center gap-2">
+                  Section · Cross-references <span className="pro-badge">Pro</span>
+                </span>
+                <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
+                  When one part <span className="display-italic text-clay">complains.</span>
+                </h2>
+                <p className="text-sm text-ink-soft mt-3 max-w-xl">
+                  Bodies are systems. Cross-references for the most common pairings — fix causes, not symptoms.
+                </p>
               </div>
-            ))}
-          </div>
-        </section>
-      ) : (
-        <section className="mt-12 p-6 rounded-3xl bg-gradient-to-br from-amber-50 to-pink-50 border border-amber-200/60 animate-fade-up">
-          <div className="flex items-start gap-4">
-            <div className="text-3xl">🔗</div>
-            <div className="flex-1">
-              <p className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-1">Pro feature</p>
-              <h3 className="font-bold text-neutral-800 mb-1">Related-areas cheat-sheet</h3>
-              <p className="text-sm text-neutral-500 leading-relaxed mb-3">
-                When your neck hurts, your shoulders probably need attention too. Cross-referenced tips so you fix the cause, not just the symptom.
-              </p>
-              <button onClick={() => onNavigate?.('pro')} className="text-xs font-semibold text-amber-700 hover:underline">
-                Unlock with Pro →
-              </button>
+            </Reveal>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-ink/15 border border-ink/15">
+              {relatedPairs.map((r, i) => (
+                <Reveal key={r.areas} delay={i * 50}>
+                  <SpotlightCard className="bg-cream-light p-6 h-full">
+                    <span className="editorial-num text-2xl text-clay">{String(i + 1).padStart(2, '0')}</span>
+                    <p className="font-display text-xl text-ink mt-1 leading-tight">{r.areas}</p>
+                    <p className="text-sm text-ink-soft mt-3 leading-relaxed">{r.tip}</p>
+                  </SpotlightCard>
+                </Reveal>
+              ))}
             </div>
-          </div>
-        </section>
-      )}
+          </>
+        ) : (
+          <Reveal>
+            <SpotlightCard className="pro-card p-8 sm:p-12 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+              <div className="lg:col-span-9">
+                <span className="editorial-label text-gold-dark">Pro Edition</span>
+                <h3 className="font-display text-3xl sm:text-4xl text-ink mt-2 leading-tight">
+                  Related-areas <span className="display-italic text-clay">cheat-sheet.</span>
+                </h3>
+                <p className="text-ink-soft mt-3 leading-relaxed text-sm max-w-lg">
+                  When your neck hurts, your shoulders probably need attention too. Cross-referenced tips so you fix the cause, not just the symptom.
+                </p>
+              </div>
+              <div className="lg:col-span-3 lg:text-right">
+                <button onClick={() => onNavigate?.('pro')} className="btn-ink">
+                  Unlock <span className="display-italic">→</span>
+                </button>
+              </div>
+            </SpotlightCard>
+          </Reveal>
+        )}
+      </section>
     </div>
   )
 }
 
-/* Accordion item for each concern within a body region */
-function ConcernAccordionItem({ concern, defaultOpen = false }) {
+function ConcernAccordionItem({ concern, defaultOpen = false, num }) {
   const [open, setOpen] = useState(defaultOpen)
 
   return (
-    <div className="rounded-2xl border border-blush/30 overflow-hidden">
+    <div className="border border-ink/15">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-blush/20 hover:bg-blush/30 transition-colors text-left"
+        className="w-full flex items-baseline gap-3 px-4 py-3 bg-bone hover:bg-cream-dark transition-colors text-left"
       >
-        <span className="font-medium text-neutral-800 text-sm">{concern.title}</span>
-        <span className="text-neutral-400 text-xs ml-2 flex-shrink-0">{open ? '↑' : '↓'}</span>
+        {num && <span className="num-display text-sm text-clay flex-shrink-0">{num}</span>}
+        <span className="font-medium text-ink text-sm flex-1">{concern.title}</span>
+        <span className="text-ink-softer text-xs ml-2 flex-shrink-0 display-italic">{open ? '−' : '+'}</span>
       </button>
 
       {open && (
         <div className="px-4 pb-4 pt-3 animate-fade-up">
           <ul className="space-y-2.5 mb-3">
             {concern.suggestions.map((s, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-blush-dark flex-shrink-0" />
-                <p className="text-sm text-neutral-600 leading-relaxed">{s}</p>
+              <li key={i} className="flex items-baseline gap-3">
+                <span className="text-xs num-display text-clay w-5 flex-shrink-0">{String(i + 1).padStart(2, '0')}</span>
+                <p className="text-sm text-ink-soft leading-relaxed">{s}</p>
               </li>
             ))}
           </ul>
           {concern.safetyNote && (
-            <div className="p-3 rounded-xl bg-amber-50 border border-amber-200">
-              <p className="text-xs text-amber-700 leading-relaxed">⚠️ {concern.safetyNote}</p>
+            <div className="p-3 bg-clay-paler border border-clay/20">
+              <p className="editorial-label text-clay-dark mb-1">Safety</p>
+              <p className="text-xs text-ink-soft leading-relaxed">{concern.safetyNote}</p>
             </div>
           )}
         </div>

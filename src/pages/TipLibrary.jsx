@@ -2,6 +2,11 @@ import { useState, useMemo } from 'react'
 import { dailyTips, categoryMeta } from '../data/dailyTips.js'
 import FavoriteButton from '../components/FavoriteButton.jsx'
 import { usePro } from '../context/ProContext.jsx'
+import SplitText from '../components/interactive/SplitText.jsx'
+import Reveal from '../components/interactive/Reveal.jsx'
+import Marquee from '../components/interactive/Marquee.jsx'
+import SpotlightCard from '../components/interactive/SpotlightCard.jsx'
+import MagneticButton from '../components/interactive/MagneticButton.jsx'
 
 const FREE_PER_CATEGORY = 5
 
@@ -24,85 +29,102 @@ export default function TipLibrary({ onNavigate }) {
     return tips
   }, [filter, isPro])
 
-  const hiddenCount = dailyTips.length - (isPro ? dailyTips.length : visibleTips.length + (filter !== 'all' ? 0 : 0))
-
   return (
-    <div className="page-section">
-      <div className="mb-8 animate-fade-up">
-        <div className="inline-flex items-center gap-2 bg-blush/60 text-pink-700 text-xs font-semibold px-4 py-1.5 rounded-full mb-4 border border-blush-dark/30">
-          💡 Tip Library
+    <div className="bg-cream">
+      {/* HERO */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-12">
+        <div className="border-b border-ink/15 pb-3 mb-10 flex items-center justify-between">
+          <span className="editorial-label">Chapter 06 · Almanac</span>
+          <span className="editorial-label">{isPro ? `${dailyTips.length} tips` : `${visibleTips.length} of ${dailyTips.length}`}</span>
         </div>
-        <h1 className="section-heading">
-          {isPro ? `All ${dailyTips.length} wellness tips` : `${visibleTips.length} of ${dailyTips.length} tips`}
+        <h1 className="font-display text-[14vw] sm:text-[10vw] lg:text-[8vw] text-ink leading-[0.9] tracking-tight">
+          <SplitText byChar stagger={28}>The daily</SplitText>
+          <br />
+          <span className="display-italic text-clay"><SplitText byChar stagger={28} startDelay={500}>almanac.</SplitText></span>
         </h1>
-        <p className="section-sub max-w-xl">
-          Bite-sized, evidence-informed habits across hydration, sleep, movement, mood, skin care, nutrition, and mindset.
-        </p>
-      </div>
+        <Reveal delay={1200} className="mt-8 max-w-md">
+          <p className="text-lg text-ink-soft leading-relaxed">
+            Bite-sized, evidence-informed habits across hydration, sleep, movement, mood, skin care, nutrition, and mindset.
+          </p>
+        </Reveal>
+      </section>
+
+      {/* Marquee */}
+      <section className="bg-ink text-cream py-4 border-y border-ink overflow-hidden">
+        <Marquee
+          items={Object.values(categoryMeta).map((c) => c.label)}
+          separator="✺"
+          speed="slow"
+          itemClassName="font-display text-2xl sm:text-3xl"
+          separatorClassName="text-clay text-xl"
+        />
+      </section>
 
       {/* Category filter */}
-      <div className="flex flex-wrap gap-2 mb-8 animate-fade-up" style={{ animationDelay: '80ms' }}>
-        {categories.map((c) => {
-          const meta = categoryMeta[c]
-          const active = filter === c
-          return (
-            <button
-              key={c}
-              onClick={() => setFilter(c)}
-              className={`px-4 py-2 rounded-full text-xs font-semibold transition-all duration-200 border ${
-                active
-                  ? c === 'all'
-                    ? 'bg-pink-500 text-white border-pink-500 shadow-soft'
-                    : `${meta.accent} ${meta.text} border-current shadow-soft`
-                  : 'bg-white text-neutral-500 border-neutral-200 hover:border-blush'
-              }`}
-            >
-              {c === 'all' ? '✨ All' : `${meta.label}`}
-            </button>
-          )
-        })}
-      </div>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <Reveal>
+          <p className="editorial-label mb-4">Filter by category</p>
+          <div className="flex flex-wrap gap-2 mb-12 border-b border-ink/10 pb-6">
+            {categories.map((c) => {
+              const meta = categoryMeta[c]
+              const active = filter === c
+              return (
+                <button
+                  key={c}
+                  onClick={() => setFilter(c)}
+                  className={`px-4 py-2 text-xs font-medium tracking-wide border transition-all ${
+                    active
+                      ? 'bg-ink text-cream border-ink'
+                      : 'bg-cream-light text-ink-soft border-ink/20 hover:border-ink hover:text-ink'
+                  }`}
+                >
+                  {c === 'all' ? 'All tips' : meta.label}
+                </button>
+              )
+            })}
+          </div>
+        </Reveal>
 
-      {/* Tip grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {visibleTips.map((tip, i) => {
-          const meta = categoryMeta[tip.category]
-          return (
-            <div
-              key={tip.id}
-              className={`relative rounded-3xl p-5 bg-gradient-to-br ${meta.color} border border-white/80 shadow-soft hover:shadow-soft-hover hover:-translate-y-0.5 transition-all duration-300 animate-fade-up`}
-              style={{ animationDelay: `${i * 30}ms` }}
-            >
-              <div className="absolute top-3 right-3">
-                <FavoriteButton id={`tip:${tip.id}`} label={tip.title} size="sm" />
-              </div>
-              <div className="text-3xl mb-2">{tip.icon}</div>
-              <span className={`badge ${meta.accent} ${meta.text} mb-2`}>{meta.label}</span>
-              <h3 className="font-semibold text-neutral-800 text-sm mt-2 mb-1.5 leading-tight pr-8">{tip.title}</h3>
-              <p className="text-xs text-neutral-600 leading-relaxed">{tip.body}</p>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Pro upsell */}
-      {!isPro && (
-        <div className="mt-12 pro-card p-6 sm:p-8 rounded-3xl text-center animate-fade-up">
-          <div className="text-4xl mb-3 animate-sparkle inline-block">✨</div>
-          <h3 className="text-xl font-bold text-neutral-800 mb-2">
-            Unlock the full library with <span className="text-gradient-pro">Quill Pro</span>
-          </h3>
-          <p className="text-sm text-neutral-500 max-w-md mx-auto mb-5 leading-relaxed">
-            {dailyTips.length - visibleTips.length}+ more tips, full category access, and unlimited favorites.
-          </p>
-          <button
-            onClick={() => onNavigate?.('pro')}
-            className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-pink-400 to-purple-400 text-white font-semibold text-sm shadow-soft-lg hover:shadow-soft-hover transition-all duration-200 hover:-translate-y-0.5"
-          >
-            See Pro features →
-          </button>
+        {/* Tip grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-ink/15 border border-ink/15">
+          {visibleTips.map((tip, i) => {
+            const meta = categoryMeta[tip.category]
+            return (
+              <Reveal key={tip.id} delay={i * 20} className="h-full">
+                <SpotlightCard className="bg-cream-light p-6 h-full relative group hover:bg-bone transition-colors">
+                  <div className="absolute top-4 right-4">
+                    <FavoriteButton id={`tip:${tip.id}`} label={tip.title} size="sm" />
+                  </div>
+                  <div className="flex items-baseline justify-between mb-4">
+                    <span className="editorial-num text-2xl text-clay">{String(i + 1).padStart(3, '0')}</span>
+                    <span className="editorial-label">{meta.label}</span>
+                  </div>
+                  <h3 className="font-display text-2xl text-ink leading-tight pr-6">{tip.title}</h3>
+                  <p className="text-sm text-ink-soft mt-3 leading-relaxed">{tip.body}</p>
+                </SpotlightCard>
+              </Reveal>
+            )
+          })}
         </div>
-      )}
+
+        {/* Pro upsell */}
+        {!isPro && (
+          <Reveal>
+            <SpotlightCard className="mt-12 pro-card p-8 sm:p-12 text-center">
+              <span className="editorial-label text-gold-dark">Pro Edition</span>
+              <h3 className="font-display text-4xl sm:text-5xl text-ink mt-3 leading-tight">
+                {dailyTips.length - visibleTips.length}+ more <span className="display-italic text-clay">tips await.</span>
+              </h3>
+              <p className="text-sm text-ink-soft max-w-md mx-auto mt-4 mb-6 leading-relaxed">
+                Unlock the full library, all categories, and unlimited favorites with Quill Pro.
+              </p>
+              <MagneticButton onClick={() => onNavigate?.('pro')} className="btn-ink">
+                See Pro features <span className="display-italic">→</span>
+              </MagneticButton>
+            </SpotlightCard>
+          </Reveal>
+        )}
+      </section>
     </div>
   )
 }

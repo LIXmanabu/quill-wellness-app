@@ -3,114 +3,278 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-cream font-sans text-neutral-800 antialiased;
-  }
   html {
     scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-cream font-sans antialiased;
+    color: #1A1410;
+    font-feature-settings: 'ss01', 'ss02', 'cv01';
+  }
+  /* Better selection */
+  ::selection {
+    background-color: #1A1410;
+    color: #F7F2EA;
+  }
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #F7F2EA;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #C8B8A2;
+    border: 2px solid #F7F2EA;
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #8B7E6E;
   }
 }
 
 @layer components {
-  /* Glassmorphism card base */
-  .card-glass {
-    @apply bg-white/60 backdrop-blur-sm rounded-3xl shadow-soft border border-white/80;
+  /* ─── Editorial typography ─────────────────────────────────────── */
+  .font-display {
+    font-family: 'Instrument Serif', Fraunces, Georgia, serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  .display-italic {
+    font-family: 'Instrument Serif', Fraunces, Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+  }
+  .editorial-label {
+    @apply text-[10px] font-bold uppercase tracking-[0.2em] text-ink-soft font-sans;
+  }
+  .editorial-num {
+    font-family: 'Instrument Serif', serif;
+    @apply text-ink-soft font-normal;
   }
 
-  /* Solid white card */
-  .card-solid {
-    @apply bg-white rounded-3xl shadow-soft border border-neutral-100;
+  /* ─── Cards ────────────────────────────────────────────────────── */
+  .card-paper {
+    @apply bg-cream-light border border-ink/10 transition-all duration-300;
+  }
+  .card-paper-hover {
+    @apply hover:border-ink/30 hover:shadow-ink;
+  }
+  .card-ink {
+    @apply bg-ink text-cream border border-ink;
+  }
+  .card-bone {
+    @apply bg-bone border border-ink/10;
+  }
+  .card-sage {
+    @apply bg-sage-pale border border-sage/20;
+  }
+  .card-clay {
+    @apply bg-clay-pale border border-clay/20;
+  }
+  .card-blush {
+    @apply bg-blush-pale border border-blush/30;
+  }
+  .card-gold {
+    @apply bg-gold-pale border border-gold/30;
   }
 
-  /* Gradient pill badge */
-  .badge {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+  /* ─── Buttons ──────────────────────────────────────────────────── */
+  .btn-ink {
+    @apply inline-flex items-center gap-2 px-6 py-3.5 bg-ink text-cream text-sm font-medium tracking-wide transition-all duration-300 hover:bg-ink-light;
+  }
+  .btn-cream {
+    @apply inline-flex items-center gap-2 px-6 py-3.5 bg-cream-light text-ink border border-ink/20 text-sm font-medium tracking-wide transition-all duration-300 hover:border-ink hover:-translate-y-0.5;
+  }
+  .btn-clay {
+    @apply inline-flex items-center gap-2 px-6 py-3.5 bg-clay text-cream text-sm font-medium tracking-wide transition-all duration-300 hover:bg-clay-dark;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-1.5 text-sm font-medium text-ink hover:text-clay transition-colors;
   }
 
-  /* Page section wrapper */
-  .page-section {
-    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10;
+  /* ─── Pills / chips ────────────────────────────────────────────── */
+  .chip {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border;
+  }
+  .chip-ink {
+    @apply bg-ink text-cream border-ink;
+  }
+  .chip-cream {
+    @apply bg-cream-light text-ink border-ink/20;
   }
 
-  /* Section heading */
+  /* ─── Editorial dividers ───────────────────────────────────────── */
+  .rule-ink {
+    @apply border-t border-ink/15;
+  }
+  .rule-double {
+    border-top: 1px solid rgba(26,20,16,0.15);
+    border-bottom: 1px solid rgba(26,20,16,0.15);
+    height: 5px;
+  }
+
+  /* ─── Section heading patterns ─────────────────────────────────── */
   .section-heading {
-    @apply text-2xl sm:text-3xl font-semibold text-neutral-800 mb-2;
+    @apply font-serif text-3xl sm:text-4xl text-ink leading-tight tracking-tight font-light;
   }
-
-  /* Section subheading */
   .section-sub {
-    @apply text-neutral-500 mb-8 text-sm sm:text-base;
+    @apply text-ink-soft text-base sm:text-lg leading-relaxed font-sans font-normal mt-2 mb-8;
+    max-width: 38rem;
+  }
+  .page-section {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16;
+  }
+  .page-section-wide {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16;
   }
 
-  /* Pro-mode glowing border */
+  /* ─── Pro mode treatment ───────────────────────────────────────── */
   .pro-card {
     @apply relative;
-    background: linear-gradient(white, white) padding-box,
-      linear-gradient(120deg, #fcd34d, #f9a8d4, #c4b5fd, #fcd34d) border-box;
+    background: linear-gradient(#FBF7F0, #FBF7F0) padding-box,
+      linear-gradient(120deg, #D4A744, #C8654A, #5A6B5D, #D4A744) border-box;
     border: 1.5px solid transparent;
     background-size: 200% 200%;
+    animation: gradient-shift 10s ease infinite;
+  }
+  .pro-badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em];
+    background: linear-gradient(120deg, #D4A744 0%, #C8654A 100%);
+    background-size: 200% 200%;
+    color: #FBF7F0;
+    animation: gradient-shift 6s ease infinite;
+  }
+  .text-gradient-pro {
+    background: linear-gradient(120deg, #C8654A, #D4A744, #5A6B5D, #C8654A);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     animation: gradient-shift 8s ease infinite;
   }
 
-  /* Pro badge */
-  .pro-badge {
-    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider;
-    background: linear-gradient(120deg, #fcd34d 0%, #f9a8d4 50%, #c4b5fd 100%);
-    background-size: 200% 200%;
-    color: #78350f;
-    animation: gradient-shift 6s ease infinite;
-  }
-
-  /* Scroll reveal — initial hidden state */
+  /* ─── Scroll reveal ────────────────────────────────────────────── */
   .reveal {
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    transform: translateY(24px);
+    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .reveal.is-visible {
     opacity: 1;
     transform: translateY(0);
   }
-
-  /* Animated gradient text */
-  .text-gradient-pro {
-    background: linear-gradient(120deg, #ec4899, #a855f7, #f59e0b, #ec4899);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradient-shift 6s ease infinite;
+  .reveal-slide-left {
+    opacity: 0;
+    transform: translateX(-32px);
+    transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal-slide-left.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .reveal-slide-right {
+    opacity: 0;
+    transform: translateX(32px);
+    transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal-slide-right.is-visible {
+    opacity: 1;
+    transform: translateX(0);
   }
 
-  /* Hero animated bg layer */
-  .hero-bg-blob {
-    @apply absolute rounded-full blur-3xl pointer-events-none;
+  /* ─── Underline animation ──────────────────────────────────────── */
+  .link-underline {
+    @apply relative inline-block;
+  }
+  .link-underline::after {
+    content: '';
+    @apply absolute left-0 -bottom-0.5 w-full h-px bg-current origin-left;
+    transform: scaleX(0);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .link-underline:hover::after {
+    transform: scaleX(1);
   }
 
-  /* Shimmer overlay (for skeleton / Pro accents) */
-  .shimmer-line {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.6) 50%,
-      transparent 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 2.4s linear infinite;
+  /* ─── Hover spotlight ──────────────────────────────────────────── */
+  .spotlight-card {
+    @apply relative overflow-hidden;
+  }
+  .spotlight-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(212,167,68,0.18), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .spotlight-card:hover::before {
+    opacity: 1;
+  }
+
+  /* ─── Noise overlay ────────────────────────────────────────────── */
+  .noise-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.04;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ─── Magazine masthead ────────────────────────────────────────── */
+  .masthead {
+    @apply flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] text-ink-soft border-b border-ink/15 py-2;
+  }
+
+  /* ─── Custom cursor ────────────────────────────────────────────── */
+  .cursor-dot {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: #1A1410;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s ease, height 0.2s ease, background 0.2s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-dot.is-hover {
+    width: 40px;
+    height: 40px;
+    background: #F7F2EA;
+  }
+  @media (max-width: 768px), (pointer: coarse) {
+    .cursor-dot { display: none; }
+  }
+
+  /* ─── Marquee container ────────────────────────────────────────── */
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+  }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+  /* Decorative numbers */
+  .num-display {
+    font-family: 'Instrument Serif', serif;
+    font-feature-settings: 'lnum';
   }
 }
 
 /* Scrollbar styling for concern panels */
-.panel-scroll::-webkit-scrollbar {
-  width: 4px;
-}
-.panel-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-.panel-scroll::-webkit-scrollbar-thumb {
-  background: #fbcfe8;
-  border-radius: 2px;
-}
+.panel-scroll::-webkit-scrollbar { width: 4px; }
+.panel-scroll::-webkit-scrollbar-track { background: transparent; }
+.panel-scroll::-webkit-scrollbar-thumb { background: #C8B8A2; border-radius: 2px; }
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -121,8 +285,11 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
-  .reveal {
+  .reveal,
+  .reveal-slide-left,
+  .reveal-slide-right {
     opacity: 1 !important;
     transform: none !important;
   }
+  .marquee-track { animation: none !important; }
 }

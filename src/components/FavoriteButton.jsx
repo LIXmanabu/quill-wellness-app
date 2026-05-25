@@ -32,23 +32,23 @@ export default function FavoriteButton({ id, label, size = 'md', onUpsell }) {
         onClick={handle}
         aria-label={fav ? `Remove ${label || 'item'} from favorites` : `Save ${label || 'item'}`}
         aria-pressed={fav}
-        className={`${sizeClasses} rounded-full flex items-center justify-center transition-all duration-200 ${
+        className={`${sizeClasses} flex items-center justify-center transition-all duration-200 border ${
           fav
-            ? 'bg-pink-100 text-pink-600 shadow-soft scale-100'
+            ? 'bg-ink text-cream border-ink'
             : reachedLimit
-              ? 'bg-neutral-100 text-neutral-400 hover:bg-amber-50 hover:text-amber-600'
-              : 'bg-white/80 text-neutral-400 hover:bg-pink-50 hover:text-pink-500 hover:scale-110'
+              ? 'bg-cream-light text-ink-softer border-ink/15 hover:border-gold-dark hover:text-gold-dark'
+              : 'bg-cream-light text-ink-softer border-ink/15 hover:border-ink hover:text-ink hover:bg-bone'
         }`}
       >
-        <span className={fav ? 'animate-pop-in' : ''}>{fav ? '💖' : '🤍'}</span>
+        <span className={fav ? 'animate-pop-in display-italic' : 'display-italic'}>
+          {fav ? '♥' : '♡'}
+        </span>
       </button>
 
       {showHint && (
-        <div className="absolute top-full right-0 mt-2 z-20 w-56 p-3 rounded-2xl bg-white shadow-soft-lg border border-amber-200 animate-pop-in">
-          <p className="text-xs font-semibold text-amber-700 mb-1">
-            ✨ Free plan: {FREE_LIMIT} favorites max
-          </p>
-          <p className="text-xs text-neutral-500 leading-snug">
+        <div className="absolute top-full right-0 mt-2 z-20 w-56 p-3 bg-cream-light border border-ink shadow-soft-lg animate-pop-in">
+          <p className="editorial-label text-clay mb-1">Free · {FREE_LIMIT} max</p>
+          <p className="text-xs text-ink-soft leading-snug">
             Upgrade to Pro for unlimited saved tips, routines, and plans.
           </p>
         </div>

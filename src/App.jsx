@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import Navbar from './components/Navbar.jsx'
 import OnboardingQuiz from './components/OnboardingQuiz.jsx'
+import CustomCursor from './components/interactive/CustomCursor.jsx'
+import NoiseOverlay from './components/interactive/NoiseOverlay.jsx'
 import Home from './pages/Home.jsx'
 import Sport from './pages/Sport.jsx'
 import Body from './pages/Body.jsx'
@@ -11,26 +13,29 @@ import About from './pages/About.jsx'
 import MyQuill from './pages/MyQuill.jsx'
 import Pro from './pages/Pro.jsx'
 import TipLibrary from './pages/TipLibrary.jsx'
-import { ProProvider, usePro } from './context/ProContext.jsx'
+import { ProProvider } from './context/ProContext.jsx'
 import { UserProvider, useUser } from './context/UserContext.jsx'
 
 function AppShell() {
   const [activePage, setActivePage] = useState('home')
   const [showOnboarding, setShowOnboarding] = useState(false)
+  const [pageTransition, setPageTransition] = useState(false)
   const { profile } = useUser()
-  const { isPro } = usePro()
 
   // Trigger onboarding on first visit
   useEffect(() => {
     if (!profile.dismissedOnboarding) {
-      const t = setTimeout(() => setShowOnboarding(true), 600)
+      const t = setTimeout(() => setShowOnboarding(true), 800)
       return () => clearTimeout(t)
     }
   }, [profile.dismissedOnboarding])
 
-  // Scroll to top on page change
+  // Scroll to top on page change with transition
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+    setPageTransition(true)
+    const t = setTimeout(() => setPageTransition(false), 50)
+    return () => clearTimeout(t)
   }, [activePage])
 
   function handleNavigate(key) {
@@ -51,16 +56,14 @@ function AppShell() {
   }
 
   return (
-    <div
-      className={`min-h-screen font-sans transition-colors duration-700 ${
-        isPro
-          ? 'bg-gradient-to-br from-cream via-amber-50/40 to-blush/20'
-          : 'bg-cream'
-      }`}
-    >
+    <div className="min-h-screen font-sans bg-cream text-ink">
+      <NoiseOverlay />
+      <CustomCursor />
       <Navbar activePage={activePage} onNavigate={handleNavigate} />
-      <main className="pt-16 relative">
-        {pageMap[activePage] ?? <Home onNavigate={handleNavigate} />}
+      <main className="pt-20 md:pt-28 relative">
+        <div key={activePage} className={pageTransition ? 'opacity-0' : 'opacity-100 transition-opacity duration-500'}>
+          {pageMap[activePage] ?? <Home onNavigate={handleNavigate} />}
+        </div>
       </main>
 
       {showOnboarding && <OnboardingQuiz onClose={() => setShowOnboarding(false)} />}

@@ -2,25 +2,25 @@ import { useState } from 'react'
 import { useUser } from '../context/UserContext.jsx'
 
 const skinTypes = [
-  { id: 'dry', label: 'Dry', icon: '🌵', desc: 'Tight, sometimes flaky' },
-  { id: 'oily', label: 'Oily', icon: '✨', desc: 'Shiny T-zone, larger pores' },
-  { id: 'combo', label: 'Combination', icon: '🌗', desc: 'Oily T-zone, dry cheeks' },
-  { id: 'sensitive', label: 'Sensitive', icon: '🌸', desc: 'Reacts easily, redness' },
-  { id: 'normal', label: 'Normal', icon: '🌼', desc: 'Balanced, rarely fussy' },
-  { id: 'unsure', label: 'Not sure', icon: '🤔', desc: "We'll help you find out" },
+  { id: 'dry', label: 'Dry', desc: 'Tight, sometimes flaky' },
+  { id: 'oily', label: 'Oily', desc: 'Shiny T-zone, larger pores' },
+  { id: 'combo', label: 'Combination', desc: 'Oily T-zone, dry cheeks' },
+  { id: 'sensitive', label: 'Sensitive', desc: 'Reacts easily, redness' },
+  { id: 'normal', label: 'Normal', desc: 'Balanced, rarely fussy' },
+  { id: 'unsure', label: 'Not sure', desc: "We'll help you find out" },
 ]
 
 const goals = [
-  { id: 'glow', label: 'Glow & confidence', icon: '✨', color: 'from-pink-100 to-blush/60' },
-  { id: 'fitness', label: 'Move & feel strong', icon: '⚡', color: 'from-orange-100 to-peach/60' },
-  { id: 'calm', label: 'Stress less, sleep better', icon: '🌿', color: 'from-sage/60 to-lavender/60' },
-  { id: 'body', label: 'Understand my body', icon: '🌸', color: 'from-blush/60 to-lavender/60' },
-  { id: 'eat', label: 'Eat smarter', icon: '🥗', color: 'from-peach/60 to-orange-100' },
+  { id: 'glow', label: 'Glow & confidence' },
+  { id: 'fitness', label: 'Move & feel strong' },
+  { id: 'calm', label: 'Stress less, sleep better' },
+  { id: 'body', label: 'Understand my body' },
+  { id: 'eat', label: 'Eat smarter' },
 ]
 
 const times = [
   { id: '5', label: '5 min/day', desc: 'Quick & simple' },
-  { id: '15', label: '15 min/day', desc: 'A real routine' },
+  { id: '15', label: '15 min/day', desc: 'A real ritual' },
   { id: '30', label: '30+ min/day', desc: 'I love self-care' },
 ]
 
@@ -31,10 +31,11 @@ export default function OnboardingQuiz({ onClose }) {
 
   const steps = [
     {
-      title: "Welcome to Quill 🌸",
-      sub: "Let's set you up in 30 seconds. First — what should we call you?",
+      kicker: '01 · Hello',
+      title: 'Welcome to Quill.',
+      sub: "Let's set you up in thirty seconds. First — what should we call you?",
       content: (
-        <div className="space-y-3">
+        <div className="space-y-3 mt-8">
           <input
             type="text"
             autoFocus
@@ -42,80 +43,79 @@ export default function OnboardingQuiz({ onClose }) {
             value={data.name}
             onChange={(e) => setData((d) => ({ ...d, name: e.target.value }))}
             onKeyDown={(e) => e.key === 'Enter' && data.name.trim() && setStep(1)}
-            className="w-full px-5 py-4 rounded-2xl border-2 border-blush/40 bg-white text-base text-neutral-800 placeholder-neutral-400 focus:border-pink-400 focus:outline-none transition-colors"
+            className="w-full px-5 py-4 bg-cream-light border-2 border-ink/20 text-lg text-ink font-display placeholder-ink-softer focus:border-ink focus:outline-none transition-colors"
             maxLength={20}
           />
           <button
-            onClick={() => setData((d) => ({ ...d, name: '' })) || setStep(1)}
-            className="text-xs text-neutral-400 hover:text-neutral-600 underline"
+            onClick={() => setStep(1)}
+            className="text-xs text-ink-softer hover:text-ink underline transition-colors"
           >
             Skip — keep it anonymous
           </button>
         </div>
       ),
-      canAdvance: true,
     },
     {
-      title: data.name ? `Hi ${data.name} 💖` : 'Nice to meet you 💖',
-      sub: "What's your skin type? (You can change this later.)",
+      kicker: '02 · Skin',
+      title: data.name ? `Hi ${data.name}.` : 'Nice to meet you.',
+      sub: "What's your skin type? You can change this later.",
       content: (
-        <div className="grid grid-cols-2 gap-3">
-          {skinTypes.map((s) => (
+        <div className="grid grid-cols-2 gap-px bg-ink/15 border border-ink/15 mt-8">
+          {skinTypes.map((s, i) => (
             <button
               key={s.id}
               onClick={() => {
                 setData((d) => ({ ...d, skinType: s.id }))
                 setTimeout(() => setStep(2), 200)
               }}
-              className={`p-4 rounded-2xl border-2 text-left transition-all duration-200 hover:-translate-y-0.5 ${
-                data.skinType === s.id
-                  ? 'border-pink-400 bg-blush/30 shadow-soft'
-                  : 'border-blush/30 bg-white hover:border-blush'
+              className={`p-5 text-left transition-all ${
+                data.skinType === s.id ? 'bg-ink text-cream' : 'bg-cream-light text-ink hover:bg-bone'
               }`}
             >
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xl">{s.icon}</span>
-                <span className="font-semibold text-sm text-neutral-800">{s.label}</span>
-              </div>
-              <p className="text-xs text-neutral-500 leading-snug">{s.desc}</p>
+              <span className={`editorial-num text-2xl ${data.skinType === s.id ? 'text-gold' : 'text-clay'}`}>
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <p className="font-display text-2xl mt-1 leading-tight">{s.label}</p>
+              <p className={`text-xs mt-1 leading-snug ${data.skinType === s.id ? 'text-cream/70' : 'text-ink-soft'}`}>{s.desc}</p>
             </button>
           ))}
         </div>
       ),
-      canAdvance: !!data.skinType,
     },
     {
-      title: 'What matters most to you right now?',
-      sub: "We'll tailor your home page to this. Pick one — change it anytime.",
+      kicker: '03 · Goal',
+      title: 'What matters most?',
+      sub: "We'll tailor your home to this. Pick one — change it anytime.",
       content: (
-        <div className="space-y-2">
-          {goals.map((g) => (
+        <div className="space-y-px bg-ink/15 border border-ink/15 mt-8">
+          {goals.map((g, i) => (
             <button
               key={g.id}
               onClick={() => {
                 setData((d) => ({ ...d, goal: g.id }))
                 setTimeout(() => setStep(3), 200)
               }}
-              className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all duration-200 hover:-translate-y-0.5 ${
-                data.goal === g.id
-                  ? 'border-pink-400 shadow-soft'
-                  : 'border-blush/30 hover:border-blush'
-              } bg-gradient-to-r ${g.color}`}
+              className={`w-full p-5 flex items-center gap-5 text-left transition-all ${
+                data.goal === g.id ? 'bg-ink text-cream' : 'bg-cream-light text-ink hover:bg-bone'
+              }`}
             >
-              <span className="text-2xl">{g.icon}</span>
-              <span className="font-semibold text-sm text-neutral-800">{g.label}</span>
+              <span className={`num-display text-xl flex-shrink-0 ${data.goal === g.id ? 'text-gold' : 'text-clay'}`}>
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <span className="font-display text-xl">{g.label}</span>
+              <span className={`ml-auto display-italic transition-transform ${data.goal === g.id ? 'translate-x-2 text-gold' : ''}`}>→</span>
             </button>
           ))}
         </div>
       ),
-      canAdvance: !!data.goal,
     },
     {
-      title: 'How much time can you give Quill?',
+      kicker: '04 · Time',
+      title: 'How much time?',
       sub: 'Honest answers get better suggestions. No pressure either way.',
       content: (
-        <div className="space-y-2">
-          {times.map((t) => (
+        <div className="space-y-px bg-ink/15 border border-ink/15 mt-8">
+          {times.map((t, i) => (
             <button
               key={t.id}
               onClick={() => {
@@ -125,19 +125,21 @@ export default function OnboardingQuiz({ onClose }) {
                   onClose()
                 }, 250)
               }}
-              className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 text-left transition-all duration-200 hover:-translate-y-0.5 ${
-                data.timePerDay === t.id
-                  ? 'border-pink-400 bg-blush/30 shadow-soft'
-                  : 'border-blush/30 bg-white hover:border-blush'
+              className={`w-full p-5 flex items-baseline justify-between text-left transition-all ${
+                data.timePerDay === t.id ? 'bg-ink text-cream' : 'bg-cream-light text-ink hover:bg-bone'
               }`}
             >
-              <span className="font-semibold text-sm text-neutral-800">{t.label}</span>
-              <span className="text-xs text-neutral-500">{t.desc}</span>
+              <span className="flex items-baseline gap-5">
+                <span className={`num-display text-xl ${data.timePerDay === t.id ? 'text-gold' : 'text-clay'}`}>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span className="font-display text-xl">{t.label}</span>
+              </span>
+              <span className={`text-xs ${data.timePerDay === t.id ? 'text-cream/70' : 'text-ink-softer'}`}>{t.desc}</span>
             </button>
           ))}
         </div>
       ),
-      canAdvance: !!data.timePerDay,
     },
   ]
 
@@ -151,54 +153,45 @@ export default function OnboardingQuiz({ onClose }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blush/60 via-lavender/60 to-cream/80 backdrop-blur-xl" />
+      <div className="absolute inset-0 bg-cream-dark/95 backdrop-blur-md" />
 
-      {/* Floating decorative blobs */}
-      <div className="hero-bg-blob bg-blush/40 w-72 h-72 top-10 left-10 animate-float-slow" />
-      <div className="hero-bg-blob bg-lavender/40 w-80 h-80 bottom-10 right-10 animate-float-reverse" />
-
-      {/* Modal */}
-      <div className="relative w-full max-w-md card-solid p-6 sm:p-8 animate-pop-in">
-        {/* Progress bar */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2 text-xs text-neutral-400">
-            <span>Step {step + 1} of {steps.length}</span>
-            <button onClick={handleSkip} className="hover:text-neutral-600 underline">
-              Skip for now
-            </button>
+      <div className="relative w-full max-w-lg bg-cream-light border border-ink/15 p-6 sm:p-8 animate-pop-in shadow-soft-lg">
+        {/* Progress */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-2">
+            <span className="editorial-label">Step {String(step + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')}</span>
+            <button onClick={handleSkip} className="editorial-label hover:text-clay transition-colors">Skip for now</button>
           </div>
-          <div className="h-1.5 rounded-full bg-blush/30 overflow-hidden">
+          <div className="h-px bg-ink/15 relative">
             <div
-              className="h-full bg-gradient-to-r from-pink-400 to-purple-400 transition-all duration-500"
+              className="absolute inset-y-0 left-0 bg-ink transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
 
-        {/* Step content */}
         <div key={step} className="animate-fade-up">
-          <h2 className="text-2xl font-bold text-neutral-800 mb-2">{current.title}</h2>
-          <p className="text-sm text-neutral-500 mb-6 leading-relaxed">{current.sub}</p>
+          <span className="editorial-label text-clay">{current.kicker}</span>
+          <h2 className="font-display text-4xl sm:text-5xl text-ink mt-2 leading-tight">{current.title}</h2>
+          <p className="text-sm text-ink-soft mt-3 leading-relaxed">{current.sub}</p>
           {current.content}
         </div>
 
-        {/* Footer nav (only for step 0 + step needing manual advance) */}
         {step === 0 && (
-          <div className="mt-5 flex justify-end">
+          <div className="mt-6 flex justify-end">
             <button
               onClick={() => setStep(1)}
               disabled={!data.name.trim()}
-              className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-pink-400 to-purple-400 text-white text-sm font-semibold shadow-soft hover:shadow-soft-hover transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="btn-ink disabled:opacity-30 disabled:cursor-not-allowed"
             >
-              Continue →
+              Continue <span className="display-italic">→</span>
             </button>
           </div>
         )}
 
         {step > 0 && (
-          <div className="mt-5 flex justify-between text-xs">
-            <button onClick={() => setStep(step - 1)} className="text-neutral-400 hover:text-neutral-600">
+          <div className="mt-5 flex justify-between">
+            <button onClick={() => setStep(step - 1)} className="editorial-label hover:text-clay transition-colors">
               ← Back
             </button>
           </div>
