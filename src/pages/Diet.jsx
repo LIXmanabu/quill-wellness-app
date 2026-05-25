@@ -6,6 +6,7 @@ import Marquee from '../components/interactive/Marquee.jsx'
 import SpotlightCard from '../components/interactive/SpotlightCard.jsx'
 import FavoriteButton from '../components/FavoriteButton.jsx'
 import DietTracker from '../components/DietTracker.jsx'
+import TierBadge from '../components/TierBadge.jsx'
 
 /* ─── Diets ─── */
 const diets = [
@@ -414,7 +415,7 @@ function ProMealPlans() {
       <Reveal>
         <div className="mb-10 pb-4 border-b border-ink/15">
           <span className="editorial-label flex items-center gap-2">
-            Section 04 · Meal plans <span className="pro-badge">Pro</span>
+            Section 04 · Meal plans <TierBadge />
           </span>
           <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
             Seven-day <span className="display-italic text-clay">templates.</span>

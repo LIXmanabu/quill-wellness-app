@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { foods, categoryStyles, goalTargets, suggestNext, slotLabel, currentMealSlot } from '../data/foodDatabase.js'
 import Reveal from './interactive/Reveal.jsx'
 import SpotlightCard from './interactive/SpotlightCard.jsx'
+import TierBadge from './TierBadge.jsx'
 
 const STORAGE_KEY = 'quill.diet.log'
 
@@ -121,7 +122,7 @@ export default function DietTracker({ initialGoal = 'balanced' }) {
         <div className="mb-10 pb-4 border-b border-ink/15 flex items-end justify-between flex-wrap gap-4">
           <div>
             <span className="editorial-label flex items-center gap-2">
-              Section 05 · Track your day <span className="pro-badge">Pro</span>
+              Section 05 · Track your day <TierBadge />
             </span>
             <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
               What you ate <span className="display-italic text-clay">today.</span>

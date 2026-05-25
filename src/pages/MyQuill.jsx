@@ -6,6 +6,7 @@ import { sportData } from '../data/sportData.js'
 import { wellnessData } from '../data/wellnessData.js'
 import { getRoutine, getComplementaryRoutine, getProblemTips, getAdvice, getRecommendations, isPersonalized } from '../data/personalization.js'
 import FavoriteButton from '../components/FavoriteButton.jsx'
+import TierBadge from '../components/TierBadge.jsx'
 import SplitText from '../components/interactive/SplitText.jsx'
 import Reveal from '../components/interactive/Reveal.jsx'
 import SpotlightCard from '../components/interactive/SpotlightCard.jsx'
@@ -58,7 +59,8 @@ function resolveFavorite(id) {
 
 export default function MyQuill({ onNavigate }) {
   const { profile, resetProfile } = useUser()
-  const { isPro } = usePro()
+  const { isPro, isMax, tier } = usePro()
+  const tierLabel = isMax ? 'Max' : isPro ? 'Pro' : 'Free'
 
   const resolved = profile.favorites.map((id) => ({ id, ...resolveFavorite(id) })).filter((f) => f && f.title)
   const greeting = profile.name ? `Hello, ${profile.name}` : 'Your Quill'
@@ -79,7 +81,9 @@ export default function MyQuill({ onNavigate }) {
           <span className="editorial-label">{resolved.length} saved</span>
         </div>
         <h1 className="font-display text-[14vw] sm:text-[10vw] lg:text-[8vw] text-ink leading-[0.9] tracking-tight">
-          <SplitText byChar stagger={28}>{greeting},</SplitText>
+          <span className={isMax ? 'tier-gradient-text' : ''}>
+            <SplitText byChar stagger={28}>{greeting},</SplitText>
+          </span>
           <br />
           <span className="display-italic text-clay"><SplitText byChar stagger={28} startDelay={500}>here you are.</SplitText></span>
         </h1>
@@ -98,7 +102,7 @@ export default function MyQuill({ onNavigate }) {
           <div className={`${isPro ? 'pro-card' : 'card-paper'} p-8 sm:p-10`}>
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 pb-6 border-b border-ink/15">
               <div>
-                <span className="editorial-label">Your profile {isPro && <span className="pro-badge ml-2">Pro</span>}</span>
+                <span className="editorial-label flex items-center gap-2">Your profile {isPro && <TierBadge />}</span>
                 <h2 className="font-display text-4xl sm:text-5xl text-ink mt-1 leading-tight">
                   {profile.name || 'Anonymous reader'}
                 </h2>
@@ -204,7 +208,7 @@ export default function MyQuill({ onNavigate }) {
           <Reveal>
             <div className="mb-10 pb-4 border-b border-ink/15">
               <span className="editorial-label flex items-center gap-2">
-                Section 03 · Your answers, your tips <span className="pro-badge">Pro</span>
+                Section 03 · Your answers, your tips <TierBadge />
               </span>
               <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
                 For each thing <span className="display-italic text-clay">you told us.</span>

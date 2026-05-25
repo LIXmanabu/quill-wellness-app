@@ -384,8 +384,31 @@
 
   /* Animated "MAX" badge in masthead is more vibrant */
   .max-mode .pro-badge {
+    background: linear-gradient(120deg, #C8654A 0%, #D4A744 25%, #5A6B5D 50%, #C9B3E8 75%, #C8654A 100%) !important;
     background-size: 300% 300% !important;
     animation: gradient-shift 3s ease infinite !important;
+    color: #1A1410 !important;
+    font-weight: 700;
+  }
+
+  /* Utility: rainbow gradient text — applied explicitly to user name etc */
+  .tier-gradient-text,
+  .max-mode .tier-gradient-text {
+    background: linear-gradient(120deg, #C8654A 0%, #D4A744 17%, #5A6B5D 34%, #6BAEEF 50%, #C9B3E8 67%, #E8B4B8 84%, #C8654A 100%);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: gradient-shift 8s ease infinite;
+  }
+
+  /* MyQuill profile chips get vivid label colours in Max */
+  .max-mode .editorial-label {
+    color: #9B4423;
+  }
+  .max-mode .text-ink-soft {
+    color: #5A4A3E;
   }
 
   /* ─── Pro mode treatment ───────────────────────────────────────── */

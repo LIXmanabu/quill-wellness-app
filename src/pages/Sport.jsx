@@ -5,6 +5,7 @@ import SplitText from '../components/interactive/SplitText.jsx'
 import Reveal from '../components/interactive/Reveal.jsx'
 import Marquee from '../components/interactive/Marquee.jsx'
 import SpotlightCard from '../components/interactive/SpotlightCard.jsx'
+import TierBadge from '../components/TierBadge.jsx'
 
 const proPlans = [
   { week: 'Week One', focus: 'Form & rhythm', notes: 'Master technique at lower volume — three sessions, twenty minutes each. Rest days are non-negotiable.' },
@@ -90,7 +91,7 @@ export default function Sport({ onNavigate }) {
               <div className="mb-10 pb-4 border-b border-ink/15 flex items-baseline justify-between">
                 <div>
                   <span className="editorial-label flex items-center gap-2">
-                    Pro Edition <span className="pro-badge">Pro</span>
+                    Pro Edition <TierBadge />
                   </span>
                   <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
                     A three-week <span className="display-italic text-clay">progression.</span>

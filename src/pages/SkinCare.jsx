@@ -6,6 +6,7 @@ import SplitText from '../components/interactive/SplitText.jsx'
 import Reveal from '../components/interactive/Reveal.jsx'
 import Marquee from '../components/interactive/Marquee.jsx'
 import SpotlightCard from '../components/interactive/SpotlightCard.jsx'
+import TierBadge from '../components/TierBadge.jsx'
 
 const ingredients = [
   { name: 'Niacinamide', good: 'Redness, large pores, oil control', strength: '2–5%', notes: 'Plays well with everything. Start with 5% AM or PM.' },
@@ -128,7 +129,7 @@ export default function SkinCare({ onNavigate }) {
             <Reveal>
               <div className="mb-10 pb-4 border-b border-ink/15">
                 <span className="editorial-label flex items-center gap-2">
-                  Section 03 · Ingredients <span className="pro-badge">Pro</span>
+                  Section 03 · Ingredients <TierBadge />
                 </span>
                 <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
                   The <span className="display-italic text-clay">active list.</span>
@@ -155,7 +156,7 @@ export default function SkinCare({ onNavigate }) {
             <Reveal>
               <div className="mt-16 mb-8 pb-4 border-b border-ink/15">
                 <span className="editorial-label flex items-center gap-2">
-                  Section 04 · Weekly plan <span className="pro-badge">Pro</span>
+                  Section 04 · Weekly plan <TierBadge />
                 </span>
                 <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
                   Your seven <span className="display-italic text-clay">days.</span>
