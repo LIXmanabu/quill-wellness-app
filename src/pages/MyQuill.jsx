@@ -4,7 +4,7 @@ import { dailyTips, categoryMeta } from '../data/dailyTips.js'
 import { skincareData } from '../data/skincareData.js'
 import { sportData } from '../data/sportData.js'
 import { wellnessData } from '../data/wellnessData.js'
-import { getRoutine, getComplementaryRoutine, getAdvice, getRecommendations, isPersonalized } from '../data/personalization.js'
+import { getRoutine, getComplementaryRoutine, getProblemTips, getAdvice, getRecommendations, isPersonalized } from '../data/personalization.js'
 import FavoriteButton from '../components/FavoriteButton.jsx'
 import SplitText from '../components/interactive/SplitText.jsx'
 import Reveal from '../components/interactive/Reveal.jsx'
@@ -66,6 +66,7 @@ export default function MyQuill({ onNavigate }) {
 
   const routine = personalized ? getRoutine(profile) : null
   const complement = personalized ? getComplementaryRoutine(profile) : null
+  const problemTips = personalized ? getProblemTips(profile) : []
   const advice = personalized ? getAdvice(profile) : []
   const recs = personalized ? getRecommendations(profile) : []
 
@@ -197,12 +198,53 @@ export default function MyQuill({ onNavigate }) {
         </section>
       )}
 
+      {/* PROBLEM-FOCUSED TIPS — one block per onboarding answer */}
+      {problemTips.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Reveal>
+            <div className="mb-10 pb-4 border-b border-ink/15">
+              <span className="editorial-label">Section 03 · Your answers, your tips</span>
+              <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
+                For each thing <span className="display-italic text-clay">you told us.</span>
+              </h2>
+              <p className="text-sm text-ink-soft mt-3 max-w-xl">
+                A morning routine, broken down by every answer you gave. One block for your skin type, one for your goal, one for the time you have.
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-ink/15 border border-ink/15">
+            {problemTips.map((block, i) => (
+              <Reveal key={block.key} delay={i * 80}>
+                <div className="bg-cream-light p-6 sm:p-8 h-full flex flex-col">
+                  <div className="pb-4 mb-5 border-b border-ink/10">
+                    <span className="editorial-label">{block.kicker}</span>
+                    <p className="font-display text-3xl text-ink mt-1 leading-tight">{block.label}</p>
+                    <p className="display-italic text-sm text-clay mt-2 leading-relaxed">{block.why}</p>
+                  </div>
+                  <ol className="space-y-3 flex-1">
+                    {block.steps.map((step, j) => (
+                      <li key={j} className="flex items-baseline gap-4">
+                        <span className="num-display text-base text-clay flex-shrink-0 w-7">
+                          {String(j + 1).padStart(2, '0')}
+                        </span>
+                        <span className="text-sm text-ink leading-relaxed">{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* PERSONALIZED ADVICE */}
       {advice.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Reveal>
             <div className="mb-10 pb-4 border-b border-ink/15">
-              <span className="editorial-label">Section 03 · Advice</span>
+              <span className="editorial-label">Section 04 · Advice</span>
               <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
                 The four <span className="display-italic text-clay">that matter most.</span>
               </h2>
@@ -234,7 +276,7 @@ export default function MyQuill({ onNavigate }) {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Reveal>
             <div className="mb-8 pb-4 border-b border-ink/15">
-              <span className="editorial-label">Section 04 · Read next</span>
+              <span className="editorial-label">Section 05 · Read next</span>
               <h2 className="font-display text-4xl sm:text-5xl text-ink mt-2 leading-none">
                 Made for <span className="display-italic text-clay">your day.</span>
               </h2>
@@ -266,7 +308,7 @@ export default function MyQuill({ onNavigate }) {
         <Reveal>
           <div className="flex items-baseline justify-between mb-10 pb-4 border-b border-ink/15">
             <div>
-              <span className="editorial-label">Section {personalized ? '05' : '01'} · Your collection</span>
+              <span className="editorial-label">Section {personalized ? '06' : '01'} · Your collection</span>
               <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
                 Favorites <span className="display-italic text-clay">({resolved.length})</span>
               </h2>

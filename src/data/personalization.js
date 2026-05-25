@@ -145,6 +145,188 @@ const complementMap = {
 }
 
 /* ─────────────────────────────────────────────────────────────────
+ * PROBLEM-FOCUSED TIPS — one routine-block per onboarding answer.
+ * Used by MyQuill's "For each thing you told us" section.
+ * ────────────────────────────────────────────────────────────── */
+
+const skinTypeTips = {
+  dry: {
+    label: 'Dry skin',
+    kicker: 'For your skin type',
+    why: 'Tight, sometimes flaky. Lipids and water both run low.',
+    steps: [
+      'Cream or oil-based cleanser — never foaming or alcohol',
+      'Apply hyaluronic acid serum to damp skin within 60 seconds',
+      'Lock in moisture with a ceramide-rich cream',
+      'Mineral SPF over chemical — gentler on a compromised barrier',
+      'Run a humidifier at night, especially in winter',
+    ],
+  },
+  oily: {
+    label: 'Oily skin',
+    kicker: 'For your skin type',
+    why: 'Shiny T-zone, larger pores. Overactive sebum needs balance, not stripping.',
+    steps: [
+      'Gentle gel cleanser, morning and night — no harsh foam',
+      'Niacinamide 5% serum — controls oil without irritation',
+      'Lightweight, oil-free moisturizer (yes, you still need it)',
+      'BHA (salicylic acid) toner 2-3× per week',
+      'Blotting papers beat re-washing — don\'t strip more',
+    ],
+  },
+  combo: {
+    label: 'Combination skin',
+    kicker: 'For your skin type',
+    why: 'Oily T-zone, drier cheeks. Multi-zone routine wins.',
+    steps: [
+      'Mild gel cleanser, morning and night',
+      'Niacinamide everywhere — works for both zones',
+      'BHA only on T-zone (forehead, nose, chin)',
+      'Richer moisturizer on cheeks, lighter on T-zone',
+      'SPF 30+ — non-greasy, ideally fluid texture',
+    ],
+  },
+  sensitive: {
+    label: 'Sensitive skin',
+    kicker: 'For your skin type',
+    why: 'Reacts easily, prone to redness. Less is more — always.',
+    steps: [
+      'Cool water rinse in the morning — no cleanser if your skin behaves',
+      'Fragrance-free, short ingredient lists — no essential oils',
+      'Patch test new products behind the ear for 48 hours',
+      'Mineral SPF (zinc oxide) — chemical filters can sting',
+      'Skip retinol and acids unless prescribed; centella + panthenol calm flare-ups',
+    ],
+  },
+  normal: {
+    label: 'Normal skin',
+    kicker: 'For your skin type',
+    why: 'Balanced, rarely fussy. Keep the basics solid before experimenting.',
+    steps: [
+      'Gentle cleanser, morning and night',
+      'A simple moisturizer — keep your barrier happy',
+      'SPF 30+ every morning, year-round',
+      'Add one active at a time (vitamin C is the safest start)',
+      'Don\'t over-exfoliate just because you can',
+    ],
+  },
+  unsure: {
+    label: 'Still figuring it out',
+    kicker: 'For your skin type',
+    why: 'No data = no actives. Run a 2-week experiment first.',
+    steps: [
+      'Use only: gentle cleanser, plain moisturizer, SPF for 2 weeks',
+      'Note: tight after washing? Dry. Shiny by noon? Oily.',
+      'Redness or stinging from new products? Sensitive.',
+      'Track for 14 days — then choose a routine from there',
+      'Add nothing else until you have an answer',
+    ],
+  },
+}
+
+const goalTips = {
+  glow: {
+    label: 'Glow & confidence',
+    kicker: 'For your goal',
+    why: 'Skin reflects sleep, hydration, and consistency more than any product.',
+    steps: [
+      'SPF every single morning — the highest-ROI skincare habit',
+      'Vitamin C serum in the AM for brightness',
+      'Hydrate first thing: a glass of water before coffee',
+      'Sleep 7-9 hours — growth hormone repairs skin overnight',
+      'Eat omega-3 fish twice a week for skin lipids',
+    ],
+  },
+  fitness: {
+    label: 'Move & feel strong',
+    kicker: 'For your goal',
+    why: 'Consistency, progressive overload, and recovery — in that order.',
+    steps: [
+      '20 squats + 10 push-ups before your shower',
+      'Protein-rich breakfast: 20-30g (eggs, yogurt, tofu)',
+      'Walk between meetings — aim for 8-10k steps daily',
+      'Strength train 3× a week, full-body, compound moves',
+      'Sleep 7-9h — most plateaus are recovery problems',
+    ],
+  },
+  calm: {
+    label: 'Stress less, sleep better',
+    kicker: 'For your goal',
+    why: 'Nervous-system regulation, not just less to-do. Mornings set the tone.',
+    steps: [
+      '10 minutes of morning sunlight (no phone) — anchors circadian rhythm',
+      'Box breathing × 4 rounds: 4 in, 4 hold, 4 out, 4 hold',
+      'No caffeine after 2 pm — half-life is 6 hours',
+      'One thing on paper for the day — beats a 10-item list',
+      'Dim lights at 9 pm; phone out of the bedroom',
+    ],
+  },
+  body: {
+    label: 'Understand my body',
+    kicker: 'For your goal',
+    why: 'Your body is talking. Pay attention to the small signals daily.',
+    steps: [
+      'Morning body scan: where am I tight, hungry, tired?',
+      'Check urine colour — pale straw = hydrated',
+      'Posture reset every hour: chin tucked, shoulders down',
+      '5 min mobility before screens — knees, hips, spine',
+      'Track sleep + energy 1-10 for two weeks',
+    ],
+  },
+  eat: {
+    label: 'Eat smarter',
+    kicker: 'For your goal',
+    why: 'Protein anchors meals. Plants supply almost everything else.',
+    steps: [
+      'Water before coffee — you wake up dehydrated',
+      'Protein + fibre breakfast (oats + berries + nuts, or eggs + greens)',
+      'Aim for 30+ different plants per week',
+      '2-minute walk after every meal — flattens blood sugar by 30%',
+      'Stop eating 2 hours before bed for better sleep',
+    ],
+  },
+}
+
+const timeTips = {
+  5: {
+    label: '5 minutes a day',
+    kicker: 'For your time',
+    why: 'Tiny is better than nothing — and tiny, done daily, compounds.',
+    steps: [
+      'Pick one habit and chain it to brushing your teeth',
+      'Done is better than done well — speed > perfection',
+      'Track on a paper calendar — visible streaks motivate',
+      'Skip a day? Restart the next. Two days is a pattern',
+      'Add one more minute every two weeks',
+    ],
+  },
+  15: {
+    label: '15 minutes a day',
+    kicker: 'For your time',
+    why: 'The sweet spot. Long enough to matter, short enough to keep doing.',
+    steps: [
+      'Block the same 15 min daily — same time, same place',
+      'Split: 5 min movement + 5 min mindset + 5 min skin or food',
+      'Phone in another room while you ritual',
+      'Track wins weekly — what stuck, what dropped',
+      'Protect this slot like a meeting with yourself',
+    ],
+  },
+  30: {
+    label: '30+ minutes a day',
+    kicker: 'For your time',
+    why: 'You have space for a real ritual. Use it without burning out.',
+    steps: [
+      'Morning block (15 min) + evening block (15 min) beats one long session',
+      'Rotate focus: skin Mon, movement Tue, mindset Wed, repeat',
+      'Build in one full rest day a week — recovery is the work',
+      'Journal weekly: what got easier, what got harder',
+      'Variety > novelty — depth beats trying new things constantly',
+    ],
+  },
+}
+
+/* ─────────────────────────────────────────────────────────────────
  * RECOMMENDED PAGES (based on goal)
  * ────────────────────────────────────────────────────────────── */
 
@@ -192,6 +374,22 @@ export function getAdvice(profile) {
 export function getRecommendations(profile) {
   const goal = profile.goal || 'body'
   return recommendedPages[goal] || recommendedPages.body
+}
+
+export function getProblemTips(profile) {
+  // Returns one block per answered question — so the user sees how each
+  // onboarding choice translates into specific morning-routine steps.
+  const blocks = []
+  if (profile.skinType && skinTypeTips[profile.skinType]) {
+    blocks.push({ key: 'skin', ...skinTypeTips[profile.skinType] })
+  }
+  if (profile.goal && goalTips[profile.goal]) {
+    blocks.push({ key: 'goal', ...goalTips[profile.goal] })
+  }
+  if (profile.timePerDay && timeTips[profile.timePerDay]) {
+    blocks.push({ key: 'time', ...timeTips[profile.timePerDay] })
+  }
+  return blocks
 }
 
 export function getComplementaryRoutine(profile) {
