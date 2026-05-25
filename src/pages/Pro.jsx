@@ -9,47 +9,23 @@ import SpotlightCard from '../components/interactive/SpotlightCard.jsx'
 import CheckoutModal from '../components/CheckoutModal.jsx'
 
 const features = [
-  // ── Core software ─────────────────────────────────────────────
-  { num: '01', icon: '∞', title: 'Saved favorites', free: 'Three', pro: 'Unlimited', max: 'Unlimited' },
-  { num: '02', icon: '☉', title: 'Tip library', free: '~5 per category', pro: 'All 60+', max: 'All 60+ · audio version' },
-  { num: '03', icon: '✺', title: 'Personalized home', free: 'Generic', pro: 'Goal-tailored', max: 'Coach-reviewed monthly' },
-  { num: '04', icon: '♆', title: 'Per-answer routine', free: '—', pro: 'Included', max: 'Included · AI-revised weekly' },
-  { num: '05', icon: '☽', title: 'Diet tracker', free: '—', pro: 'Live · suggestions', max: 'Live · barcode + photo + voice' },
-  // ── Plans built for you ───────────────────────────────────────
-  { num: '06', icon: '☄', title: 'Custom meal plan', free: '—', pro: '7-day templates', max: 'RD-built · refreshed quarterly' },
-  { num: '07', icon: '⊕', title: 'Training cycle', free: '—', pro: 'Single routine', max: 'PT-written · 12 wks · progression' },
-  { num: '08', icon: '⚘', title: 'Supplement stack', free: '—', pro: '—', max: 'Built from your labs' },
-  { num: '09', icon: '☷', title: 'Grocery automation', free: '—', pro: '—', max: 'Meal plan → list → checkout' },
-  // ── Human concierge ───────────────────────────────────────────
-  { num: '10', icon: '☓', title: 'Monthly coach call', free: '—', pro: '—', max: '30-min 1:1 with a wellness coach' },
-  { num: '11', icon: '✺', title: 'Expert chat', free: '—', pro: '—', max: 'Derm · RD · PT, async < 24h' },
-  { num: '12', icon: '☉', title: 'Concierge medical', free: '—', pro: '—', max: 'Same-day referrals to in-network MDs' },
-  { num: '13', icon: '◇', title: 'Sleep coaching', free: '—', pro: '—', max: 'Personalised from your biometrics' },
-  // ── Quill AI ──────────────────────────────────────────────────
-  { num: '14', icon: '✦', title: 'Quill AI assistant', free: '—', pro: '—', max: 'Memory · 24/7 chat · voice mode' },
-  { num: '15', icon: '◐', title: 'Morning briefing', free: '—', pro: '—', max: 'Daily AI summary of your data' },
-  { num: '16', icon: '✸', title: 'Predictive nudges', free: '—', pro: '—', max: 'AI catches patterns before you do' },
-  // ── Biometrics & labs ─────────────────────────────────────────
-  { num: '17', icon: '◈', title: 'Wearable sync', free: '—', pro: '—', max: 'Apple Health · Oura · Whoop · Garmin' },
-  { num: '18', icon: '✶', title: 'Lab panel integration', free: '—', pro: '—', max: '100+ biomarkers · Quest Diagnostics' },
-  { num: '19', icon: '◯', title: 'CGM sync', free: '—', pro: '—', max: 'Glucose data shapes meal advice' },
-  { num: '20', icon: '☽', title: 'Quill Age', free: '—', pro: '—', max: 'Biological age vs calendar, monthly' },
-  { num: '21', icon: '⊛', title: 'HRV · RHR · respiratory', free: '—', pro: '—', max: 'Real-time stress & recovery score' },
-  { num: '22', icon: '⚭', title: 'Sleep stage analysis', free: '—', pro: '—', max: 'Lab-grade · REM · deep · light' },
-  { num: '23', icon: '☿', title: 'Cycle tracking + prediction', free: '—', pro: '—', max: 'Period · hormones · adjusts protocols' },
-  // ── Lifestyle ─────────────────────────────────────────────────
-  { num: '24', icon: '⊕', title: 'Audio library', free: '—', pro: '—', max: 'Sleep stories · breathwork · focus' },
-  { num: '25', icon: '◑', title: 'Workout video library', free: '—', pro: '—', max: 'Strength · yoga · HIIT · mobility' },
-  { num: '26', icon: '⊙', title: 'Fasting tracker', free: '—', pro: '—', max: 'Glucose-aware windows' },
-  { num: '27', icon: '✾', title: 'Family seats', free: '1', pro: '1', max: '4 — share with household' },
-  { num: '28', icon: '✿', title: 'Group challenges', free: '—', pro: '—', max: 'Run streaks together with family' },
-  { num: '29', icon: '✦', title: 'Travel mode', free: '—', pro: '—', max: 'Auto-adjusts protocols to time-zones' },
-  // ── Reports & extras ──────────────────────────────────────────
-  { num: '30', icon: '☓', title: 'Annual health report', free: '—', pro: '—', max: 'PDF year-in-review, every Dec' },
-  { num: '31', icon: '♁', title: 'Print issue', free: '—', pro: '—', max: 'Quarterly magazine, posted' },
-  { num: '32', icon: '✶', title: 'Quill drops', free: '—', pro: '—', max: 'Member-only seasonal gifts' },
-  { num: '33', icon: '◐', title: 'Priority support', free: '—', pro: 'Standard', max: '< 12h, human, named owner' },
-  { num: '34', icon: '◇', title: 'Early access', free: '—', pro: '—', max: '30-day head start on new features' },
+  // ── Real, built today ─────────────────────────────────────────
+  { num: '01', icon: '∞', title: 'Saved favorites', free: 'Three', pro: 'Unlimited', max: 'Unlimited', status: 'live' },
+  { num: '02', icon: '☉', title: 'Tip library', free: '~5 per category', pro: 'All 60', max: 'All 60', status: 'live' },
+  { num: '03', icon: '✺', title: 'Personalized MyQuill', free: '—', pro: 'Full routine + advice', max: 'Full routine + advice', status: 'live' },
+  { num: '04', icon: '♆', title: 'Per-answer routine block', free: '—', pro: 'Included', max: 'Included', status: 'live' },
+  { num: '05', icon: '☄', title: 'Complementary routine', free: '—', pro: 'Included', max: 'Included', status: 'live' },
+  { num: '06', icon: '☽', title: 'Live diet tracker', free: '—', pro: 'Macros + smart suggestions', max: 'Macros + smart suggestions', status: 'live' },
+  { num: '07', icon: '⊕', title: '7-day meal templates', free: 'Diet overview only', pro: 'All 6 protocols', max: 'All 6 protocols', status: 'live' },
+  { num: '08', icon: '⚘', title: 'Body Map cross-refs', free: 'Single region', pro: 'Related areas', max: 'Related areas', status: 'live' },
+  // ── Max-only tools, built today ───────────────────────────────
+  { num: '09', icon: '☾', title: 'Sleep schedule analyzer', free: '—', pro: '—', max: '7-night log · consistency score · jetlag', status: 'live' },
+  { num: '10', icon: '✓', title: 'Habit streak tracker', free: '—', pro: '—', max: '9 presets · 14-day grid · live streaks', status: 'live' },
+  // ── Planned (clearly marked) ──────────────────────────────────
+  { num: '11', icon: '◯', title: 'Cycle tracking', free: '—', pro: '—', max: 'Preview · Q3', status: 'planned' },
+  { num: '12', icon: '◈', title: 'Wearable sync', free: '—', pro: '—', max: 'Preview · Apple Health first', status: 'planned' },
+  { num: '13', icon: '◐', title: 'Audio library', free: '—', pro: '—', max: 'Preview · breathwork sessions', status: 'planned' },
+  { num: '14', icon: '✿', title: 'Family seats', free: '1', pro: '1', max: 'Preview · 4 included', status: 'planned' },
 ]
 
 const testimonials = [
@@ -101,22 +77,19 @@ const tiers = [
   {
     key: 'max',
     label: 'Max',
-    sub: 'Concierge wellness — labs, biometrics, AI, and a real coach.',
+    sub: 'Pro + the working tools we keep building first.',
     price: 13,
     crossedPrice: 20,
     period: 'month',
     accent: 'gold',
     bullets: [
       'Everything in Pro',
-      'Monthly 1:1 with a real wellness coach (30 min)',
-      'Lab integration — 100+ biomarkers via Quest, Quill Age tracking',
-      'Wearable & CGM sync — Apple Health · Oura · Whoop · Garmin · Dexcom',
-      'Cycle-aware protocols + sleep-stage analysis',
-      'RD-built meal plan + PT-written 12-wk cycle + supplement stack',
-      'Quill AI — memory, voice mode, daily morning briefing',
-      'Async expert chat (< 24h) + same-day MD referrals',
-      'Sleep stories · workout videos · fasting tracker · travel mode',
-      'Four family seats · group challenges · print issue · annual report',
+      'Sleep schedule analyzer — log 7 nights, get consistency + jetlag stats',
+      'Habit streak tracker — 9 presets, 14-day grid, live streaks',
+      'Rainbow Max theme across every page',
+      'New tools land here first — 30-day early access',
+      'Cycle tracking · wearable sync · audio library (preview, Q3)',
+      'Family seats — 4 included (preview)',
     ],
   },
 ]
@@ -315,25 +288,36 @@ export default function Pro({ onNavigate }) {
             <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
               The <span className="display-italic text-clay">complete list.</span>
             </h2>
+            <p className="text-sm text-ink-soft mt-3 max-w-xl">
+              Honest about what's live versus planned. "Live" features work today; "preview" rows are on the Max roadmap.
+            </p>
           </div>
         </Reveal>
 
         <div className="border border-ink/15 overflow-x-auto">
-          <div className="min-w-[640px]">
-            <div className="grid grid-cols-[60px_minmax(180px,1fr)_120px_140px_180px] gap-3 px-4 sm:px-6 py-3 bg-ink text-cream editorial-label">
+          <div className="min-w-[680px]">
+            <div className="grid grid-cols-[60px_minmax(180px,1fr)_80px_120px_140px_180px] gap-3 px-4 sm:px-6 py-3 bg-ink text-cream editorial-label">
               <div>№</div>
               <div>Feature</div>
+              <div className="text-center">Status</div>
               <div className="text-center">Free</div>
               <div className="text-center">Pro</div>
               <div className="text-center">Max</div>
             </div>
             {features.map((f, i) => (
               <Reveal key={f.title} delay={i * 20}>
-                <div className="grid grid-cols-[60px_minmax(180px,1fr)_120px_140px_180px] gap-3 px-4 sm:px-6 py-4 border-t border-ink/10 text-sm items-center bg-cream-light">
+                <div className={`grid grid-cols-[60px_minmax(180px,1fr)_80px_120px_140px_180px] gap-3 px-4 sm:px-6 py-4 border-t border-ink/10 text-sm items-center ${f.status === 'planned' ? 'bg-bone' : 'bg-cream-light'}`}>
                   <div className="num-display text-xl text-ink-softer">{f.num}</div>
                   <div className="flex items-baseline gap-3">
                     <span className="text-lg text-clay">{f.icon}</span>
                     <span className="font-medium text-ink">{f.title}</span>
+                  </div>
+                  <div className="text-center">
+                    <span className={`inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide border ${
+                      f.status === 'live' ? 'bg-sage-pale text-sage-dark border-sage/30' : 'bg-gold-pale text-gold-dark border-gold/30'
+                    }`}>
+                      {f.status}
+                    </span>
                   </div>
                   <div className="text-center text-ink-softer text-xs">{f.free}</div>
                   <div className="text-center text-ink text-xs font-medium">{f.pro}</div>
@@ -387,7 +371,8 @@ export default function Pro({ onNavigate }) {
         <div className="border-b border-ink/15">
           {[
             { q: 'Is this a real subscription?', a: 'No — Quill is a prototype. The checkout looks real but no payment is taken; your card details stay in your browser.' },
-            { q: 'What\'s the difference between Pro and Max?', a: 'Pro unlocks the full software (tips, tracker, routines, per-answer plans). Max is the concierge layer: a real human wellness coach you meet monthly, plans built by a registered dietitian and certified PT, cycle-aware protocols that flex with your hormones, wearable data integration, and async chat with experts. Plus four family seats, a quarterly print issue, and an annual health-review PDF.' },
+            { q: 'What\'s the difference between Pro and Max?', a: 'Pro gives you the full software — all 60 tips, per-answer routine, live diet tracker, ingredient deep-dives, 7-day meal templates. Max adds the working tools that ship Max-first: the sleep schedule analyzer (live now), the habit streak tracker (live now), the rainbow theme, and every new tool we build lands here 30 days before anywhere else. Cycle tracking, wearable sync, audio library, and family seats are previewed on the roadmap but not live yet.' },
+            { q: 'Are the "preview" features available now?', a: 'No — they\'re honestly labelled. Anything marked "preview" or "Q3" is on the Max roadmap but not built yet. We list them so you know what\'s coming. The "live" features in the spec table are the ones that work today.' },
             { q: 'Can I cancel anytime?', a: 'Yes — monthly with no commitment. In this prototype, cancel from My Quill or the hero CTA above.' },
             { q: 'Do you store my data?', a: 'Everything stays in your browser via localStorage. No account, no servers, no tracking — even on Max.' },
             { q: 'Is content medically reviewed?', a: 'All in-app content is general wellness guidance, evidence-informed but not medical advice. Max-tier custom plans are built by registered professionals.' },

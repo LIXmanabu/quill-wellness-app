@@ -7,6 +7,8 @@ import { wellnessData } from '../data/wellnessData.js'
 import { getRoutine, getComplementaryRoutine, getProblemTips, getAdvice, getRecommendations, isPersonalized } from '../data/personalization.js'
 import FavoriteButton from '../components/FavoriteButton.jsx'
 import TierBadge from '../components/TierBadge.jsx'
+import SleepAnalyzer from '../components/SleepAnalyzer.jsx'
+import HabitStreaks from '../components/HabitStreaks.jsx'
 import SplitText from '../components/interactive/SplitText.jsx'
 import Reveal from '../components/interactive/Reveal.jsx'
 import SpotlightCard from '../components/interactive/SpotlightCard.jsx'
@@ -318,12 +320,20 @@ export default function MyQuill({ onNavigate }) {
         </section>
       )}
 
+      {/* MAX-ONLY TOOLS — real working features */}
+      {isMax && (
+        <>
+          <SleepAnalyzer />
+          <HabitStreaks />
+        </>
+      )}
+
       {/* RECOMMENDED CONTENT */}
       {recs.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Reveal>
             <div className="mb-8 pb-4 border-b border-ink/15">
-              <span className="editorial-label">Section 05 · Read next</span>
+              <span className="editorial-label">Section · Read next</span>
               <h2 className="font-display text-4xl sm:text-5xl text-ink mt-2 leading-none">
                 Made for <span className="display-italic text-clay">your day.</span>
               </h2>
