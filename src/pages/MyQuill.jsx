@@ -4,6 +4,7 @@ import { dailyTips, categoryMeta } from '../data/dailyTips.js'
 import { skincareData } from '../data/skincareData.js'
 import { sportData } from '../data/sportData.js'
 import { wellnessData } from '../data/wellnessData.js'
+import { getRoutine, getAdvice, getRecommendations, isPersonalized } from '../data/personalization.js'
 import FavoriteButton from '../components/FavoriteButton.jsx'
 import SplitText from '../components/interactive/SplitText.jsx'
 import Reveal from '../components/interactive/Reveal.jsx'
@@ -61,6 +62,11 @@ export default function MyQuill({ onNavigate }) {
 
   const resolved = profile.favorites.map((id) => ({ id, ...resolveFavorite(id) })).filter((f) => f && f.title)
   const greeting = profile.name ? `Hello, ${profile.name}` : 'Your Quill'
+  const personalized = isPersonalized(profile)
+
+  const routine = personalized ? getRoutine(profile) : null
+  const advice = personalized ? getAdvice(profile) : []
+  const recs = personalized ? getRecommendations(profile) : []
 
   return (
     <div className="bg-cream">
@@ -75,15 +81,17 @@ export default function MyQuill({ onNavigate }) {
           <br />
           <span className="display-italic text-clay"><SplitText byChar stagger={28} startDelay={500}>here you are.</SplitText></span>
         </h1>
-        <Reveal delay={1200} className="mt-8 max-w-md">
+        <Reveal delay={400} className="mt-8 max-w-md">
           <p className="text-lg text-ink-soft leading-relaxed">
-            Your saved tips, your profile, and the rituals you keep coming back to.
+            {personalized
+              ? `Tailored to your goal — ${goalLabels[profile.goal] || 'understand your body'} — and the time you have for it.`
+              : 'Take the quick quiz to get a routine made for you.'}
           </p>
         </Reveal>
       </section>
 
       {/* Profile card */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Reveal>
           <div className={`${isPro ? 'pro-card' : 'card-paper'} p-8 sm:p-10`}>
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 pb-6 border-b border-ink/15">
@@ -109,12 +117,122 @@ export default function MyQuill({ onNavigate }) {
         </Reveal>
       </section>
 
+      {/* PERSONALIZED ROUTINE */}
+      {routine && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Reveal>
+            <div className="mb-10 pb-4 border-b border-ink/15">
+              <span className="editorial-label">Section 01 · Your routine</span>
+              <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
+                A day, <span className="display-italic text-clay">your way.</span>
+              </h2>
+              <p className="text-sm text-ink-soft mt-3 max-w-xl">
+                Built around your goal ({routine.label.toLowerCase()}) and your {routine.minutes}-minute window. Adapt it; don't worship it.
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink/15 border border-ink/15">
+            <Reveal>
+              <RoutineColumn time="Morning" kicker="Start the day" steps={routine.morning} accent="#D4A744" />
+            </Reveal>
+            <Reveal delay={80}>
+              <RoutineColumn time="Evening" kicker="Wind it down" steps={routine.evening} accent="#5A6B5D" />
+            </Reveal>
+          </div>
+
+          {routine.skinAddons && (
+            <Reveal delay={120}>
+              <div className="mt-px border-x border-b border-ink/15 bg-bone p-6">
+                <span className="editorial-label">For your {skinTypeLabels[profile.skinType]?.toLowerCase()}</span>
+                <ul className="mt-3 space-y-1.5">
+                  {routine.skinAddons.map((a, i) => (
+                    <li key={i} className="text-sm text-ink-soft leading-relaxed flex gap-2">
+                      <span className="text-clay">·</span>
+                      <span>{a}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+          )}
+
+          <Reveal delay={150}>
+            <p className="display-italic text-2xl text-ink-soft mt-6 text-center">"{routine.quote}"</p>
+          </Reveal>
+        </section>
+      )}
+
+      {/* PERSONALIZED ADVICE */}
+      {advice.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Reveal>
+            <div className="mb-10 pb-4 border-b border-ink/15">
+              <span className="editorial-label">Section 02 · Advice</span>
+              <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
+                The four <span className="display-italic text-clay">that matter most.</span>
+              </h2>
+              <p className="text-sm text-ink-soft mt-3 max-w-xl">
+                If you only took four things from Quill — based on what you're working toward — these would be them.
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-ink/15 border border-ink/15">
+            {advice.map((a, i) => (
+              <Reveal key={i} delay={i * 50}>
+                <SpotlightCard className="bg-cream-light p-6 sm:p-8 h-full group">
+                  <div className="flex items-baseline justify-between mb-4">
+                    <span className="editorial-num text-3xl text-clay">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="editorial-label">Advice</span>
+                  </div>
+                  <h3 className="font-display text-2xl text-ink leading-tight">{a.title}</h3>
+                  <p className="text-sm text-ink-soft mt-3 leading-relaxed">{a.body}</p>
+                </SpotlightCard>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* RECOMMENDED CONTENT */}
+      {recs.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Reveal>
+            <div className="mb-8 pb-4 border-b border-ink/15">
+              <span className="editorial-label">Section 03 · Read next</span>
+              <h2 className="font-display text-4xl sm:text-5xl text-ink mt-2 leading-none">
+                Made for <span className="display-italic text-clay">your day.</span>
+              </h2>
+            </div>
+          </Reveal>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {recs.map((r, i) => (
+              <Reveal key={r.key} delay={i * 60}>
+                <button
+                  onClick={() => onNavigate?.(r.key)}
+                  className="w-full text-left card-paper card-paper-hover p-6 sm:p-7 flex items-center justify-between group"
+                >
+                  <div>
+                    <span className="editorial-label text-clay">Recommended</span>
+                    <p className="font-display text-2xl text-ink mt-1">{r.label}</p>
+                    <p className="display-italic text-sm text-ink-soft mt-1">— {r.why}</p>
+                  </div>
+                  <span className="display-italic text-3xl text-ink-softer group-hover:text-clay group-hover:translate-x-1 transition-all">→</span>
+                </button>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Favorites */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Reveal>
           <div className="flex items-baseline justify-between mb-10 pb-4 border-b border-ink/15">
             <div>
-              <span className="editorial-label">Your collection</span>
+              <span className="editorial-label">Section {personalized ? '04' : '01'} · Your collection</span>
               <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
                 Favorites <span className="display-italic text-clay">({resolved.length})</span>
               </h2>
@@ -168,7 +286,7 @@ export default function MyQuill({ onNavigate }) {
                   Want unlimited <span className="display-italic text-clay">favorites?</span>
                 </h3>
                 <p className="text-ink-soft mt-3 leading-relaxed text-sm max-w-lg">
-                  Quill Pro unlocks the full tip library, expanded routines, ingredient deep-dives, and personalized plans.
+                  Quill Pro unlocks the full tip library, expanded routines, ingredient deep-dives, and the live diet tracker.
                 </p>
               </div>
               <div className="lg:col-span-3 lg:text-right">
@@ -180,6 +298,32 @@ export default function MyQuill({ onNavigate }) {
           </Reveal>
         </section>
       )}
+    </div>
+  )
+}
+
+function RoutineColumn({ time, kicker, steps, accent }) {
+  return (
+    <div className="bg-cream-light p-6 sm:p-8 h-full">
+      <div className="flex items-baseline justify-between mb-6 pb-3 border-b border-ink/10">
+        <div>
+          <span className="editorial-label">{kicker}</span>
+          <p className="font-display text-3xl text-ink mt-1 leading-none">{time}</p>
+        </div>
+        <span className="num-display text-5xl leading-none" style={{ color: accent }}>
+          {time === 'Morning' ? '☀' : '☾'}
+        </span>
+      </div>
+      <ol className="space-y-3">
+        {steps.map((step, i) => (
+          <li key={i} className="flex items-baseline gap-4">
+            <span className="num-display text-base flex-shrink-0 w-7" style={{ color: accent }}>
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <span className="text-sm text-ink leading-relaxed">{step}</span>
+          </li>
+        ))}
+      </ol>
     </div>
   )
 }

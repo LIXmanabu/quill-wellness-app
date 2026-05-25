@@ -21,13 +21,12 @@ function AppShell() {
   const [showOnboarding, setShowOnboarding] = useState(false)
   const { profile } = useUser()
 
-  // Trigger onboarding on first visit
+  // Always show onboarding on load (testing mode — comment out the setShowOnboarding
+  // call to disable). Profile data is pre-filled from saved values.
   useEffect(() => {
-    if (!profile.dismissedOnboarding) {
-      const t = setTimeout(() => setShowOnboarding(true), 800)
-      return () => clearTimeout(t)
-    }
-  }, [profile.dismissedOnboarding])
+    const t = setTimeout(() => setShowOnboarding(true), 600)
+    return () => clearTimeout(t)
+  }, [])
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })

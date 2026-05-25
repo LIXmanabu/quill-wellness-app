@@ -25,9 +25,14 @@ const times = [
 ]
 
 export default function OnboardingQuiz({ onClose }) {
-  const { completeOnboarding } = useUser()
+  const { completeOnboarding, profile } = useUser()
   const [step, setStep] = useState(0)
-  const [data, setData] = useState({ name: '', skinType: '', goal: '', timePerDay: '' })
+  const [data, setData] = useState({
+    name: profile.name || '',
+    skinType: profile.skinType || '',
+    goal: profile.goal || '',
+    timePerDay: profile.timePerDay || '',
+  })
 
   const steps = [
     {
