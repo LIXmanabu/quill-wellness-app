@@ -91,16 +91,34 @@ export default function TipLibrary({ onNavigate }) {
             const meta = categoryMeta[tip.category]
             return (
               <Reveal key={tip.id} delay={i * 20} className="h-full">
-                <SpotlightCard className="bg-cream-light p-6 h-full relative group hover:bg-bone transition-colors">
-                  <div className="absolute top-4 right-4">
-                    <FavoriteButton id={`tip:${tip.id}`} label={tip.title} size="sm" />
+                <SpotlightCard className="bg-ink text-cream p-6 h-full relative group overflow-hidden min-h-[280px] flex flex-col">
+                  {/* Background image with zoom-on-hover */}
+                  {tip.img && (
+                    <img
+                      src={tip.img}
+                      alt=""
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 group-hover:scale-105 transition-all duration-[1200ms] ease-out"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {/* Dark gradient to lock in legibility */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/20 pointer-events-none" />
+
+                  {/* Foreground content */}
+                  <div className="relative z-10 flex flex-col h-full">
+                    <div className="absolute top-0 right-0">
+                      <FavoriteButton id={`tip:${tip.id}`} label={tip.title} size="sm" />
+                    </div>
+                    <div className="flex items-baseline justify-between mb-4">
+                      <span className="editorial-num text-2xl text-gold">{String(i + 1).padStart(3, '0')}</span>
+                      <span className="editorial-label text-cream/80">{meta.label}</span>
+                    </div>
+                    <div className="mt-auto">
+                      <h3 className="font-display text-2xl text-cream leading-tight pr-6 group-hover:translate-y-[-2px] transition-transform duration-500">{tip.title}</h3>
+                      <p className="text-sm text-cream/80 mt-3 leading-relaxed">{tip.body}</p>
+                    </div>
                   </div>
-                  <div className="flex items-baseline justify-between mb-4">
-                    <span className="editorial-num text-2xl text-clay">{String(i + 1).padStart(3, '0')}</span>
-                    <span className="editorial-label">{meta.label}</span>
-                  </div>
-                  <h3 className="font-display text-2xl text-ink leading-tight pr-6">{tip.title}</h3>
-                  <p className="text-sm text-ink-soft mt-3 leading-relaxed">{tip.body}</p>
                 </SpotlightCard>
               </Reveal>
             )

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import ProToggle from './ProToggle.jsx'
 import { usePro } from '../context/ProContext.jsx'
 import { useUser } from '../context/UserContext.jsx'
@@ -18,17 +18,53 @@ const tabs = [
 export default function Navbar({ activePage, onNavigate }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [hoverKey, setHoverKey] = useState(null)
+  const [indicator, setIndicator] = useState({ left: 0, width: 0, opacity: 0 })
   const { isPro } = usePro()
   const { profile } = useUser()
   const favCount = profile.favorites.length
 
+  const navRef = useRef(null)
+  const tabRefs = useRef({})
+
   useEffect(() => {
-    function onScroll() {
-      setScrolled(window.scrollY > 20)
-    }
+    function onScroll() { setScrolled(window.scrollY > 20) }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  // Position the sliding indicator under the hovered or active tab
+  useLayoutEffect(() => {
+    const target = hoverKey || activePage
+    const el = tabRefs.current[target]
+    const nav = navRef.current
+    if (!el || !nav) {
+      setIndicator((s) => ({ ...s, opacity: 0 }))
+      return
+    }
+    const navRect = nav.getBoundingClientRect()
+    const elRect = el.getBoundingClientRect()
+    setIndicator({
+      left: elRect.left - navRect.left,
+      width: elRect.width,
+      opacity: 1,
+    })
+  }, [hoverKey, activePage])
+
+  // Recompute on resize
+  useEffect(() => {
+    function onResize() {
+      const target = hoverKey || activePage
+      const el = tabRefs.current[target]
+      const nav = navRef.current
+      if (!el || !nav) return
+      const navRect = nav.getBoundingClientRect()
+      const elRect = el.getBoundingClientRect()
+      setIndicator({ left: elRect.left - navRect.left, width: elRect.width, opacity: 1 })
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [hoverKey, activePage])
 
   function handleNav(key) {
     onNavigate(key)
@@ -59,30 +95,64 @@ export default function Navbar({ activePage, onNavigate }) {
             <span className="display-italic text-xs text-ink-soft hidden sm:inline">— since '26</span>
           </button>
 
-          {/* Desktop tabs */}
-          <nav className="hidden lg:flex items-center gap-6 xl:gap-7">
-            {tabs.map((tab, i) => (
-              <button
-                key={tab.key}
-                onClick={() => handleNav(tab.key)}
-                className={`group relative text-sm tracking-wide font-medium transition-colors duration-300 ${
-                  activePage === tab.key ? 'text-ink' : 'text-ink-soft hover:text-ink'
-                }`}
-              >
-                <span className="flex items-center gap-1.5">
-                  <span className={`text-[10px] num-display ${activePage === tab.key ? 'text-clay' : 'text-ink-softer'}`}>
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  {tab.label}
-                  {tab.key === 'myquill' && favCount > 0 && (
-                    <span className="ml-1 inline-flex items-center justify-center w-4 h-4 text-[9px] num-display bg-clay text-cream rounded-full">
-                      {favCount}
+          {/* Desktop tabs with sliding indicator */}
+          <nav
+            ref={navRef}
+            className="hidden lg:flex relative items-center gap-5 xl:gap-7"
+            onMouseLeave={() => setHoverKey(null)}
+          >
+            {/* Sliding active/hover indicator — a single bar tracking the focused tab */}
+            <span
+              className="absolute -bottom-1 h-px bg-ink pointer-events-none"
+              style={{
+                left: indicator.left,
+                width: indicator.width,
+                opacity: indicator.opacity,
+                transition: 'left 0.5s cubic-bezier(0.22, 1, 0.36, 1), width 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease',
+              }}
+              aria-hidden="true"
+            />
+            {/* Soft moving background pill for hover */}
+            <span
+              className="absolute -inset-y-1.5 bg-bone pointer-events-none"
+              style={{
+                left: indicator.left - 10,
+                width: indicator.width + 20,
+                opacity: hoverKey && hoverKey !== activePage ? 0.6 : 0,
+                transition: 'left 0.5s cubic-bezier(0.22, 1, 0.36, 1), width 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease',
+                zIndex: -1,
+              }}
+              aria-hidden="true"
+            />
+
+            {tabs.map((tab, i) => {
+              const isActive = activePage === tab.key
+              return (
+                <button
+                  key={tab.key}
+                  ref={(el) => (tabRefs.current[tab.key] = el)}
+                  onClick={() => handleNav(tab.key)}
+                  onMouseEnter={() => setHoverKey(tab.key)}
+                  className={`relative text-sm tracking-wide font-medium transition-all duration-300 py-1 ${
+                    isActive ? 'text-ink' : 'text-ink-soft hover:text-ink'
+                  }`}
+                >
+                  <span className="flex items-center gap-1.5">
+                    <span className={`text-[10px] num-display transition-colors duration-300 ${isActive || hoverKey === tab.key ? 'text-clay' : 'text-ink-softer'}`}>
+                      {String(i + 1).padStart(2, '0')}
                     </span>
-                  )}
-                </span>
-                <span className={`absolute -bottom-1 left-0 right-0 h-px bg-ink origin-left transition-transform duration-400 ${activePage === tab.key ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} />
-              </button>
-            ))}
+                    <span className={`inline-block transition-transform duration-500 ${isActive ? '-translate-y-px' : ''}`}>
+                      {tab.label}
+                    </span>
+                    {tab.key === 'myquill' && favCount > 0 && (
+                      <span className="ml-1 inline-flex items-center justify-center w-4 h-4 text-[9px] num-display bg-clay text-cream rounded-full animate-pop-in">
+                        {favCount}
+                      </span>
+                    )}
+                  </span>
+                </button>
+              )
+            })}
           </nav>
 
           {/* Right side: Pro toggle + mobile menu */}
