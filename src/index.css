@@ -231,63 +231,43 @@
     @apply flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] text-ink-soft border-b border-ink/15 py-2;
   }
 
-  /* ─── Custom cursor ────────────────────────────────────────────── */
+  /* ─── Custom cursor — light pink trail ─────────────────────────── */
   .cursor-dot {
     position: fixed;
     top: 0;
     left: 0;
-    width: 6px;
-    height: 6px;
-    background: #F7F2EA;
+    width: 10px;
+    height: 10px;
+    background: #F4D4D6;
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
-    mix-blend-mode: difference;
+    box-shadow: 0 0 12px rgba(244, 212, 214, 0.7),
+                0 0 24px rgba(232, 180, 184, 0.35);
     transition: width 0.25s cubic-bezier(0.22, 1, 0.36, 1),
                 height 0.25s cubic-bezier(0.22, 1, 0.36, 1),
                 background 0.25s ease,
-                opacity 0.25s ease;
+                box-shadow 0.25s ease;
     will-change: transform;
   }
   .cursor-dot.is-hover {
-    width: 0;
-    height: 0;
-    opacity: 0;
-  }
-  .cursor-dot.is-clicked {
-    width: 12px;
-    height: 12px;
+    width: 20px;
+    height: 20px;
+    background: #E8B4B8;
+    box-shadow: 0 0 16px rgba(232, 180, 184, 0.9),
+                0 0 36px rgba(232, 180, 184, 0.5);
   }
 
-  .cursor-ring {
+  .cursor-trail {
     position: fixed;
     top: 0;
     left: 0;
-    width: 36px;
-    height: 36px;
-    border: 1px solid #F7F2EA;
+    background: #F4D4D6;
     border-radius: 50%;
     pointer-events: none;
     z-index: 9998;
-    mix-blend-mode: difference;
-    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-                height 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-                border-color 0.4s ease,
-                background-color 0.4s ease,
-                border-width 0.4s ease;
+    filter: blur(0.5px);
     will-change: transform;
-  }
-  .cursor-ring.is-hover {
-    width: 64px;
-    height: 64px;
-    background-color: rgba(212, 167, 68, 0.18);
-    border-color: #D4A744;
-    border-width: 1.5px;
-  }
-  .cursor-ring.is-clicked {
-    width: 28px;
-    height: 28px;
-    border-width: 2px;
   }
 
   .cursor-label {
@@ -299,8 +279,8 @@
     font-family: 'Instrument Serif', serif;
     font-style: italic;
     font-size: 13px;
-    color: #F7F2EA;
-    mix-blend-mode: difference;
+    color: #D89BA0;
+    text-shadow: 0 0 8px rgba(252, 243, 243, 0.8);
     white-space: nowrap;
     letter-spacing: 0.02em;
     animation: cursor-label-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
@@ -313,7 +293,7 @@
   }
 
   @media (max-width: 768px), (pointer: coarse) {
-    .cursor-dot, .cursor-ring, .cursor-label { display: none; }
+    .cursor-dot, .cursor-trail, .cursor-label { display: none; }
   }
 
   /* Hide default cursor on interactive elements when custom cursor active */
