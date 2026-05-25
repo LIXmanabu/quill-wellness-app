@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { usePro } from '../context/ProContext.jsx'
+import Celebration from './Celebration.jsx'
 
 const planData = {
   pro: {
@@ -18,20 +19,21 @@ const planData = {
   },
   max: {
     label: 'Max',
-    sub: 'Concierge wellness — real coaches, real plans, real data.',
+    sub: 'Concierge wellness — labs, biometrics, AI, and a real coach.',
     price: 13,
     crossedPrice: 20,
     period: 'month',
     color: '#9B4423',
     bullets: [
       'Everything in Pro',
-      'Monthly 30-min 1:1 with a wellness coach',
-      'RD-built seasonal meal plan + auto grocery list',
-      'PT-written 12-week training cycle',
-      'Cycle-aware protocols + wearable sync',
-      'Quill AI assistant — full history, 24/7',
-      'Async expert chat: derm, RD, PT — under 24h',
-      'Sleep + focus audio library',
+      'Monthly 1:1 with a real wellness coach',
+      '100+ lab biomarkers + Quill Age tracking',
+      'Wearable & CGM sync (Oura · Whoop · Dexcom)',
+      'Cycle-aware + sleep-stage protocols',
+      'RD meal plan + PT 12-wk cycle + supplements',
+      'Quill AI — memory, voice mode, morning briefing',
+      'Same-day MD referrals + expert chat',
+      'Sleep stories · workout videos · fasting',
       'Four family seats · print issue · annual report',
     ],
   },
@@ -77,11 +79,13 @@ export default function CheckoutModal({ plan, onClose }) {
     setTimeout(() => {
       setTier(plan)
       setDone(true)
-      setTimeout(onClose, 2000)
+      // Celebration component handles its own onDone → close
     }, 1100)
   }
 
   return (
+    <>
+    {done && <Celebration tier={plan} onDone={onClose} />}
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 animate-fade-in"
       onClick={(e) => e.target === e.currentTarget && !submitting && onClose()}
@@ -239,6 +243,7 @@ export default function CheckoutModal({ plan, onClose }) {
         </form>
       </div>
     </div>
+    </>
   )
 }
 

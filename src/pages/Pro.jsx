@@ -9,25 +9,47 @@ import SpotlightCard from '../components/interactive/SpotlightCard.jsx'
 import CheckoutModal from '../components/CheckoutModal.jsx'
 
 const features = [
+  // ── Core software ─────────────────────────────────────────────
   { num: '01', icon: '∞', title: 'Saved favorites', free: 'Three', pro: 'Unlimited', max: 'Unlimited' },
   { num: '02', icon: '☉', title: 'Tip library', free: '~5 per category', pro: 'All 60+', max: 'All 60+ · audio version' },
   { num: '03', icon: '✺', title: 'Personalized home', free: 'Generic', pro: 'Goal-tailored', max: 'Coach-reviewed monthly' },
-  { num: '04', icon: '♆', title: 'Per-answer routine', free: '—', pro: 'Included', max: 'Included + AI-revised' },
+  { num: '04', icon: '♆', title: 'Per-answer routine', free: '—', pro: 'Included', max: 'Included · AI-revised weekly' },
   { num: '05', icon: '☽', title: 'Diet tracker', free: '—', pro: 'Live · suggestions', max: 'Live · barcode + photo + voice' },
+  // ── Plans built for you ───────────────────────────────────────
   { num: '06', icon: '☄', title: 'Custom meal plan', free: '—', pro: '7-day templates', max: 'RD-built · refreshed quarterly' },
-  { num: '07', icon: '⊕', title: 'Training cycle', free: '—', pro: 'Single routine', max: 'PT-written · 12 weeks · progression' },
-  { num: '08', icon: '✾', title: 'Family seats', free: '1', pro: '1', max: '4 — share with household' },
-  { num: '09', icon: '⚘', title: 'Quill AI assistant', free: '—', pro: '—', max: 'Memory + 24/7 chat' },
-  { num: '10', icon: '✦', title: 'Cycle-aware protocols', free: '—', pro: '—', max: 'Auto-adjusts to hormonal phase' },
-  { num: '11', icon: '◈', title: 'Wearable sync', free: '—', pro: '—', max: 'Apple Health · Oura · Whoop' },
-  { num: '12', icon: '◐', title: 'Sleep & focus audio', free: '—', pro: '—', max: 'Stories · breathwork · soundscapes' },
-  { num: '13', icon: '☓', title: 'Monthly coach call', free: '—', pro: '—', max: '30-min 1:1 with a wellness coach' },
-  { num: '14', icon: '✺', title: 'Expert chat', free: '—', pro: '—', max: 'Derm · RD · PT, async < 24h' },
-  { num: '15', icon: '✸', title: 'Annual health report', free: '—', pro: '—', max: 'PDF year-in-review, every Dec' },
-  { num: '16', icon: '☷', title: 'Grocery automation', free: '—', pro: '—', max: 'Meal plan → list → checkout' },
-  { num: '17', icon: '♁', title: 'Print issue', free: '—', pro: '—', max: 'Quarterly magazine, posted' },
-  { num: '18', icon: '✶', title: 'Priority support', free: '—', pro: 'Standard', max: '< 12h response, human' },
-  { num: '19', icon: '◇', title: 'Early access', free: '—', pro: '—', max: '30-day head start' },
+  { num: '07', icon: '⊕', title: 'Training cycle', free: '—', pro: 'Single routine', max: 'PT-written · 12 wks · progression' },
+  { num: '08', icon: '⚘', title: 'Supplement stack', free: '—', pro: '—', max: 'Built from your labs' },
+  { num: '09', icon: '☷', title: 'Grocery automation', free: '—', pro: '—', max: 'Meal plan → list → checkout' },
+  // ── Human concierge ───────────────────────────────────────────
+  { num: '10', icon: '☓', title: 'Monthly coach call', free: '—', pro: '—', max: '30-min 1:1 with a wellness coach' },
+  { num: '11', icon: '✺', title: 'Expert chat', free: '—', pro: '—', max: 'Derm · RD · PT, async < 24h' },
+  { num: '12', icon: '☉', title: 'Concierge medical', free: '—', pro: '—', max: 'Same-day referrals to in-network MDs' },
+  { num: '13', icon: '◇', title: 'Sleep coaching', free: '—', pro: '—', max: 'Personalised from your biometrics' },
+  // ── Quill AI ──────────────────────────────────────────────────
+  { num: '14', icon: '✦', title: 'Quill AI assistant', free: '—', pro: '—', max: 'Memory · 24/7 chat · voice mode' },
+  { num: '15', icon: '◐', title: 'Morning briefing', free: '—', pro: '—', max: 'Daily AI summary of your data' },
+  { num: '16', icon: '✸', title: 'Predictive nudges', free: '—', pro: '—', max: 'AI catches patterns before you do' },
+  // ── Biometrics & labs ─────────────────────────────────────────
+  { num: '17', icon: '◈', title: 'Wearable sync', free: '—', pro: '—', max: 'Apple Health · Oura · Whoop · Garmin' },
+  { num: '18', icon: '✶', title: 'Lab panel integration', free: '—', pro: '—', max: '100+ biomarkers · Quest Diagnostics' },
+  { num: '19', icon: '◯', title: 'CGM sync', free: '—', pro: '—', max: 'Glucose data shapes meal advice' },
+  { num: '20', icon: '☽', title: 'Quill Age', free: '—', pro: '—', max: 'Biological age vs calendar, monthly' },
+  { num: '21', icon: '⊛', title: 'HRV · RHR · respiratory', free: '—', pro: '—', max: 'Real-time stress & recovery score' },
+  { num: '22', icon: '⚭', title: 'Sleep stage analysis', free: '—', pro: '—', max: 'Lab-grade · REM · deep · light' },
+  { num: '23', icon: '☿', title: 'Cycle tracking + prediction', free: '—', pro: '—', max: 'Period · hormones · adjusts protocols' },
+  // ── Lifestyle ─────────────────────────────────────────────────
+  { num: '24', icon: '⊕', title: 'Audio library', free: '—', pro: '—', max: 'Sleep stories · breathwork · focus' },
+  { num: '25', icon: '◑', title: 'Workout video library', free: '—', pro: '—', max: 'Strength · yoga · HIIT · mobility' },
+  { num: '26', icon: '⊙', title: 'Fasting tracker', free: '—', pro: '—', max: 'Glucose-aware windows' },
+  { num: '27', icon: '✾', title: 'Family seats', free: '1', pro: '1', max: '4 — share with household' },
+  { num: '28', icon: '✿', title: 'Group challenges', free: '—', pro: '—', max: 'Run streaks together with family' },
+  { num: '29', icon: '✦', title: 'Travel mode', free: '—', pro: '—', max: 'Auto-adjusts protocols to time-zones' },
+  // ── Reports & extras ──────────────────────────────────────────
+  { num: '30', icon: '☓', title: 'Annual health report', free: '—', pro: '—', max: 'PDF year-in-review, every Dec' },
+  { num: '31', icon: '♁', title: 'Print issue', free: '—', pro: '—', max: 'Quarterly magazine, posted' },
+  { num: '32', icon: '✶', title: 'Quill drops', free: '—', pro: '—', max: 'Member-only seasonal gifts' },
+  { num: '33', icon: '◐', title: 'Priority support', free: '—', pro: 'Standard', max: '< 12h, human, named owner' },
+  { num: '34', icon: '◇', title: 'Early access', free: '—', pro: '—', max: '30-day head start on new features' },
 ]
 
 const testimonials = [
@@ -79,21 +101,22 @@ const tiers = [
   {
     key: 'max',
     label: 'Max',
-    sub: 'Concierge wellness — real coaches, real plans, real data.',
+    sub: 'Concierge wellness — labs, biometrics, AI, and a real coach.',
     price: 13,
     crossedPrice: 20,
     period: 'month',
     accent: 'gold',
     bullets: [
       'Everything in Pro',
-      'Monthly 30-min 1:1 with a wellness coach',
-      'Custom seasonal meal plan — RD-built, with grocery list',
-      'PT-written 12-week training cycle with progression',
-      'Cycle-aware protocols + wearable sync (Apple Health · Oura · Whoop)',
-      'Quill AI assistant — full history, 24/7 chat',
-      'Async expert chat: derm, RD, PT — under 24h',
-      'Sleep stories + breathwork audio library',
-      'Four family seats · quarterly print issue · annual health report',
+      'Monthly 1:1 with a real wellness coach (30 min)',
+      'Lab integration — 100+ biomarkers via Quest, Quill Age tracking',
+      'Wearable & CGM sync — Apple Health · Oura · Whoop · Garmin · Dexcom',
+      'Cycle-aware protocols + sleep-stage analysis',
+      'RD-built meal plan + PT-written 12-wk cycle + supplement stack',
+      'Quill AI — memory, voice mode, daily morning briefing',
+      'Async expert chat (< 24h) + same-day MD referrals',
+      'Sleep stories · workout videos · fasting tracker · travel mode',
+      'Four family seats · group challenges · print issue · annual report',
     ],
   },
 ]
