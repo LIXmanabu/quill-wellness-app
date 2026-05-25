@@ -5,6 +5,7 @@ import Reveal from '../components/interactive/Reveal.jsx'
 import Marquee from '../components/interactive/Marquee.jsx'
 import SpotlightCard from '../components/interactive/SpotlightCard.jsx'
 import FavoriteButton from '../components/FavoriteButton.jsx'
+import DietTracker from '../components/DietTracker.jsx'
 
 /* ─── Diets ─── */
 const diets = [
@@ -582,9 +583,12 @@ export default function Diet({ onNavigate }) {
       <IdealPlate />
       <PHScale />
 
-      {/* Pro meal plans */}
+      {/* Pro: live diet tracker + meal plans */}
       {isPro ? (
-        <ProMealPlans />
+        <>
+          <ProMealPlans />
+          <DietTracker />
+        </>
       ) : (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <Reveal>
@@ -592,11 +596,17 @@ export default function Diet({ onNavigate }) {
               <div className="lg:col-span-9">
                 <span className="editorial-label text-gold-dark">Pro Edition</span>
                 <h3 className="font-display text-3xl sm:text-4xl text-ink mt-2 leading-tight">
-                  Seven-day meal <span className="display-italic text-clay">templates.</span>
+                  Track your day. Get the <span className="display-italic text-clay">next bite.</span>
                 </h3>
                 <p className="text-ink-soft mt-3 leading-relaxed text-sm max-w-lg">
-                  Starter day blueprints for every goal — fat loss, muscle, Mediterranean, performance, heart, brain. Swap one meal a day to build your own rotation.
+                  A live diet tracker that learns from what you ate today and suggests your next snack or meal — closing protein, fibre and calorie gaps against your goal. Plus seven-day meal templates for every goal.
                 </p>
+                <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-y-1 text-xs text-ink-soft">
+                  <li className="flex items-baseline gap-2"><span className="text-clay">+</span> Log meals + snacks in one click</li>
+                  <li className="flex items-baseline gap-2"><span className="text-clay">+</span> Live macro &amp; fibre dashboard</li>
+                  <li className="flex items-baseline gap-2"><span className="text-clay">+</span> Smart next-meal suggestions</li>
+                  <li className="flex items-baseline gap-2"><span className="text-clay">+</span> Seven-day meal templates</li>
+                </ul>
               </div>
               <div className="lg:col-span-3 lg:text-right">
                 <button onClick={() => onNavigate?.('pro')} className="btn-ink">
