@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 
-const TRAIL_LENGTH = 18
+const TRAIL_LENGTH = 12
 
 export default function CustomCursor() {
   const [hovering, setHovering] = useState(false)

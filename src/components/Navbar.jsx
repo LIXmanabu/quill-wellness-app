@@ -75,7 +75,7 @@ export default function Navbar({ activePage, onNavigate }) {
   const date = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-cream/95 backdrop-blur-md border-b border-ink/15 shadow-soft' : 'bg-cream border-b border-ink/10'}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${scrolled ? 'bg-cream/98 border-b border-ink/15 shadow-soft' : 'bg-cream border-b border-ink/10'}`}>
       {/* Editorial top strip */}
       <div className="hidden md:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="masthead">
