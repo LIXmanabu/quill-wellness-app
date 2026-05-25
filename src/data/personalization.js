@@ -131,6 +131,20 @@ const adviceByGoal = {
 }
 
 /* ─────────────────────────────────────────────────────────────────
+ * COMPLEMENT — every goal has one practice that supports it most.
+ * The complement routine is just the other goal's routine at the same
+ * time bucket, framed as "what protects the work you're already doing".
+ * ────────────────────────────────────────────────────────────── */
+
+const complementMap = {
+  glow: { goal: 'calm', why: 'Stress and poor sleep show up on your skin first. Calm is your hidden serum.' },
+  fitness: { goal: 'calm', why: 'Most plateaus are recovery problems. Sleep and stress are training variables too.' },
+  calm: { goal: 'fitness', why: 'Gentle movement releases anxiety faster than rest. Your body asks to be used.' },
+  body: { goal: 'eat', why: 'Nutrition is body literacy. What you eat is the loudest signal you give yourself.' },
+  eat: { goal: 'fitness', why: 'Movement is the other half of metabolism. Walking after meals beats any supplement.' },
+}
+
+/* ─────────────────────────────────────────────────────────────────
  * RECOMMENDED PAGES (based on goal)
  * ────────────────────────────────────────────────────────────── */
 
@@ -178,6 +192,19 @@ export function getAdvice(profile) {
 export function getRecommendations(profile) {
   const goal = profile.goal || 'body'
   return recommendedPages[goal] || recommendedPages.body
+}
+
+export function getComplementaryRoutine(profile) {
+  const goal = profile.goal || 'body'
+  const pairing = complementMap[goal]
+  if (!pairing) return null
+  // Same time-bucket and skin-type, but routine shaped by the complement goal
+  const complementRoutine = getRoutine({ ...profile, goal: pairing.goal })
+  return {
+    ...complementRoutine,
+    why: pairing.why,
+    sourceLabel: complementRoutine.label,
+  }
 }
 
 export function getGoalLabel(profile) {

@@ -4,7 +4,7 @@ import { dailyTips, categoryMeta } from '../data/dailyTips.js'
 import { skincareData } from '../data/skincareData.js'
 import { sportData } from '../data/sportData.js'
 import { wellnessData } from '../data/wellnessData.js'
-import { getRoutine, getAdvice, getRecommendations, isPersonalized } from '../data/personalization.js'
+import { getRoutine, getComplementaryRoutine, getAdvice, getRecommendations, isPersonalized } from '../data/personalization.js'
 import FavoriteButton from '../components/FavoriteButton.jsx'
 import SplitText from '../components/interactive/SplitText.jsx'
 import Reveal from '../components/interactive/Reveal.jsx'
@@ -65,6 +65,7 @@ export default function MyQuill({ onNavigate }) {
   const personalized = isPersonalized(profile)
 
   const routine = personalized ? getRoutine(profile) : null
+  const complement = personalized ? getComplementaryRoutine(profile) : null
   const advice = personalized ? getAdvice(profile) : []
   const recs = personalized ? getRecommendations(profile) : []
 
@@ -163,12 +164,45 @@ export default function MyQuill({ onNavigate }) {
         </section>
       )}
 
+      {/* COMPLEMENTARY ROUTINE — the thing that supports your main thing */}
+      {complement && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Reveal>
+            <div className="mb-10 pb-4 border-b border-ink/15 flex items-end justify-between flex-wrap gap-4">
+              <div>
+                <span className="editorial-label">Section 02 · The other routine</span>
+                <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
+                  What <span className="display-italic text-clay">protects it.</span>
+                </h2>
+                <p className="text-sm text-ink-soft mt-3 max-w-xl">
+                  {complement.why}
+                </p>
+              </div>
+              <span className="editorial-label text-clay">↳ {complement.sourceLabel}</span>
+            </div>
+          </Reveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink/15 border border-ink/15">
+            <Reveal>
+              <RoutineColumn time="Morning" kicker="Supporting AM" steps={complement.morning} accent="#C8654A" />
+            </Reveal>
+            <Reveal delay={80}>
+              <RoutineColumn time="Evening" kicker="Supporting PM" steps={complement.evening} accent="#8FA694" />
+            </Reveal>
+          </div>
+
+          <Reveal delay={150}>
+            <p className="display-italic text-2xl text-ink-soft mt-6 text-center">"{complement.quote}"</p>
+          </Reveal>
+        </section>
+      )}
+
       {/* PERSONALIZED ADVICE */}
       {advice.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Reveal>
             <div className="mb-10 pb-4 border-b border-ink/15">
-              <span className="editorial-label">Section 02 · Advice</span>
+              <span className="editorial-label">Section 03 · Advice</span>
               <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
                 The four <span className="display-italic text-clay">that matter most.</span>
               </h2>
@@ -200,7 +234,7 @@ export default function MyQuill({ onNavigate }) {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Reveal>
             <div className="mb-8 pb-4 border-b border-ink/15">
-              <span className="editorial-label">Section 03 · Read next</span>
+              <span className="editorial-label">Section 04 · Read next</span>
               <h2 className="font-display text-4xl sm:text-5xl text-ink mt-2 leading-none">
                 Made for <span className="display-italic text-clay">your day.</span>
               </h2>
@@ -232,7 +266,7 @@ export default function MyQuill({ onNavigate }) {
         <Reveal>
           <div className="flex items-baseline justify-between mb-10 pb-4 border-b border-ink/15">
             <div>
-              <span className="editorial-label">Section {personalized ? '04' : '01'} · Your collection</span>
+              <span className="editorial-label">Section {personalized ? '05' : '01'} · Your collection</span>
               <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
                 Favorites <span className="display-italic text-clay">({resolved.length})</span>
               </h2>
