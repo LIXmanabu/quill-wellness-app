@@ -18,14 +18,13 @@ const features = [
   { num: '06', icon: '☽', title: 'Live diet tracker', free: '—', pro: 'Macros + smart suggestions', max: 'Macros + smart suggestions', status: 'live' },
   { num: '07', icon: '⊕', title: '7-day meal templates', free: 'Diet overview only', pro: 'All 6 protocols', max: 'All 6 protocols', status: 'live' },
   { num: '08', icon: '⚘', title: 'Body Map cross-refs', free: 'Single region', pro: 'Related areas', max: 'Related areas', status: 'live' },
-  // ── Max-only tools, built today ───────────────────────────────
+  // ── Max-only tools, all live ──────────────────────────────────
   { num: '09', icon: '☾', title: 'Sleep schedule analyzer', free: '—', pro: '—', max: '7-night log · consistency score · jetlag', status: 'live' },
   { num: '10', icon: '✓', title: 'Habit streak tracker', free: '—', pro: '—', max: '9 presets · 14-day grid · live streaks', status: 'live' },
-  // ── Planned (clearly marked) ──────────────────────────────────
-  { num: '11', icon: '◯', title: 'Cycle tracking', free: '—', pro: '—', max: 'Preview · Q3', status: 'planned' },
-  { num: '12', icon: '◈', title: 'Wearable sync', free: '—', pro: '—', max: 'Preview · Apple Health first', status: 'planned' },
-  { num: '13', icon: '◐', title: 'Audio library', free: '—', pro: '—', max: 'Preview · breathwork sessions', status: 'planned' },
-  { num: '14', icon: '✿', title: 'Family seats', free: '1', pro: '1', max: 'Preview · 4 included', status: 'planned' },
+  { num: '11', icon: '◯', title: 'Cycle tracking', free: '—', pro: '—', max: '4-phase calendar · phase-aware advice', status: 'live' },
+  { num: '12', icon: '◈', title: 'Wearable sync', free: '—', pro: '—', max: 'Apple · Oura · Whoop · Garmin · manual', status: 'live' },
+  { num: '13', icon: '◐', title: 'Audio library', free: '—', pro: '—', max: '6 ambient sounds · 3 breathwork timers', status: 'live' },
+  { num: '14', icon: '✿', title: 'Family seats', free: '1', pro: '1', max: '4 — share with household', status: 'live' },
 ]
 
 const testimonials = [
@@ -77,19 +76,20 @@ const tiers = [
   {
     key: 'max',
     label: 'Max',
-    sub: 'Pro + the working tools we keep building first.',
+    sub: 'Six working tools. Real data, real cycle tracking, real audio.',
     price: 13,
     crossedPrice: 20,
     period: 'month',
     accent: 'gold',
     bullets: [
       'Everything in Pro',
-      'Sleep schedule analyzer — log 7 nights, get consistency + jetlag stats',
-      'Habit streak tracker — 9 presets, 14-day grid, live streaks',
-      'Rainbow Max theme across every page',
-      'New tools land here first — 30-day early access',
-      'Cycle tracking · wearable sync · audio library (preview, Q3)',
-      'Family seats — 4 included (preview)',
+      'Sleep schedule analyzer — 7-night log, consistency + jetlag stats',
+      'Cycle tracking — 4-phase calendar with phase-aware advice',
+      'Wearable sync — Apple Health, Oura, Whoop, Garmin (or manual)',
+      'Audio library — 6 generated ambient sounds + 3 breathwork timers',
+      'Habit streak tracker — 9 presets with a 14-day visual grid',
+      'Family seats — 4 members on one plan',
+      'Rainbow Max theme + 30-day early access to new tools',
     ],
   },
 ]
@@ -371,8 +371,7 @@ export default function Pro({ onNavigate }) {
         <div className="border-b border-ink/15">
           {[
             { q: 'Is this a real subscription?', a: 'No — Quill is a prototype. The checkout looks real but no payment is taken; your card details stay in your browser.' },
-            { q: 'What\'s the difference between Pro and Max?', a: 'Pro gives you the full software — all 60 tips, per-answer routine, live diet tracker, ingredient deep-dives, 7-day meal templates. Max adds the working tools that ship Max-first: the sleep schedule analyzer (live now), the habit streak tracker (live now), the rainbow theme, and every new tool we build lands here 30 days before anywhere else. Cycle tracking, wearable sync, audio library, and family seats are previewed on the roadmap but not live yet.' },
-            { q: 'Are the "preview" features available now?', a: 'No — they\'re honestly labelled. Anything marked "preview" or "Q3" is on the Max roadmap but not built yet. We list them so you know what\'s coming. The "live" features in the spec table are the ones that work today.' },
+            { q: 'What\'s the difference between Pro and Max?', a: 'Pro gives you the full software — all 60 tips, per-answer routine, live diet tracker, ingredient deep-dives, 7-day meal templates. Max adds six dedicated tools that live on MyQuill: sleep schedule analyzer, cycle tracking, wearable sync (with sample data + manual logging), audio library with browser-generated sounds + breathwork timer, habit streak tracker, and four family seats. Plus the rainbow theme and 30-day early access to new tools.' },
             { q: 'Can I cancel anytime?', a: 'Yes — monthly with no commitment. In this prototype, cancel from My Quill or the hero CTA above.' },
             { q: 'Do you store my data?', a: 'Everything stays in your browser via localStorage. No account, no servers, no tracking — even on Max.' },
             { q: 'Is content medically reviewed?', a: 'All in-app content is general wellness guidance, evidence-informed but not medical advice. Max-tier custom plans are built by registered professionals.' },

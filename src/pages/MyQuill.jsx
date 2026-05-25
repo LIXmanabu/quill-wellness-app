@@ -9,6 +9,10 @@ import FavoriteButton from '../components/FavoriteButton.jsx'
 import TierBadge from '../components/TierBadge.jsx'
 import SleepAnalyzer from '../components/SleepAnalyzer.jsx'
 import HabitStreaks from '../components/HabitStreaks.jsx'
+import CycleTracker from '../components/CycleTracker.jsx'
+import WearableSync from '../components/WearableSync.jsx'
+import AudioLibrary from '../components/AudioLibrary.jsx'
+import FamilySeats from '../components/FamilySeats.jsx'
 import SplitText from '../components/interactive/SplitText.jsx'
 import Reveal from '../components/interactive/Reveal.jsx'
 import SpotlightCard from '../components/interactive/SpotlightCard.jsx'
@@ -324,7 +328,11 @@ export default function MyQuill({ onNavigate }) {
       {isMax && (
         <>
           <SleepAnalyzer />
+          <CycleTracker />
+          <WearableSync />
+          <AudioLibrary />
           <HabitStreaks />
+          <FamilySeats />
         </>
       )}
 
