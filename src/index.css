@@ -162,8 +162,11 @@
   }
 
   /* Italic accent words (the .display-italic.text-clay pattern used across pages)
-     get a flowing brand-color gradient in Max mode */
-  .max-mode .display-italic.text-clay {
+     get a flowing brand-color gradient in Max mode.
+     Also applies to all descendants so SplitText character spans render
+     visibly instead of becoming transparent. */
+  .max-mode .display-italic.text-clay,
+  .max-mode .display-italic.text-clay * {
     background: linear-gradient(
       120deg,
       #C8654A 0%,
@@ -211,11 +214,16 @@
     100% { background: #C8654A; box-shadow: 0 0 12px rgba(200,101,74,0.7), 0 0 24px rgba(200,101,74,0.35); }
   }
 
-  /* Editorial labels in clay get a subtle hue shift */
+  /* Editorial labels in clay get a subtle hue shift.
+     Descendant selector keeps SplitText children visible. */
   .max-mode .editorial-label.text-clay,
+  .max-mode .editorial-label.text-clay *,
   .max-mode .text-clay.editorial-num,
+  .max-mode .text-clay.editorial-num *,
   .max-mode .editorial-num.text-clay,
-  .max-mode .num-display.text-clay {
+  .max-mode .editorial-num.text-clay *,
+  .max-mode .num-display.text-clay,
+  .max-mode .num-display.text-clay * {
     background: linear-gradient(120deg, #C8654A, #D4A744, #5A6B5D, #6BAEEF, #C9B3E8, #C8654A);
     background-size: 300% 300%;
     -webkit-background-clip: text;
@@ -227,8 +235,9 @@
 
   /* ── More rainbow accents in Max mode ── */
 
-  /* Big editorial numbers (.editorial-num) get the gradient */
-  .max-mode .editorial-num {
+  /* Big editorial numbers (.editorial-num) get the gradient — and their children */
+  .max-mode .editorial-num,
+  .max-mode .editorial-num * {
     background: linear-gradient(120deg, #C8654A, #D4A744, #5A6B5D, #6BAEEF, #C9B3E8, #C8654A);
     background-size: 300% 300%;
     -webkit-background-clip: text;
@@ -286,7 +295,9 @@
 
   /* The Quill logo wordmark in the navbar gets the gradient */
   .max-mode .font-display.text-3xl.text-ink,
-  .max-mode .font-display.md\:text-4xl.text-ink {
+  .max-mode .font-display.text-3xl.text-ink *,
+  .max-mode .font-display.md\:text-4xl.text-ink,
+  .max-mode .font-display.md\:text-4xl.text-ink * {
     background: linear-gradient(120deg, #1A1410, #C8654A, #D4A744, #5A6B5D, #C9B3E8, #1A1410);
     background-size: 400% 400%;
     -webkit-background-clip: text;
@@ -296,10 +307,15 @@
     animation: gradient-shift 14s ease infinite;
   }
 
-  /* The big oversized SplitText headlines on hero get a subtle hue under the ink */
+  /* The big oversized SplitText headlines on hero get a subtle hue under the ink.
+     The descendant selector is critical — without it, SplitText character spans
+     render as transparent because background-clip:text doesn't cascade. */
   .max-mode h1 .display-italic,
+  .max-mode h1 .display-italic *,
   .max-mode h2 .display-italic,
-  .max-mode h3 .display-italic {
+  .max-mode h2 .display-italic *,
+  .max-mode h3 .display-italic,
+  .max-mode h3 .display-italic * {
     background: linear-gradient(120deg, #C8654A, #D4A744, #5A6B5D, #6BAEEF, #C9B3E8, #C8654A);
     background-size: 300% 300%;
     -webkit-background-clip: text;
@@ -391,9 +407,13 @@
     font-weight: 700;
   }
 
-  /* Utility: rainbow gradient text — applied explicitly to user name etc */
+  /* Utility: rainbow gradient text — applied explicitly to user name etc.
+     The descendant selector is mandatory so SplitText character spans
+     don't render as transparent. */
   .tier-gradient-text,
-  .max-mode .tier-gradient-text {
+  .tier-gradient-text *,
+  .max-mode .tier-gradient-text,
+  .max-mode .tier-gradient-text * {
     background: linear-gradient(120deg, #C8654A 0%, #D4A744 17%, #5A6B5D 34%, #6BAEEF 50%, #C9B3E8 67%, #E8B4B8 84%, #C8654A 100%);
     background-size: 300% 300%;
     -webkit-background-clip: text;

@@ -1,21 +1,35 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import Navbar from './components/Navbar.jsx'
 import OnboardingQuiz from './components/OnboardingQuiz.jsx'
 import CustomCursor from './components/interactive/CustomCursor.jsx'
 import NoiseOverlay from './components/interactive/NoiseOverlay.jsx'
 import Home from './pages/Home.jsx'
-import Sport from './pages/Sport.jsx'
-import Body from './pages/Body.jsx'
-import SkinCare from './pages/SkinCare.jsx'
-import Wellness from './pages/Wellness.jsx'
-import Diet from './pages/Diet.jsx'
-import About from './pages/About.jsx'
-import MyQuill from './pages/MyQuill.jsx'
-import Pro from './pages/Pro.jsx'
-import TipLibrary from './pages/TipLibrary.jsx'
 import { ProProvider } from './context/ProContext.jsx'
 import { UserProvider, useUser } from './context/UserContext.jsx'
 import { usePro } from './context/ProContext.jsx'
+
+// Code-split: each route ships as its own chunk, loaded on demand.
+// Home stays eagerly imported so first paint is instant.
+const Sport = lazy(() => import('./pages/Sport.jsx'))
+const Body = lazy(() => import('./pages/Body.jsx'))
+const SkinCare = lazy(() => import('./pages/SkinCare.jsx'))
+const Wellness = lazy(() => import('./pages/Wellness.jsx'))
+const Diet = lazy(() => import('./pages/Diet.jsx'))
+const About = lazy(() => import('./pages/About.jsx'))
+const MyQuill = lazy(() => import('./pages/MyQuill.jsx'))
+const Pro = lazy(() => import('./pages/Pro.jsx'))
+const TipLibrary = lazy(() => import('./pages/TipLibrary.jsx'))
+
+function PageLoader() {
+  return (
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="text-center">
+        <p className="num-display text-5xl text-clay animate-pulse-soft">◐</p>
+        <p className="editorial-label text-ink-soft mt-3">Loading</p>
+      </div>
+    </div>
+  )
+}
 
 function AppShell() {
   const [activePage, setActivePage] = useState('home')
@@ -65,7 +79,9 @@ function AppShell() {
       <Navbar activePage={activePage} onNavigate={handleNavigate} />
       <main className="pt-20 md:pt-28 relative">
         <div key={activePage} className="animate-page-in">
-          {pageMap[activePage] ?? <Home onNavigate={handleNavigate} />}
+          <Suspense fallback={<PageLoader />}>
+            {pageMap[activePage] ?? <Home onNavigate={handleNavigate} />}
+          </Suspense>
         </div>
       </main>
 

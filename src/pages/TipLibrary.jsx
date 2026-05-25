@@ -98,6 +98,7 @@ export default function TipLibrary({ onNavigate }) {
                       src={tip.img}
                       alt=""
                       loading="lazy"
+                      decoding="async"
                       className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 group-hover:scale-105 transition-all duration-[1200ms] ease-out"
                       aria-hidden="true"
                     />

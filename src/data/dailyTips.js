@@ -2,7 +2,7 @@
 // Categories: hydration, sleep, movement, mood, skincare, nutrition, mindset
 // Each tip has a unique curated Unsplash photo (no duplicates across the set).
 
-const U = (id) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=800&q=70`
+const U = (id) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=640&q=55`
 
 export const dailyTips = [
   { id: 't1', category: 'hydration', icon: '💧', title: 'Start with a glass', body: 'Drink a full glass of water before your first coffee — it rehydrates you after sleep and curbs the false-hunger signal.', img: U('1548839140-29a749e1cf4d') },
