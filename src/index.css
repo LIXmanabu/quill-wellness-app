@@ -231,19 +231,19 @@
     @apply flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.25em] text-ink-soft border-b border-ink/15 py-2;
   }
 
-  /* ─── Custom cursor — light pink trail ─────────────────────────── */
+  /* ─── Custom cursor — lavender trail ───────────────────────────── */
   .cursor-dot {
     position: fixed;
     top: 0;
     left: 0;
     width: 10px;
     height: 10px;
-    background: #F4D4D6;
+    background: #C9B3E8;
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
-    box-shadow: 0 0 12px rgba(244, 212, 214, 0.7),
-                0 0 24px rgba(232, 180, 184, 0.35);
+    box-shadow: 0 0 12px rgba(201, 179, 232, 0.75),
+                0 0 24px rgba(165, 130, 215, 0.4);
     transition: width 0.25s cubic-bezier(0.22, 1, 0.36, 1),
                 height 0.25s cubic-bezier(0.22, 1, 0.36, 1),
                 background 0.25s ease,
@@ -253,16 +253,16 @@
   .cursor-dot.is-hover {
     width: 20px;
     height: 20px;
-    background: #E8B4B8;
-    box-shadow: 0 0 16px rgba(232, 180, 184, 0.9),
-                0 0 36px rgba(232, 180, 184, 0.5);
+    background: #A582D7;
+    box-shadow: 0 0 18px rgba(165, 130, 215, 0.9),
+                0 0 40px rgba(140, 105, 200, 0.55);
   }
 
   .cursor-trail {
     position: fixed;
     top: 0;
     left: 0;
-    background: #F4D4D6;
+    background: #C9B3E8;
     border-radius: 50%;
     pointer-events: none;
     z-index: 9998;
@@ -279,8 +279,8 @@
     font-family: 'Instrument Serif', serif;
     font-style: italic;
     font-size: 13px;
-    color: #D89BA0;
-    text-shadow: 0 0 8px rgba(252, 243, 243, 0.8);
+    color: #8B6BB8;
+    text-shadow: 0 0 8px rgba(244, 238, 252, 0.85);
     white-space: nowrap;
     letter-spacing: 0.02em;
     animation: cursor-label-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
