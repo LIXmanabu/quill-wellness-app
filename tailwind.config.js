@@ -187,7 +187,7 @@ export default {
         'rotate-slow': 'rotate-slow 24s linear infinite',
         'bounce-subtle': 'bounce-subtle 2s ease-in-out infinite',
         'fade-grow-y': 'fade-grow-y 0.4s cubic-bezier(0.22, 1, 0.36, 1) both',
-        'page-in': 'page-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both',
+        'page-in': 'page-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both',
         'curtain-sweep': 'curtain-sweep 0.9s cubic-bezier(0.76, 0, 0.24, 1) both',
       },
     },
