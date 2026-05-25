@@ -77,7 +77,7 @@ export default function WearableSync() {
   }
 
   function disconnect() {
-    if (!confirm('Disconnect your device? Logged data will be kept.')) return
+    // No confirm — manually logged values stay in localStorage either way.
     setState((s) => ({ ...s, connectedDevice: null }))
   }
 
@@ -120,25 +120,31 @@ export default function WearableSync() {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" id="wearable-sync">
       <Reveal>
-        <div className="mb-10 pb-4 border-b border-ink/15 flex items-end justify-between flex-wrap gap-4">
-          <div>
-            <span className="editorial-label flex items-center gap-2">
-              Section · Wearable sync <TierBadge />
-            </span>
-            <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
-              Your body, <span className="display-italic text-clay">in numbers.</span>
-            </h2>
-            <p className="text-sm text-ink-soft mt-3 max-w-xl">
-              Connect a wearable or log manually. Quill reads your HRV, resting heart rate, sleep, and steps — and weighs them as one signal of readiness.
-            </p>
-          </div>
-          {device && (
-            <button onClick={disconnect} className="text-xs text-ink-soft hover:text-clay display-italic transition-colors">
-              disconnect {device.name}
-            </button>
-          )}
+        <div className="mb-10 pb-4 border-b border-ink/15">
+          <span className="editorial-label flex items-center gap-2">
+            Section · Wearable sync <TierBadge />
+          </span>
+          <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
+            Your body, <span className="display-italic text-clay">in numbers.</span>
+          </h2>
+          <p className="text-sm text-ink-soft mt-3 max-w-xl">
+            Connect a wearable or log manually. Quill reads your HRV, resting heart rate, sleep, and steps — and weighs them as one signal of readiness.
+          </p>
         </div>
       </Reveal>
+
+      {/* Back-to-devices bar — always visible when a device is connected */}
+      {device && (
+        <Reveal>
+          <button
+            onClick={disconnect}
+            className="mb-4 inline-flex items-center gap-2 px-4 py-2 bg-cream-light border border-ink/20 hover:border-ink hover:bg-bone text-sm font-medium tracking-wide transition-all"
+            data-cursor-label="change device"
+          >
+            <span className="display-italic text-lg leading-none">←</span> Back to all devices
+          </button>
+        </Reveal>
+      )}
 
       {!device ? (
         /* Device picker */
@@ -182,6 +188,12 @@ export default function WearableSync() {
                 <p className="font-display text-3xl mt-1">{device.name}</p>
                 <p className="text-xs text-cream/60 mt-1">Last sync: just now · {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' })}</p>
               </div>
+              <button
+                onClick={disconnect}
+                className="text-xs text-gold hover:text-cream display-italic transition-colors px-3 py-2 border border-gold/30 hover:border-cream"
+              >
+                change device
+              </button>
               <div className="w-3 h-3 rounded-full bg-sage animate-pulse-soft" />
             </SpotlightCard>
           </Reveal>
