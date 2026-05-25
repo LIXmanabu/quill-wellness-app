@@ -130,6 +130,95 @@
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16;
   }
 
+  /* ─── Max mode — colourful accents only when isMax ─────────────── */
+  .max-rainbow-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 100;
+    background: linear-gradient(
+      90deg,
+      #C8654A 0%,
+      #D4A744 20%,
+      #5A6B5D 40%,
+      #C9B3E8 60%,
+      #E8B4B8 80%,
+      #C8654A 100%
+    );
+    background-size: 200% 100%;
+    animation: rainbow-flow 12s linear infinite;
+  }
+
+  @keyframes rainbow-flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  /* Italic accent words (the .display-italic.text-clay pattern used across pages)
+     get a flowing brand-color gradient in Max mode */
+  .max-mode .display-italic.text-clay {
+    background: linear-gradient(
+      120deg,
+      #C8654A 0%,
+      #D4A744 25%,
+      #5A6B5D 50%,
+      #C9B3E8 75%,
+      #C8654A 100%
+    );
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: gradient-shift 10s ease infinite;
+  }
+
+  /* Quill logo in navbar gets a softer gradient */
+  .max-mode .masthead {
+    background: linear-gradient(
+      90deg,
+      rgba(200,101,74,0.06),
+      rgba(212,167,68,0.08),
+      rgba(90,107,93,0.06),
+      rgba(201,179,232,0.08),
+      rgba(200,101,74,0.06)
+    );
+    background-size: 200% 100%;
+    animation: rainbow-flow 18s linear infinite;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  /* Cursor trail cycles through brand colors in Max mode */
+  .max-mode .cursor-dot {
+    animation: cursor-rainbow 6s linear infinite;
+  }
+  .max-mode .cursor-trail {
+    animation: cursor-rainbow 6s linear infinite;
+  }
+  @keyframes cursor-rainbow {
+    0%   { background: #C8654A; box-shadow: 0 0 12px rgba(200,101,74,0.7), 0 0 24px rgba(200,101,74,0.35); }
+    25%  { background: #D4A744; box-shadow: 0 0 12px rgba(212,167,68,0.7), 0 0 24px rgba(212,167,68,0.35); }
+    50%  { background: #5A6B5D; box-shadow: 0 0 12px rgba(90,107,93,0.7), 0 0 24px rgba(90,107,93,0.35); }
+    75%  { background: #C9B3E8; box-shadow: 0 0 12px rgba(201,179,232,0.7), 0 0 24px rgba(201,179,232,0.35); }
+    100% { background: #C8654A; box-shadow: 0 0 12px rgba(200,101,74,0.7), 0 0 24px rgba(200,101,74,0.35); }
+  }
+
+  /* Editorial labels in clay get a subtle hue shift */
+  .max-mode .editorial-label.text-clay,
+  .max-mode .text-clay.editorial-num,
+  .max-mode .editorial-num.text-clay {
+    background: linear-gradient(120deg, #C8654A, #D4A744, #5A6B5D, #C9B3E8, #C8654A);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: gradient-shift 12s ease infinite;
+  }
+
   /* ─── Pro mode treatment ───────────────────────────────────────── */
   .pro-card {
     @apply relative;

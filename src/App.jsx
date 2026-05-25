@@ -15,11 +15,13 @@ import Pro from './pages/Pro.jsx'
 import TipLibrary from './pages/TipLibrary.jsx'
 import { ProProvider } from './context/ProContext.jsx'
 import { UserProvider, useUser } from './context/UserContext.jsx'
+import { usePro } from './context/ProContext.jsx'
 
 function AppShell() {
   const [activePage, setActivePage] = useState('home')
   const [showOnboarding, setShowOnboarding] = useState(false)
   const { profile } = useUser()
+  const { isMax } = usePro()
 
   // Always show onboarding on load (testing mode — comment out the setShowOnboarding
   // call to disable). Profile data is pre-filled from saved values.
@@ -51,7 +53,8 @@ function AppShell() {
   }
 
   return (
-    <div className="min-h-screen font-sans bg-cream text-ink">
+    <div className={`min-h-screen font-sans bg-cream text-ink ${isMax ? 'max-mode' : ''}`}>
+      {isMax && <div className="max-rainbow-bar" aria-hidden="true" />}
       <NoiseOverlay />
       <CustomCursor />
       <Navbar activePage={activePage} onNavigate={handleNavigate} />
