@@ -1,31 +1,79 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Navbar from './components/Navbar.jsx'
+import OnboardingQuiz from './components/OnboardingQuiz.jsx'
 import Home from './pages/Home.jsx'
 import Sport from './pages/Sport.jsx'
 import Body from './pages/Body.jsx'
 import SkinCare from './pages/SkinCare.jsx'
 import Wellness from './pages/Wellness.jsx'
+import Diet from './pages/Diet.jsx'
 import About from './pages/About.jsx'
+import MyQuill from './pages/MyQuill.jsx'
+import Pro from './pages/Pro.jsx'
+import TipLibrary from './pages/TipLibrary.jsx'
+import { ProProvider, usePro } from './context/ProContext.jsx'
+import { UserProvider, useUser } from './context/UserContext.jsx'
 
-export default function App() {
+function AppShell() {
   const [activePage, setActivePage] = useState('home')
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  const { profile } = useUser()
+  const { isPro } = usePro()
+
+  // Trigger onboarding on first visit
+  useEffect(() => {
+    if (!profile.dismissedOnboarding) {
+      const t = setTimeout(() => setShowOnboarding(true), 600)
+      return () => clearTimeout(t)
+    }
+  }, [profile.dismissedOnboarding])
+
+  // Scroll to top on page change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [activePage])
+
+  function handleNavigate(key) {
+    setActivePage(key)
+  }
 
   const pageMap = {
-    home: <Home onNavigate={setActivePage} />,
-    sport: <Sport />,
-    body: <Body />,
-    skincare: <SkinCare />,
-    wellness: <Wellness />,
+    home: <Home onNavigate={handleNavigate} />,
+    sport: <Sport onNavigate={handleNavigate} />,
+    body: <Body onNavigate={handleNavigate} />,
+    skincare: <SkinCare onNavigate={handleNavigate} />,
+    wellness: <Wellness onNavigate={handleNavigate} />,
+    diet: <Diet onNavigate={handleNavigate} />,
     about: <About />,
+    myquill: <MyQuill onNavigate={handleNavigate} />,
+    pro: <Pro onNavigate={handleNavigate} />,
+    tips: <TipLibrary onNavigate={handleNavigate} />,
   }
 
   return (
-    <div className="min-h-screen bg-cream font-sans">
-      <Navbar activePage={activePage} onNavigate={setActivePage} />
-      {/* pt-16 offsets the fixed navbar height */}
-      <main className="pt-16">
-        {pageMap[activePage] ?? <Home onNavigate={setActivePage} />}
+    <div
+      className={`min-h-screen font-sans transition-colors duration-700 ${
+        isPro
+          ? 'bg-gradient-to-br from-cream via-amber-50/40 to-blush/20'
+          : 'bg-cream'
+      }`}
+    >
+      <Navbar activePage={activePage} onNavigate={handleNavigate} />
+      <main className="pt-16 relative">
+        {pageMap[activePage] ?? <Home onNavigate={handleNavigate} />}
       </main>
+
+      {showOnboarding && <OnboardingQuiz onClose={() => setShowOnboarding(false)} />}
     </div>
+  )
+}
+
+export default function App() {
+  return (
+    <ProProvider>
+      <UserProvider>
+        <AppShell />
+      </UserProvider>
+    </ProProvider>
   )
 }

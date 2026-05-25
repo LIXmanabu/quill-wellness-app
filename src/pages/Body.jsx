@@ -2,6 +2,7 @@ import { useState } from 'react'
 import BodyMap from '../components/BodyMap.jsx'
 import ConcernPanel from '../components/ConcernPanel.jsx'
 import { bodyData } from '../data/bodyData.js'
+import { usePro } from '../context/ProContext.jsx'
 
 const regionList = [
   { id: 'face', label: 'Face', icon: '✨' },
@@ -19,7 +20,8 @@ const regionList = [
   { id: 'feet', label: 'Feet', icon: '🦶' },
 ]
 
-export default function Body() {
+export default function Body({ onNavigate }) {
+  const { isPro } = usePro()
   const [view, setView] = useState('front')
   const [selectedRegion, setSelectedRegion] = useState(null)
 
@@ -170,6 +172,48 @@ export default function Body() {
             onClose={closePanel}
           />
         </div>
+      )}
+
+      {/* Pro section: related areas reference */}
+      {isPro ? (
+        <section className="mt-12 animate-fade-up">
+          <div className="flex items-center gap-3 mb-2">
+            <h2 className="text-xl font-semibold text-neutral-800">Related areas cheat-sheet</h2>
+            <span className="pro-badge">Pro</span>
+          </div>
+          <p className="text-sm text-neutral-500 mb-6">When one area complains, others often need attention too. Cross-references for the most common pairings.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { areas: 'Neck ⇄ Shoulders ⇄ Head', tip: 'Tension headaches usually start in upper traps. Stretch shoulders before chasing the headache.' },
+              { areas: 'Hips ⇄ Lower back ⇄ Knees', tip: 'Tight hip flexors yank the lumbar spine and shift knee tracking. Foam-roll hips first.' },
+              { areas: 'Stomach ⇄ Mood ⇄ Sleep', tip: 'The gut-brain axis is real. Bloating + low mood + bad sleep often share a root: stress + diet.' },
+              { areas: 'Feet ⇄ Calves ⇄ Lower back', tip: 'Tight calves shorten stride and tilt the pelvis. Daily 30s calf stretch can help low-back pain.' },
+              { areas: 'Face ⇄ Hydration ⇄ Sleep', tip: 'Dull skin + dark circles correlate more with sleep + water than with any product. Fix those first.' },
+              { areas: 'Chest ⇄ Posture ⇄ Breathing', tip: 'Slouched posture compresses the diaphragm. Sit tall to breathe deeper — and feel calmer.' },
+            ].map((r, i) => (
+              <div key={r.areas} className="pro-card p-5 rounded-3xl animate-fade-up" style={{ animationDelay: `${i * 50}ms` }}>
+                <p className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-2">{r.areas}</p>
+                <p className="text-sm text-neutral-600 leading-relaxed">{r.tip}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : (
+        <section className="mt-12 p-6 rounded-3xl bg-gradient-to-br from-amber-50 to-pink-50 border border-amber-200/60 animate-fade-up">
+          <div className="flex items-start gap-4">
+            <div className="text-3xl">🔗</div>
+            <div className="flex-1">
+              <p className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-1">Pro feature</p>
+              <h3 className="font-bold text-neutral-800 mb-1">Related-areas cheat-sheet</h3>
+              <p className="text-sm text-neutral-500 leading-relaxed mb-3">
+                When your neck hurts, your shoulders probably need attention too. Cross-referenced tips so you fix the cause, not just the symptom.
+              </p>
+              <button onClick={() => onNavigate?.('pro')} className="text-xs font-semibold text-amber-700 hover:underline">
+                Unlock with Pro →
+              </button>
+            </div>
+          </div>
+        </section>
       )}
     </div>
   )

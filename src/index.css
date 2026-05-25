@@ -41,6 +41,63 @@
   .section-sub {
     @apply text-neutral-500 mb-8 text-sm sm:text-base;
   }
+
+  /* Pro-mode glowing border */
+  .pro-card {
+    @apply relative;
+    background: linear-gradient(white, white) padding-box,
+      linear-gradient(120deg, #fcd34d, #f9a8d4, #c4b5fd, #fcd34d) border-box;
+    border: 1.5px solid transparent;
+    background-size: 200% 200%;
+    animation: gradient-shift 8s ease infinite;
+  }
+
+  /* Pro badge */
+  .pro-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider;
+    background: linear-gradient(120deg, #fcd34d 0%, #f9a8d4 50%, #c4b5fd 100%);
+    background-size: 200% 200%;
+    color: #78350f;
+    animation: gradient-shift 6s ease infinite;
+  }
+
+  /* Scroll reveal — initial hidden state */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Animated gradient text */
+  .text-gradient-pro {
+    background: linear-gradient(120deg, #ec4899, #a855f7, #f59e0b, #ec4899);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 6s ease infinite;
+  }
+
+  /* Hero animated bg layer */
+  .hero-bg-blob {
+    @apply absolute rounded-full blur-3xl pointer-events-none;
+  }
+
+  /* Shimmer overlay (for skeleton / Pro accents) */
+  .shimmer-line {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2.4s linear infinite;
+  }
 }
 
 /* Scrollbar styling for concern panels */
@@ -53,4 +110,19 @@
 .panel-scroll::-webkit-scrollbar-thumb {
   background: #fbcfe8;
   border-radius: 2px;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
