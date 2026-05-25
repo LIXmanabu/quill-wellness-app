@@ -198,12 +198,14 @@ export default function MyQuill({ onNavigate }) {
         </section>
       )}
 
-      {/* PROBLEM-FOCUSED TIPS — one block per onboarding answer */}
+      {/* PROBLEM-FOCUSED TIPS — Pro-exclusive */}
       {problemTips.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Reveal>
             <div className="mb-10 pb-4 border-b border-ink/15">
-              <span className="editorial-label">Section 03 · Your answers, your tips</span>
+              <span className="editorial-label flex items-center gap-2">
+                Section 03 · Your answers, your tips <span className="pro-badge">Pro</span>
+              </span>
               <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
                 For each thing <span className="display-italic text-clay">you told us.</span>
               </h2>
@@ -213,29 +215,70 @@ export default function MyQuill({ onNavigate }) {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-ink/15 border border-ink/15">
-            {problemTips.map((block, i) => (
-              <Reveal key={block.key} delay={i * 80}>
-                <div className="bg-cream-light p-6 sm:p-8 h-full flex flex-col">
-                  <div className="pb-4 mb-5 border-b border-ink/10">
-                    <span className="editorial-label">{block.kicker}</span>
-                    <p className="font-display text-3xl text-ink mt-1 leading-tight">{block.label}</p>
-                    <p className="display-italic text-sm text-clay mt-2 leading-relaxed">{block.why}</p>
+          {isPro ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-ink/15 border border-ink/15">
+              {problemTips.map((block, i) => (
+                <Reveal key={block.key} delay={i * 80}>
+                  <div className="bg-cream-light p-6 sm:p-8 h-full flex flex-col">
+                    <div className="pb-4 mb-5 border-b border-ink/10">
+                      <span className="editorial-label">{block.kicker}</span>
+                      <p className="font-display text-3xl text-ink mt-1 leading-tight">{block.label}</p>
+                      <p className="display-italic text-sm text-clay mt-2 leading-relaxed">{block.why}</p>
+                    </div>
+                    <ol className="space-y-3 flex-1">
+                      {block.steps.map((step, j) => (
+                        <li key={j} className="flex items-baseline gap-4">
+                          <span className="num-display text-base text-clay flex-shrink-0 w-7">
+                            {String(j + 1).padStart(2, '0')}
+                          </span>
+                          <span className="text-sm text-ink leading-relaxed">{step}</span>
+                        </li>
+                      ))}
+                    </ol>
                   </div>
-                  <ol className="space-y-3 flex-1">
-                    {block.steps.map((step, j) => (
-                      <li key={j} className="flex items-baseline gap-4">
-                        <span className="num-display text-base text-clay flex-shrink-0 w-7">
-                          {String(j + 1).padStart(2, '0')}
-                        </span>
-                        <span className="text-sm text-ink leading-relaxed">{step}</span>
-                      </li>
-                    ))}
-                  </ol>
+                </Reveal>
+              ))}
+            </div>
+          ) : (
+            /* Locked teaser */
+            <Reveal>
+              <SpotlightCard className="pro-card p-8 sm:p-12 relative overflow-hidden">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-ink/10 border border-ink/10 mb-8 opacity-50 blur-[2px] pointer-events-none select-none">
+                  {problemTips.map((block) => (
+                    <div key={block.key} className="bg-cream-light p-6">
+                      <span className="editorial-label">{block.kicker}</span>
+                      <p className="font-display text-2xl text-ink mt-1 leading-tight">{block.label}</p>
+                      <ol className="space-y-2 mt-4">
+                        {block.steps.slice(0, 2).map((step, j) => (
+                          <li key={j} className="flex items-baseline gap-3 text-sm text-ink-soft">
+                            <span className="num-display text-xs text-clay">{String(j + 1).padStart(2, '0')}</span>
+                            <span className="leading-snug">{step}</span>
+                          </li>
+                        ))}
+                        <li className="text-xs text-ink-softer pl-7 italic">+ more</li>
+                      </ol>
+                    </div>
+                  ))}
                 </div>
-              </Reveal>
-            ))}
-          </div>
+                <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                  <div className="lg:col-span-9">
+                    <span className="editorial-label text-gold-dark">Pro Edition</span>
+                    <h3 className="font-display text-3xl sm:text-4xl text-ink mt-2 leading-tight">
+                      Tailored routines for <span className="display-italic text-clay">each of your answers.</span>
+                    </h3>
+                    <p className="text-ink-soft mt-3 leading-relaxed text-sm max-w-lg">
+                      Five concrete morning-routine steps for your skin type, five for your goal, and five for the time you have — all explained, all editable.
+                    </p>
+                  </div>
+                  <div className="lg:col-span-3 lg:text-right">
+                    <MagneticButton onClick={() => onNavigate?.('pro')} className="btn-ink">
+                      Unlock <span className="display-italic">→</span>
+                    </MagneticButton>
+                  </div>
+                </div>
+              </SpotlightCard>
+            </Reveal>
+          )}
         </section>
       )}
 
