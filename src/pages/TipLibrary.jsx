@@ -91,7 +91,10 @@ export default function TipLibrary({ onNavigate }) {
             const meta = categoryMeta[tip.category]
             return (
               <Reveal key={tip.id} delay={i * 20} className="h-full">
-                <SpotlightCard className="bg-ink text-cream p-6 h-full relative group overflow-hidden min-h-[280px] flex flex-col">
+                <SpotlightCard
+                  className="bg-ink text-cream p-6 h-full relative group overflow-hidden min-h-[280px] flex flex-col"
+                  style={{ contentVisibility: i > 8 ? 'auto' : undefined, containIntrinsicSize: '0 280px' }}
+                >
                   {/* Background image with zoom-on-hover */}
                   {tip.img && (
                     <img
@@ -99,6 +102,9 @@ export default function TipLibrary({ onNavigate }) {
                       alt=""
                       loading="lazy"
                       decoding="async"
+                      fetchpriority={i < 6 ? 'auto' : 'low'}
+                      width="480"
+                      height="360"
                       className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 group-hover:scale-105 transition-all duration-[1200ms] ease-out"
                       aria-hidden="true"
                     />
