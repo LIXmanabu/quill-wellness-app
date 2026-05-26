@@ -15,6 +15,7 @@ import AudioLibrary from '../components/AudioLibrary.jsx'
 import FamilySeats from '../components/FamilySeats.jsx'
 import TierReviews from '../components/TierReviews.jsx'
 import MaxToolsPreview from '../components/MaxToolsPreview.jsx'
+import SkinJournal from '../components/SkinJournal.jsx'
 import SplitText from '../components/interactive/SplitText.jsx'
 import Reveal from '../components/interactive/Reveal.jsx'
 import SpotlightCard from '../components/interactive/SpotlightCard.jsx'
@@ -325,6 +326,9 @@ export default function MyQuill({ onNavigate }) {
           </div>
         </section>
       )}
+
+      {/* SKIN JOURNAL — all tiers, 100% on-device */}
+      <SkinJournal />
 
       {/* AUDIO LIBRARY — available to all tiers; gates sounds by tier internally */}
       <AudioLibrary />
