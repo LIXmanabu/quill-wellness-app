@@ -27,18 +27,42 @@ function useDietLog() {
   const todays = log[day] || []
 
   function add(food, servings, slot) {
-    const entry = {
-      id: food.id,
-      name: food.name,
-      serving: food.serving,
-      kcal: food.kcal, p: food.p, c: food.c, f: food.f, fib: food.fib,
-      cat: food.cat,
-      servings: Number(servings) || 1,
-      slot,
-      at: new Date().toISOString(),
-      uid: `${food.id}-${Date.now()}`,
-    }
-    setLog((prev) => ({ ...prev, [day]: [...(prev[day] || []), entry] }))
+    const inc = Number(servings) || 1
+    setLog((prev) => {
+      const list = prev[day] || []
+      // If this food+slot already exists, increment its servings instead
+      // of creating a new entry. Stops "17 portions of salmon" from
+      // building up when the user clicks Add multiple times.
+      const existingIdx = list.findIndex((e) => e.id === food.id && e.slot === slot)
+      if (existingIdx >= 0) {
+        const next = [...list]
+        next[existingIdx] = { ...next[existingIdx], servings: next[existingIdx].servings + inc }
+        return { ...prev, [day]: next }
+      }
+      const entry = {
+        id: food.id,
+        name: food.name,
+        serving: food.serving,
+        kcal: food.kcal, p: food.p, c: food.c, f: food.f, fib: food.fib,
+        cat: food.cat,
+        servings: inc,
+        slot,
+        at: new Date().toISOString(),
+        uid: `${food.id}-${slot}-${Date.now()}`,
+      }
+      return { ...prev, [day]: [...list, entry] }
+    })
+  }
+
+  function setServings(uid, newServings) {
+    const n = Math.max(0, Number(newServings) || 0)
+    setLog((prev) => {
+      const list = prev[day] || []
+      if (n === 0) {
+        return { ...prev, [day]: list.filter((e) => e.uid !== uid) }
+      }
+      return { ...prev, [day]: list.map((e) => e.uid === uid ? { ...e, servings: n } : e) }
+    })
   }
 
   function remove(uid) {
@@ -49,7 +73,7 @@ function useDietLog() {
     setLog((prev) => ({ ...prev, [day]: [] }))
   }
 
-  return { todays, add, remove, clearDay }
+  return { todays, add, setServings, remove, clearDay }
 }
 
 function MacroBar({ label, current, target, accent }) {
@@ -78,7 +102,7 @@ function MacroBar({ label, current, target, accent }) {
 }
 
 export default function DietTracker({ initialGoal = 'balanced' }) {
-  const { todays, add, remove, clearDay } = useDietLog()
+  const { todays, add, setServings, remove, clearDay } = useDietLog()
   const [goal, setGoal] = useState(initialGoal)
   const [query, setQuery] = useState('')
   const [showAll, setShowAll] = useState(false)
@@ -244,18 +268,36 @@ export default function DietTracker({ initialGoal = 'balanced' }) {
                           {meals.map((m) => {
                             const style = categoryStyles[m.cat] || categoryStyles.composed
                             return (
-                              <li key={m.uid} className="flex items-center gap-3 group">
+                              <li key={m.uid} className="flex items-center gap-3">
                                 <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: style.dot }} />
                                 <div className="flex-1 min-w-0">
                                   <p className="text-sm text-ink leading-tight">{m.name}</p>
                                   <p className="text-[11px] text-ink-softer mt-0.5">
-                                    {m.servings > 1 && `${m.servings}× `}{m.serving} · {Math.round(m.kcal * m.servings)} kcal · {Math.round(m.p * m.servings)}p / {Math.round(m.c * m.servings)}c / {Math.round(m.f * m.servings)}f
+                                    {m.serving} · {Math.round(m.kcal * m.servings)} kcal · {Math.round(m.p * m.servings)}p / {Math.round(m.c * m.servings)}c / {Math.round(m.f * m.servings)}f
                                   </p>
+                                </div>
+                                {/* Servings stepper — always visible, touch-friendly */}
+                                <div className="flex items-center gap-1 flex-shrink-0">
+                                  <button
+                                    onClick={() => setServings(m.uid, m.servings - 1)}
+                                    aria-label="Decrease servings"
+                                    className="w-7 h-7 flex items-center justify-center border border-ink/20 hover:border-ink hover:bg-bone text-ink text-base leading-none transition-all"
+                                  >
+                                    −
+                                  </button>
+                                  <span className="num-display text-sm text-ink min-w-[20px] text-center">{m.servings}×</span>
+                                  <button
+                                    onClick={() => setServings(m.uid, m.servings + 1)}
+                                    aria-label="Increase servings"
+                                    className="w-7 h-7 flex items-center justify-center border border-ink/20 hover:border-ink hover:bg-bone text-ink text-base leading-none transition-all"
+                                  >
+                                    +
+                                  </button>
                                 </div>
                                 <button
                                   onClick={() => remove(m.uid)}
-                                  className="opacity-0 group-hover:opacity-100 text-xs text-ink-softer hover:text-clay transition-all display-italic px-1"
                                   aria-label={`Remove ${m.name}`}
+                                  className="w-7 h-7 flex items-center justify-center text-ink-softer hover:text-cream hover:bg-clay border border-ink/15 hover:border-clay transition-all text-xs flex-shrink-0"
                                   data-cursor-label="remove"
                                 >
                                   ✕
@@ -311,21 +353,29 @@ export default function DietTracker({ initialGoal = 'balanced' }) {
                 />
               </div>
 
-              <div className="px-6 pb-4 max-h-[420px] overflow-y-auto panel-scroll space-y-1">
+              <div className="px-6 pb-4 max-h-[520px] overflow-y-auto panel-scroll space-y-1">
                 {filtered.map((food) => {
                   const style = categoryStyles[food.cat] || categoryStyles.composed
+                  const alreadyLogged = todays.some((m) => m.id === food.id && m.slot === activeSlot)
                   return (
                     <button
                       key={food.id}
                       onClick={() => handleAdd(food)}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 text-left bg-cream border border-ink/10 hover:border-ink hover:bg-bone transition-all group"
-                      data-cursor-label="add"
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-left border transition-all group ${
+                        alreadyLogged
+                          ? 'bg-sage-pale border-sage/40'
+                          : 'bg-cream border-ink/10 hover:border-ink hover:bg-bone'
+                      }`}
+                      data-cursor-label={alreadyLogged ? 'add another' : 'add'}
                     >
                       <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: style.dot }} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-ink leading-tight truncate">{food.name}</p>
                         <p className="text-[11px] text-ink-softer">{food.serving} · {food.kcal} kcal · {food.p}p / {food.c}c</p>
                       </div>
+                      {alreadyLogged && (
+                        <span className="text-[10px] text-sage-dark font-medium">logged</span>
+                      )}
                       <span className="num-display text-lg text-ink-softer group-hover:text-clay transition-colors leading-none">+</span>
                     </button>
                   )
