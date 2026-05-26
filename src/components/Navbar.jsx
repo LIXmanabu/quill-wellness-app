@@ -20,7 +20,7 @@ export default function Navbar({ activePage, onNavigate }) {
   const [scrolled, setScrolled] = useState(false)
   const [hoverKey, setHoverKey] = useState(null)
   const [indicator, setIndicator] = useState({ left: 0, width: 0, opacity: 0 })
-  const { tier } = usePro()
+  const { tier, devUnlocked } = usePro()
   const tierLabel = tier === 'max' ? 'Max Edition' : tier === 'pro' ? 'Pro Edition' : 'Free Edition'
   const { profile } = useUser()
   const favCount = profile.favorites.length
@@ -156,9 +156,9 @@ export default function Navbar({ activePage, onNavigate }) {
             })}
           </nav>
 
-          {/* Right side: Pro toggle + mobile menu */}
+          {/* Right side: Pro toggle (dev-only) + mobile menu */}
           <div className="flex items-center gap-3">
-            <ProToggle />
+            {devUnlocked && <ProToggle />}
 
             {/* Mobile hamburger */}
             <button

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { usePro } from '../context/ProContext.jsx'
+import { usePro, DEV_CODE } from '../context/ProContext.jsx'
 import Celebration from './Celebration.jsx'
 
 const planData = {
@@ -49,7 +49,7 @@ function formatCvc(v) {
 }
 
 export default function CheckoutModal({ plan, onClose }) {
-  const { setTier } = usePro()
+  const { setTier, devUnlocked, setDevUnlocked } = usePro()
   const [email, setEmail] = useState('')
   const [card, setCard] = useState('')
   const [exp, setExp] = useState('')
@@ -57,6 +57,25 @@ export default function CheckoutModal({ plan, onClose }) {
   const [country, setCountry] = useState('United Kingdom')
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
+  // Dev-mode unlock UI state
+  const [codeOpen, setCodeOpen] = useState(false)
+  const [codeInput, setCodeInput] = useState('')
+  const [codeError, setCodeError] = useState(false)
+  const [codeUnlocked, setCodeUnlocked] = useState(false)
+
+  function tryCode(e) {
+    e.preventDefault()
+    if (codeInput.trim().toLowerCase() === DEV_CODE.toLowerCase()) {
+      setDevUnlocked(true)
+      setCodeUnlocked(true)
+      setCodeError(false)
+      setCodeInput('')
+      setTimeout(() => setCodeOpen(false), 1400)
+    } else {
+      setCodeError(true)
+      setTimeout(() => setCodeError(false), 600)
+    }
+  }
 
   const p = planData[plan]
 
@@ -239,6 +258,59 @@ export default function CheckoutModal({ plan, onClose }) {
             </>
           )}
         </form>
+
+        {/* ─── Hidden dev-mode unlock ─────────────────────────────────
+            A tiny dot in the bottom-right corner. Clicking it opens an
+            inline code input. Typing the secret unlocks the dev tier
+            switcher in the navbar. */}
+        {!devUnlocked && !done && (
+          <>
+            {!codeOpen ? (
+              <button
+                type="button"
+                onClick={() => setCodeOpen(true)}
+                aria-label="Developer access"
+                title=""
+                className="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-ink/15 hover:bg-clay transition-colors"
+              />
+            ) : (
+              <form
+                onSubmit={tryCode}
+                className="absolute bottom-4 right-4 bg-cream-light border border-ink/20 shadow-soft-lg p-3 animate-fade-up flex items-center gap-2"
+                style={{ zIndex: 50 }}
+              >
+                <input
+                  type="text"
+                  value={codeInput}
+                  onChange={(e) => setCodeInput(e.target.value)}
+                  autoFocus
+                  placeholder="code"
+                  className={`w-32 text-xs bg-cream border px-2 py-1 focus:outline-none transition-all ${
+                    codeError ? 'border-clay animate-pop-in' : 'border-ink/20 focus:border-ink'
+                  }`}
+                />
+                <button
+                  type="submit"
+                  className="text-xs px-2 py-1 bg-ink text-cream hover:bg-ink-light transition-colors"
+                >
+                  ↵
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setCodeOpen(false); setCodeInput(''); setCodeError(false) }}
+                  className="text-xs text-ink-softer hover:text-clay display-italic"
+                >
+                  ✕
+                </button>
+              </form>
+            )}
+          </>
+        )}
+        {codeUnlocked && (
+          <div className="absolute bottom-4 right-4 bg-sage text-cream px-3 py-2 text-xs font-medium animate-pop-in" style={{ zIndex: 50 }}>
+            ✓ Dev mode unlocked
+          </div>
+        )}
       </div>
     </div>
     </>
