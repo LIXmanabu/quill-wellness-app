@@ -23,7 +23,7 @@ const features = [
   { num: '10', icon: '✓', title: 'Habit streak tracker', free: '—', pro: '—', max: '9 presets · 14-day grid · live streaks', status: 'live' },
   { num: '11', icon: '◯', title: 'Cycle tracking', free: '—', pro: '—', max: '4-phase calendar · phase-aware advice', status: 'live' },
   { num: '12', icon: '◈', title: 'Wearable sync', free: '—', pro: '—', max: 'Apple · Oura · Whoop · Garmin · manual', status: 'live' },
-  { num: '13', icon: '◐', title: 'Audio library', free: '—', pro: '—', max: '6 ambient sounds · 3 breathwork timers', status: 'live' },
+  { num: '13', icon: '◐', title: 'Audio library', free: '4 ambient sounds', pro: '6 sounds', max: '8 sounds · breathwork timer', status: 'live' },
   { num: '14', icon: '✿', title: 'Family seats', free: '1', pro: '1', max: '4 — share with household', status: 'live' },
 ]
 
@@ -55,6 +55,7 @@ const tiers = [
       'Three saved favorites',
       'Five tips per category',
       'Full diet & pH guide',
+      '4 ambient sounds + breathwork timer',
     ],
   },
   {
@@ -71,6 +72,7 @@ const tiers = [
       'Per-answer routine on My Quill',
       'Live diet tracker + smart suggestions',
       'Seven-day meal templates',
+      '6 ambient sounds (4 free + 2 Pro)',
     ],
   },
   {
@@ -86,7 +88,7 @@ const tiers = [
       'Sleep schedule analyzer — 7-night log, consistency + jetlag stats',
       'Cycle tracking — 4-phase calendar with phase-aware advice',
       'Wearable sync — Apple Health, Oura, Whoop, Garmin (or manual)',
-      'Audio library — 6 generated ambient sounds + 3 breathwork timers',
+      'Audio library — 8 ambient sounds + 3 breathwork timers',
       'Habit streak tracker — 9 presets with a 14-day visual grid',
       'Family seats — 4 members on one plan',
       'Rainbow Max theme + 30-day early access to new tools',

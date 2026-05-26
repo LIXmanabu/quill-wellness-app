@@ -324,13 +324,15 @@ export default function MyQuill({ onNavigate }) {
         </section>
       )}
 
-      {/* MAX-ONLY TOOLS — real working features */}
+      {/* AUDIO LIBRARY — available to all tiers; gates sounds by tier internally */}
+      <AudioLibrary />
+
+      {/* MAX-ONLY TOOLS — Sleep, Cycle, Wearable, Habits, Family */}
       {isMax && (
         <>
           <SleepAnalyzer />
           <CycleTracker />
           <WearableSync />
-          <AudioLibrary />
           <HabitStreaks />
           <FamilySeats />
         </>

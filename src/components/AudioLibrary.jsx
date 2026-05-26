@@ -1,26 +1,38 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { usePro } from '../context/ProContext.jsx'
 import Reveal from './interactive/Reveal.jsx'
 import TierBadge from './TierBadge.jsx'
 
 /**
- * Real ambient audio streamed from Mixkit's free-sound-effects CDN.
- * Each sound is a loop-able preview MP3 served from a CloudFront edge.
- * HTMLAudioElement is used directly (no Web Audio decode) so cross-origin
- * playback works without CORS preflight.
+ * Real ambient audio streamed from public CDNs.
  *
- * Mixkit License: free to use in personal and commercial projects.
- * https://mixkit.co/license/
+ * - Environmental loops (rain, ocean, fire, etc.): Mixkit free-sound-effects
+ *   CDN. Royalty-free under the Mixkit Licence.
+ * - White noise: Wikimedia Commons CC0 file (works in modern browsers
+ *   including Safari 17+).
+ *
+ * Plain HTMLAudioElement playback — no CORS preflight, no Web Audio
+ * autoplay quirks.
  */
 
 const M = (id) => `https://assets.mixkit.co/active_storage/sfx/${id}/${id}-preview.mp3`
+const W = (path) => `https://upload.wikimedia.org/wikipedia/commons/${path}`
+
+// tier ranking — used to compare what the user has access to
+const tierRank = { free: 0, pro: 1, max: 2 }
 
 const sounds = [
-  { id: 'rain',   label: 'Rain on roof',   cat: 'Sleep', desc: 'Light steady rain on a quiet street',  url: M(1253), accent: '#5A6B5D' },
-  { id: 'ocean',  label: 'Ocean waves',    cat: 'Sleep', desc: 'Sea waves rolling in to shore',         url: M(1196), accent: '#6BAEEF' },
-  { id: 'fire',   label: 'Fireplace',      cat: 'Focus', desc: 'Wood crackling in a hearth',            url: M(1330), accent: '#C8654A' },
-  { id: 'forest', label: 'Forest birds',   cat: 'Focus', desc: 'Soft birdsong in an open forest',       url: M(1210), accent: '#3D4A40' },
-  { id: 'wind',   label: 'Wind in trees',  cat: 'Sleep', desc: 'Steady breeze through leaves',          url: M(2658), accent: '#9B8E82' },
-  { id: 'stream', label: 'Mountain stream',cat: 'Focus', desc: 'Flowing water in a quiet creek',        url: M(3126), accent: '#D4A744' },
+  // ─── Free (4) ────────────────────────────────────────────────
+  { id: 'white',   tier: 'free', label: 'White noise',     cat: 'Sleep', desc: 'Pure broadband white noise — masks distractions',  url: W('9/98/White-noise-sound-20sec-mono-44100Hz.ogg'), accent: '#9B8E82' },
+  { id: 'crickets',tier: 'free', label: 'Night crickets',  cat: 'Sleep', desc: 'Summer crickets at night — countryside calm',       url: M(1789), accent: '#3D4A40' },
+  { id: 'rain',    tier: 'free', label: 'Rain on roof',    cat: 'Sleep', desc: 'Light steady rain on a quiet street',               url: M(1253), accent: '#5A6B5D' },
+  { id: 'wind',    tier: 'free', label: 'Wind in trees',   cat: 'Sleep', desc: 'Steady breeze through leaves',                      url: M(2658), accent: '#6BAEEF' },
+  // ─── Pro adds (+2 → 6 total) ─────────────────────────────────
+  { id: 'ocean',   tier: 'pro',  label: 'Ocean waves',     cat: 'Sleep', desc: 'Sea waves rolling in to shore',                     url: M(1196), accent: '#6BAEEF' },
+  { id: 'fire',    tier: 'pro',  label: 'Fireplace',       cat: 'Focus', desc: 'Wood crackling in a hearth',                        url: M(1330), accent: '#C8654A' },
+  // ─── Max adds (+2 → 8 total) ─────────────────────────────────
+  { id: 'forest',  tier: 'max',  label: 'Forest birds',    cat: 'Focus', desc: 'Soft birdsong in an open forest',                   url: M(1210), accent: '#3D4A40' },
+  { id: 'stream',  tier: 'max',  label: 'Mountain stream', cat: 'Focus', desc: 'Flowing water in a quiet creek',                    url: M(3126), accent: '#D4A744' },
 ]
 
 const breathPatterns = [
@@ -50,11 +62,14 @@ function fade(audio, target, durationMs, onDone) {
 }
 
 export default function AudioLibrary() {
+  const { tier } = usePro()
+  const userRank = tierRank[tier] ?? 0
+
   const [playingId, setPlayingId] = useState(null)
   const [loadingId, setLoadingId] = useState(null)
   const [volume, setVolume] = useState(0.6)
   const [error, setError] = useState(null)
-  const audioRef = useRef(null) // currently active <Audio>
+  const audioRef = useRef(null)
   const fadeIdRef = useRef(null)
 
   const stop = useCallback((cb) => {
@@ -71,14 +86,14 @@ export default function AudioLibrary() {
 
   async function play(sound) {
     setError(null)
+    const unlocked = userRank >= (tierRank[sound.tier] ?? 0)
+    if (!unlocked) return // gated — handled in UI
 
-    // Toggle off if clicking the active one
     if (playingId === sound.id) {
       stop()
       return
     }
 
-    // Fade old out, start new one in parallel
     const old = audioRef.current
     if (old) {
       if (fadeIdRef.current) clearInterval(fadeIdRef.current)
@@ -98,7 +113,6 @@ export default function AudioLibrary() {
     audio.volume = 0
 
     try {
-      // play() returns a Promise that rejects if autoplay blocked
       await audio.play()
       audioRef.current = audio
       setPlayingId(sound.id)
@@ -111,32 +125,38 @@ export default function AudioLibrary() {
     }
   }
 
-  // Apply live volume changes to whatever is playing
   useEffect(() => {
     if (audioRef.current && !fadeIdRef.current) {
       try { audioRef.current.volume = volume } catch {}
     }
   }, [volume])
 
-  // Clean up on unmount
   useEffect(() => () => {
     const a = audioRef.current
     if (a) try { a.pause(); a.src = '' } catch {}
   }, [])
 
+  const unlockedCount = sounds.filter((s) => userRank >= tierRank[s.tier]).length
+
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" id="audio-library">
       <Reveal>
-        <div className="mb-10 pb-4 border-b border-ink/15">
-          <span className="editorial-label flex items-center gap-2">
-            Section · Sounds &amp; breathwork <TierBadge />
-          </span>
-          <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
-            Sounds for the <span className="display-italic text-clay">moment.</span>
-          </h2>
-          <p className="text-sm text-ink-soft mt-3 max-w-xl">
-            Six high-quality ambient loops streamed from Mixkit's free library. Plus three breathwork patterns with a visual timer. Headphones recommended.
-          </p>
+        <div className="mb-10 pb-4 border-b border-ink/15 flex items-end justify-between flex-wrap gap-4">
+          <div>
+            <span className="editorial-label">Section · Sounds &amp; breathwork</span>
+            <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
+              Sounds for the <span className="display-italic text-clay">moment.</span>
+            </h2>
+            <p className="text-sm text-ink-soft mt-3 max-w-xl">
+              Real ambient loops you can leave running while you sleep, work, or unwind. Plus three breathwork patterns with a visual timer.
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="editorial-label">Your library</p>
+            <p className="num-display text-3xl text-clay mt-1 leading-none">
+              {unlockedCount}<span className="text-ink-softer text-lg"> / {sounds.length}</span>
+            </p>
+          </div>
         </div>
       </Reveal>
 
@@ -149,8 +169,9 @@ export default function AudioLibrary() {
       )}
 
       <Reveal>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-px bg-ink/15 border border-ink/15 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-px bg-ink/15 border border-ink/15 mb-6">
           {sounds.map((s) => {
+            const unlocked = userRank >= tierRank[s.tier]
             const active = playingId === s.id
             const loading = loadingId === s.id
             return (
@@ -158,26 +179,50 @@ export default function AudioLibrary() {
                 key={s.id}
                 onClick={() => play(s)}
                 disabled={loading}
-                className={`text-left p-5 transition-all ${active ? 'bg-ink text-cream' : 'bg-cream-light hover:bg-bone'} ${loading ? 'opacity-70' : ''}`}
-                data-cursor-label={active ? 'stop' : loading ? 'loading' : 'play'}
+                aria-disabled={!unlocked}
+                className={`text-left p-5 transition-all relative ${
+                  active
+                    ? 'bg-ink text-cream'
+                    : unlocked
+                      ? 'bg-cream-light hover:bg-bone'
+                      : 'bg-bone/50 cursor-not-allowed'
+                } ${loading ? 'opacity-70' : ''}`}
+                data-cursor-label={!unlocked ? `${s.tier} only` : active ? 'stop' : loading ? 'loading' : 'play'}
               >
                 <div className="flex items-start justify-between mb-3">
                   <span className={`editorial-label ${active ? 'text-gold' : ''}`}>{s.cat}</span>
-                  <span
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-base display-italic ${active ? 'bg-gold text-ink' : loading ? 'border border-clay text-clay animate-pulse-soft' : 'border border-ink/20'}`}
-                    style={active ? {} : !loading ? { color: s.accent } : {}}
-                  >
-                    {active ? '❚❚' : loading ? '◐' : '▶'}
-                  </span>
+                  {!unlocked ? (
+                    <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide border bg-gold-paler text-gold-dark border-gold/30">
+                      {s.tier}
+                    </span>
+                  ) : (
+                    <span
+                      className={`w-10 h-10 rounded-full flex items-center justify-center text-base display-italic ${active ? 'bg-gold text-ink' : loading ? 'border border-clay text-clay animate-pulse-soft' : 'border border-ink/20'}`}
+                      style={active ? {} : !loading ? { color: s.accent } : {}}
+                    >
+                      {active ? '❚❚' : loading ? '◐' : '▶'}
+                    </span>
+                  )}
                 </div>
-                <p className="font-display text-2xl leading-tight">{s.label}</p>
-                <p className={`text-xs mt-2 leading-snug ${active ? 'text-cream/70' : 'text-ink-soft'}`}>{s.desc}</p>
+                <p className={`font-display text-2xl leading-tight ${unlocked ? '' : 'text-ink-softer'}`}>{s.label}</p>
+                <p className={`text-xs mt-2 leading-snug ${active ? 'text-cream/70' : unlocked ? 'text-ink-soft' : 'text-ink-softer'}`}>{s.desc}</p>
                 {active && <ActiveEqualizer />}
               </button>
             )
           })}
         </div>
       </Reveal>
+
+      {/* Upgrade hint for free/pro */}
+      {userRank < 2 && (
+        <Reveal>
+          <p className="text-xs text-ink-soft italic mb-4">
+            {userRank === 0
+              ? `${sounds.filter((s) => s.tier !== 'free').length} more sounds unlock with Pro and Max.`
+              : `${sounds.filter((s) => s.tier === 'max').length} more sounds unlock with Max.`}
+          </p>
+        </Reveal>
+      )}
 
       {playingId && (
         <Reveal>
@@ -200,7 +245,7 @@ export default function AudioLibrary() {
       )}
 
       <p className="text-[10px] text-ink-softer italic mt-2 mb-12">
-        Audio loops via <a href="https://mixkit.co/free-sound-effects/" target="_blank" rel="noopener noreferrer" className="underline hover:text-clay">Mixkit free sound library</a> · royalty-free under the Mixkit License.
+        Loops via <a href="https://mixkit.co/free-sound-effects/" target="_blank" rel="noopener noreferrer" className="underline hover:text-clay">Mixkit free sound library</a> and <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener noreferrer" className="underline hover:text-clay">Wikimedia Commons</a>.
       </p>
 
       <Reveal>
