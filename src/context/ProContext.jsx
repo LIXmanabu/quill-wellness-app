@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 
 const STORAGE_KEY = 'quill.tier'
 const DEV_STORAGE_KEY = 'quill.devUnlocked'
-const RESET_FLAG_KEY = 'quill.tierResetV2'
+const RESET_FLAG_KEY = 'quill.tierResetV3'
 const TIERS = ['free', 'pro', 'max']
 
 export const DEV_CODE = 'I know Felix'

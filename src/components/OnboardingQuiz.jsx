@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useUser } from '../context/UserContext.jsx'
 
 const skinTypes = [
@@ -33,6 +33,16 @@ export default function OnboardingQuiz({ onClose }) {
     goal: profile.goal || '',
     timePerDay: profile.timePerDay || '',
   })
+
+  // Allow dismissing the modal via Escape key — without this, the modal
+  // (z-100, full-screen blur) blocks navbar clicks and traps the user.
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [onClose])
 
   const steps = [
     {
@@ -157,12 +167,27 @@ export default function OnboardingQuiz({ onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in">
-      <div className="absolute inset-0 bg-cream-dark/95 backdrop-blur-md" />
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div
+        className="absolute inset-0 bg-cream-dark/95 backdrop-blur-md"
+        onClick={onClose}
+      />
 
       <div className="relative w-full max-w-lg bg-cream-light border border-ink/15 p-6 sm:p-8 animate-pop-in shadow-soft-lg">
+        {/* Big X close button — top-right */}
+        <button
+          onClick={onClose}
+          aria-label="Close onboarding"
+          className="absolute top-3 right-3 w-9 h-9 flex items-center justify-center border border-ink/20 hover:border-ink hover:bg-ink hover:text-cream transition-all display-italic text-lg z-10"
+        >
+          ✕
+        </button>
+
         {/* Progress */}
-        <div className="mb-8">
+        <div className="mb-8 pr-12">
           <div className="flex items-center justify-between mb-2">
             <span className="editorial-label">Step {String(step + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')}</span>
             <button onClick={handleSkip} className="editorial-label hover:text-clay transition-colors">Skip for now</button>
