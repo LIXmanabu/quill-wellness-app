@@ -13,7 +13,8 @@ export default function ProToggle() {
   const index = tiers.indexOf(tier)
 
   function lock() {
-    if (confirm('Lock developer mode? The tier toggle will be hidden. You can re-unlock from the checkout modal.')) {
+    if (confirm('Lock developer mode? The tier toggle will be hidden and you\'ll be returned to Free.')) {
+      setTier('free')
       setDevUnlocked(false)
     }
   }

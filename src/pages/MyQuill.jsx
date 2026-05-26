@@ -13,6 +13,7 @@ import CycleTracker from '../components/CycleTracker.jsx'
 import WearableSync from '../components/WearableSync.jsx'
 import AudioLibrary from '../components/AudioLibrary.jsx'
 import FamilySeats from '../components/FamilySeats.jsx'
+import TierReviews from '../components/TierReviews.jsx'
 import SplitText from '../components/interactive/SplitText.jsx'
 import Reveal from '../components/interactive/Reveal.jsx'
 import SpotlightCard from '../components/interactive/SpotlightCard.jsx'
@@ -418,29 +419,8 @@ export default function MyQuill({ onNavigate }) {
         )}
       </section>
 
-      {/* Pro upsell */}
-      {!isPro && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <Reveal>
-            <SpotlightCard className="pro-card p-8 sm:p-12 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-              <div className="lg:col-span-9">
-                <span className="editorial-label text-gold-dark">Pro Edition</span>
-                <h3 className="font-display text-3xl sm:text-4xl text-ink mt-2 leading-tight">
-                  Want unlimited <span className="display-italic text-clay">favorites?</span>
-                </h3>
-                <p className="text-ink-soft mt-3 leading-relaxed text-sm max-w-lg">
-                  Quill Pro unlocks the full tip library, expanded routines, ingredient deep-dives, and the live diet tracker.
-                </p>
-              </div>
-              <div className="lg:col-span-3 lg:text-right">
-                <MagneticButton onClick={() => onNavigate?.('pro')} className="btn-ink">
-                  See Pro <span className="display-italic">→</span>
-                </MagneticButton>
-              </div>
-            </SpotlightCard>
-          </Reveal>
-        </section>
-      )}
+      {/* Letters from readers — Free sees Pro+Max, Pro sees Max-only, Max sees nothing */}
+      <TierReviews onNavigate={onNavigate} />
     </div>
   )
 }
