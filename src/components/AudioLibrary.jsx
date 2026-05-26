@@ -3,23 +3,24 @@ import Reveal from './interactive/Reveal.jsx'
 import TierBadge from './TierBadge.jsx'
 
 /**
- * Six sounds, six genuinely different Web Audio node graphs.
+ * Real ambient audio streamed from Mixkit's free-sound-effects CDN.
+ * Each sound is a loop-able preview MP3 served from a CloudFront edge.
+ * HTMLAudioElement is used directly (no Web Audio decode) so cross-origin
+ * playback works without CORS preflight.
  *
- * Each sound is its own factory — multiple layers of typed noise, sine
- * harmonics, stereo panning, LFO modulation, impulse scheduling, and
- * convolver reverb. Nothing is just "noise + filter".
- *
- * Architecture credits: Paul Kellet pink-noise, Audiokinetic's
- * layered rain technique, and the slee1005/rain shimmer approach.
+ * Mixkit License: free to use in personal and commercial projects.
+ * https://mixkit.co/license/
  */
 
+const M = (id) => `https://assets.mixkit.co/active_storage/sfx/${id}/${id}-preview.mp3`
+
 const sounds = [
-  { id: 'rain',     label: 'Rain on roof', cat: 'Sleep', desc: 'Pink-noise body + high-frequency shimmer + random droplets in stereo', accent: '#5A6B5D', factory: 'rain'    },
-  { id: 'ocean',    label: 'Ocean waves',  cat: 'Sleep', desc: 'Brown-noise base with slow 8-second swells and high spray on top',     accent: '#6BAEEF', factory: 'ocean'   },
-  { id: 'fire',     label: 'Fireplace',    cat: 'Focus', desc: 'Low brown rumble + irregular sharp crackles in stereo',                accent: '#C8654A', factory: 'fire'    },
-  { id: 'bowl',     label: 'Singing bowl', cat: 'Focus', desc: 'Three sine harmonics with slow tremolo — Tibetan meditation drone',     accent: '#D4A744', factory: 'bowl'    },
-  { id: 'forest',   label: 'Forest dawn',  cat: 'Focus', desc: 'Soft pink-noise wind + occasional synthesised bird chirps',             accent: '#3D4A40', factory: 'forest'  },
-  { id: 'wind',     label: 'Wind in trees', cat: 'Sleep', desc: 'High-passed pink noise with slow LFO sweeping the cutoff',             accent: '#9B8E82', factory: 'wind'    },
+  { id: 'rain',   label: 'Rain on roof',   cat: 'Sleep', desc: 'Light steady rain on a quiet street',  url: M(1253), accent: '#5A6B5D' },
+  { id: 'ocean',  label: 'Ocean waves',    cat: 'Sleep', desc: 'Sea waves rolling in to shore',         url: M(1196), accent: '#6BAEEF' },
+  { id: 'fire',   label: 'Fireplace',      cat: 'Focus', desc: 'Wood crackling in a hearth',            url: M(1330), accent: '#C8654A' },
+  { id: 'forest', label: 'Forest birds',   cat: 'Focus', desc: 'Soft birdsong in an open forest',       url: M(1210), accent: '#3D4A40' },
+  { id: 'wind',   label: 'Wind in trees',  cat: 'Sleep', desc: 'Steady breeze through leaves',          url: M(2658), accent: '#9B8E82' },
+  { id: 'stream', label: 'Mountain stream',cat: 'Focus', desc: 'Flowing water in a quiet creek',        url: M(3126), accent: '#D4A744' },
 ]
 
 const breathPatterns = [
@@ -28,535 +29,100 @@ const breathPatterns = [
   { id: 'coherent', label: 'Coherent',      phases: [['Inhale', 6], ['Exhale', 6], ['', 0], ['', 0]], desc: '6-second breaths — peak heart-rate variability.' },
 ]
 
-// ════════════════════════════════════════════════════════════════
-// Noise buffer fillers
-// ════════════════════════════════════════════════════════════════
-
-function fillWhite(data) {
-  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
-}
-
-function fillPink(data) {
-  let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0
-  for (let i = 0; i < data.length; i++) {
-    const w = Math.random() * 2 - 1
-    b0 = 0.99886 * b0 + w * 0.0555179
-    b1 = 0.99332 * b1 + w * 0.0750759
-    b2 = 0.96900 * b2 + w * 0.1538520
-    b3 = 0.86650 * b3 + w * 0.3104856
-    b4 = 0.55000 * b4 + w * 0.5329522
-    b5 = -0.7616 * b5 - w * 0.0168980
-    data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11
-    b6 = w * 0.115926
-  }
-}
-
-function fillBrown(data, gain = 3.5) {
-  let last = 0
-  for (let i = 0; i < data.length; i++) {
-    const w = Math.random() * 2 - 1
-    last = (last + 0.02 * w) / 1.02
-    data[i] = last * gain
-  }
-}
-
-// Reusable: build a looped noise source
-function noiseSource(ctx, seconds, filler) {
-  const buf = ctx.createBuffer(1, seconds * ctx.sampleRate, ctx.sampleRate)
-  filler(buf.getChannelData(0))
-  const src = ctx.createBufferSource()
-  src.buffer = buf
-  src.loop = true
-  return src
-}
-
-// Reusable: convolver reverb with synthetic impulse response
-function makeReverb(ctx, seconds, decay) {
-  const length = ctx.sampleRate * seconds
-  const ir = ctx.createBuffer(2, length, ctx.sampleRate)
-  for (let ch = 0; ch < 2; ch++) {
-    const data = ir.getChannelData(ch)
-    for (let i = 0; i < length; i++) {
-      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, decay)
+// Smoothly ramp an audio element's volume over `durationMs`
+function fade(audio, target, durationMs, onDone) {
+  if (!audio) return
+  const start = audio.volume
+  const steps = Math.max(8, Math.floor(durationMs / 30))
+  const stepTime = durationMs / steps
+  let i = 0
+  const id = setInterval(() => {
+    i++
+    const t = i / steps
+    const v = start + (target - start) * t
+    try { audio.volume = Math.max(0, Math.min(1, v)) } catch {}
+    if (i >= steps) {
+      clearInterval(id)
+      if (onDone) onDone()
     }
-  }
-  const conv = ctx.createConvolver()
-  conv.buffer = ir
-  return conv
+  }, stepTime)
+  return id
 }
-
-// ════════════════════════════════════════════════════════════════
-// Sound factories — each returns { master, stop }
-// ════════════════════════════════════════════════════════════════
-
-function makeRain(ctx) {
-  // Pink-noise body (mid-frequencies)
-  const pink = noiseSource(ctx, 8, fillPink)
-  const pinkLP = ctx.createBiquadFilter()
-  pinkLP.type = 'lowpass'
-  pinkLP.frequency.value = 3500
-  pinkLP.Q.value = 0.5
-  const pinkGain = ctx.createGain()
-  pinkGain.gain.value = 1.2
-
-  // High-frequency shimmer (white noise, >6kHz)
-  const white = noiseSource(ctx, 8, fillWhite)
-  const whiteHP = ctx.createBiquadFilter()
-  whiteHP.type = 'highpass'
-  whiteHP.frequency.value = 6000
-  const whiteGain = ctx.createGain()
-  whiteGain.gain.value = 0.35
-
-  // Stereo widening — pan each layer slightly opposite
-  const pinkPan = ctx.createStereoPanner()
-  pinkPan.pan.value = -0.15
-  const whitePan = ctx.createStereoPanner()
-  whitePan.pan.value = 0.2
-
-  pink.connect(pinkLP).connect(pinkGain).connect(pinkPan)
-  white.connect(whiteHP).connect(whiteGain).connect(whitePan)
-
-  // Slow amplitude breathing (LFO at 0.12 Hz)
-  const amLFO = ctx.createOscillator()
-  amLFO.frequency.value = 0.12
-  const amDepth = ctx.createGain()
-  amDepth.gain.value = 0.18
-  const amOffset = ctx.createConstantSource()
-  amOffset.offset.value = 1
-  amLFO.connect(amDepth)
-
-  const amGain = ctx.createGain()
-  amGain.gain.value = 1
-  amOffset.connect(amGain.gain)
-  amDepth.connect(amGain.gain)
-  amOffset.start()
-  amLFO.start()
-
-  // Soft reverb for spatial depth
-  const reverb = makeReverb(ctx, 1.5, 2)
-  const wet = ctx.createGain()
-  wet.gain.value = 0.15
-
-  const master = ctx.createGain()
-  pinkPan.connect(amGain)
-  whitePan.connect(amGain)
-  amGain.connect(master)
-  amGain.connect(reverb).connect(wet).connect(master)
-
-  pink.start()
-  white.start()
-
-  return {
-    master,
-    stop() {
-      try { pink.stop(); white.stop(); amLFO.stop(); amOffset.stop() } catch {}
-    },
-  }
-}
-
-function makeOcean(ctx) {
-  // Brown noise body — the rumble
-  const brown = noiseSource(ctx, 8, (d) => fillBrown(d, 3.5))
-  const brownLP = ctx.createBiquadFilter()
-  brownLP.type = 'lowpass'
-  brownLP.frequency.value = 700
-  const brownGain = ctx.createGain()
-  brownGain.gain.value = 1.4
-
-  // High spray hiss
-  const white = noiseSource(ctx, 8, fillWhite)
-  const whiteHP = ctx.createBiquadFilter()
-  whiteHP.type = 'highpass'
-  whiteHP.frequency.value = 3500
-  const whiteGain = ctx.createGain()
-  whiteGain.gain.value = 0.15
-
-  // Big slow swell LFO — gain pulses every ~8 seconds
-  const swellLFO = ctx.createOscillator()
-  swellLFO.frequency.value = 0.125 // 8 second cycle
-  const swellDepth = ctx.createGain()
-  swellDepth.gain.value = 0.55
-  const swellOffset = ctx.createConstantSource()
-  swellOffset.offset.value = 0.6
-  swellLFO.connect(swellDepth)
-
-  const swellGain = ctx.createGain()
-  swellGain.gain.value = 0
-  swellOffset.connect(swellGain.gain)
-  swellDepth.connect(swellGain.gain)
-  swellOffset.start()
-  swellLFO.start()
-
-  brown.connect(brownLP).connect(brownGain).connect(swellGain)
-  white.connect(whiteHP).connect(whiteGain).connect(swellGain)
-
-  const reverb = makeReverb(ctx, 2.5, 1.5)
-  const wet = ctx.createGain()
-  wet.gain.value = 0.2
-
-  const master = ctx.createGain()
-  swellGain.connect(master)
-  swellGain.connect(reverb).connect(wet).connect(master)
-
-  brown.start()
-  white.start()
-
-  return {
-    master,
-    stop() {
-      try { brown.stop(); white.stop(); swellLFO.stop(); swellOffset.stop() } catch {}
-    },
-  }
-}
-
-function makeFire(ctx) {
-  // Low brown rumble
-  const brown = noiseSource(ctx, 8, (d) => fillBrown(d, 3.0))
-  const brownLP = ctx.createBiquadFilter()
-  brownLP.type = 'lowpass'
-  brownLP.frequency.value = 500
-  const brownGain = ctx.createGain()
-  brownGain.gain.value = 1.0
-  brown.connect(brownLP).connect(brownGain)
-
-  // Crackle generator — scheduled noise bursts
-  const crackleGain = ctx.createGain()
-  crackleGain.gain.value = 1.0
-  const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.15, ctx.sampleRate)
-  fillWhite(noiseBuffer.getChannelData(0))
-
-  let scheduling = true
-  function scheduleCrackle() {
-    if (!scheduling) return
-    const src = ctx.createBufferSource()
-    src.buffer = noiseBuffer
-    const bp = ctx.createBiquadFilter()
-    bp.type = 'bandpass'
-    bp.frequency.value = 1500 + Math.random() * 2500
-    bp.Q.value = 1.5 + Math.random() * 1.5
-    const g = ctx.createGain()
-    const now = ctx.currentTime
-    const peak = 0.4 + Math.random() * 0.5
-    g.gain.setValueAtTime(0, now)
-    g.gain.linearRampToValueAtTime(peak, now + 0.004)
-    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.05 + Math.random() * 0.1)
-    const pan = ctx.createStereoPanner()
-    pan.pan.value = (Math.random() - 0.5) * 1.6
-    src.connect(bp).connect(g).connect(pan).connect(crackleGain)
-    src.start(now)
-    src.stop(now + 0.2)
-    // Schedule next crackle 50-400ms ahead
-    setTimeout(scheduleCrackle, 50 + Math.random() * 350)
-  }
-  scheduleCrackle()
-
-  const master = ctx.createGain()
-  brownGain.connect(master)
-  crackleGain.connect(master)
-
-  brown.start()
-
-  return {
-    master,
-    stop() {
-      scheduling = false
-      try { brown.stop() } catch {}
-    },
-  }
-}
-
-function makeBowl(ctx) {
-  // Tibetan singing bowl — fundamental + 2x + 3x harmonics, slow tremolo
-  const fundamental = 256 // C4
-  const harmonics = [1, 2.01, 3.02, 4.05] // slight detune for natural beating
-  const sources = []
-  const baseGain = [0.4, 0.25, 0.15, 0.08]
-
-  const sumGain = ctx.createGain()
-  sumGain.gain.value = 0.6
-
-  harmonics.forEach((mult, i) => {
-    const osc = ctx.createOscillator()
-    osc.type = 'sine'
-    osc.frequency.value = fundamental * mult
-    const g = ctx.createGain()
-    g.gain.value = 0
-    // Slow attack
-    g.gain.setValueAtTime(0.0001, ctx.currentTime)
-    g.gain.exponentialRampToValueAtTime(baseGain[i], ctx.currentTime + 2.5)
-    osc.connect(g).connect(sumGain)
-    osc.start()
-    sources.push(osc)
-  })
-
-  // Slow tremolo LFO (0.3 Hz)
-  const tremLFO = ctx.createOscillator()
-  tremLFO.frequency.value = 0.3
-  const tremDepth = ctx.createGain()
-  tremDepth.gain.value = 0.15
-  const tremOffset = ctx.createConstantSource()
-  tremOffset.offset.value = 0.85
-  tremLFO.connect(tremDepth)
-  const tremGain = ctx.createGain()
-  tremGain.gain.value = 0
-  tremOffset.connect(tremGain.gain)
-  tremDepth.connect(tremGain.gain)
-  tremOffset.start()
-  tremLFO.start()
-  sumGain.connect(tremGain)
-
-  const reverb = makeReverb(ctx, 4, 1.5)
-  const wet = ctx.createGain()
-  wet.gain.value = 0.45
-
-  const master = ctx.createGain()
-  tremGain.connect(master)
-  tremGain.connect(reverb).connect(wet).connect(master)
-
-  return {
-    master,
-    stop() {
-      const now = ctx.currentTime
-      sources.forEach((s) => {
-        try {
-          s.stop(now + 0.3)
-        } catch {}
-      })
-      try { tremLFO.stop(); tremOffset.stop() } catch {}
-    },
-  }
-}
-
-function makeForest(ctx) {
-  // Soft pink-noise wind base
-  const pink = noiseSource(ctx, 8, fillPink)
-  const pinkBP = ctx.createBiquadFilter()
-  pinkBP.type = 'bandpass'
-  pinkBP.frequency.value = 1200
-  pinkBP.Q.value = 0.6
-  const pinkGain = ctx.createGain()
-  pinkGain.gain.value = 0.7
-  pink.connect(pinkBP).connect(pinkGain)
-
-  // Bird chirp generator — sine sweeps
-  const birdGain = ctx.createGain()
-  birdGain.gain.value = 0.35
-
-  let scheduling = true
-  function scheduleBird() {
-    if (!scheduling) return
-    const osc = ctx.createOscillator()
-    osc.type = 'sine'
-    const startFreq = 1800 + Math.random() * 2200
-    const endFreq = startFreq + (Math.random() - 0.5) * 1000
-    const now = ctx.currentTime
-    const duration = 0.06 + Math.random() * 0.15
-    osc.frequency.setValueAtTime(startFreq, now)
-    osc.frequency.exponentialRampToValueAtTime(Math.max(200, endFreq), now + duration)
-
-    const g = ctx.createGain()
-    g.gain.setValueAtTime(0, now)
-    g.gain.linearRampToValueAtTime(0.6, now + 0.02)
-    g.gain.exponentialRampToValueAtTime(0.0001, now + duration)
-    const pan = ctx.createStereoPanner()
-    pan.pan.value = (Math.random() - 0.5) * 1.8
-
-    osc.connect(g).connect(pan).connect(birdGain)
-    osc.start(now)
-    osc.stop(now + duration + 0.05)
-
-    // Occasionally chirp twice quickly (like a sparrow call)
-    if (Math.random() < 0.4) {
-      const osc2 = ctx.createOscillator()
-      osc2.type = 'sine'
-      osc2.frequency.setValueAtTime(startFreq * (0.9 + Math.random() * 0.2), now + duration + 0.05)
-      const g2 = ctx.createGain()
-      g2.gain.setValueAtTime(0, now + duration + 0.05)
-      g2.gain.linearRampToValueAtTime(0.5, now + duration + 0.07)
-      g2.gain.exponentialRampToValueAtTime(0.0001, now + duration + 0.05 + duration)
-      osc2.connect(g2).connect(pan).connect(birdGain)
-      osc2.start(now + duration + 0.05)
-      osc2.stop(now + duration * 2 + 0.1)
-    }
-
-    setTimeout(scheduleBird, 1500 + Math.random() * 4000)
-  }
-  // First bird after a small delay
-  setTimeout(scheduleBird, 800)
-
-  const reverb = makeReverb(ctx, 2, 2)
-  const wet = ctx.createGain()
-  wet.gain.value = 0.25
-
-  const master = ctx.createGain()
-  pinkGain.connect(master)
-  birdGain.connect(master)
-  birdGain.connect(reverb).connect(wet).connect(master)
-
-  pink.start()
-
-  return {
-    master,
-    stop() {
-      scheduling = false
-      try { pink.stop() } catch {}
-    },
-  }
-}
-
-function makeWind(ctx) {
-  // High-passed pink noise with slow LFO sweeping the cutoff for "gusts"
-  const pink = noiseSource(ctx, 8, fillPink)
-  const hp = ctx.createBiquadFilter()
-  hp.type = 'highpass'
-  hp.frequency.value = 600
-  hp.Q.value = 0.7
-
-  // Cutoff LFO — sweeps 400 to 1600 Hz over 12 seconds
-  const cutLFO = ctx.createOscillator()
-  cutLFO.frequency.value = 0.08
-  const cutDepth = ctx.createGain()
-  cutDepth.gain.value = 600
-  const cutOffset = ctx.createConstantSource()
-  cutOffset.offset.value = 1000
-  cutLFO.connect(cutDepth)
-  cutOffset.connect(hp.frequency)
-  cutDepth.connect(hp.frequency)
-  cutOffset.start()
-  cutLFO.start()
-
-  // Amplitude LFO for "gusts"
-  const ampLFO = ctx.createOscillator()
-  ampLFO.frequency.value = 0.15
-  const ampDepth = ctx.createGain()
-  ampDepth.gain.value = 0.35
-  const ampOffset = ctx.createConstantSource()
-  ampOffset.offset.value = 0.7
-  ampLFO.connect(ampDepth)
-  const ampGain = ctx.createGain()
-  ampGain.gain.value = 0
-  ampOffset.connect(ampGain.gain)
-  ampDepth.connect(ampGain.gain)
-  ampOffset.start()
-  ampLFO.start()
-
-  // Slow stereo panning sweep
-  const panner = ctx.createStereoPanner()
-  const panLFO = ctx.createOscillator()
-  panLFO.frequency.value = 0.07
-  const panDepth = ctx.createGain()
-  panDepth.gain.value = 0.6
-  panLFO.connect(panDepth)
-  panDepth.connect(panner.pan)
-  panLFO.start()
-
-  pink.connect(hp).connect(ampGain).connect(panner)
-
-  const master = ctx.createGain()
-  panner.connect(master)
-
-  pink.start()
-
-  return {
-    master,
-    stop() {
-      try { pink.stop(); cutLFO.stop(); cutOffset.stop(); ampLFO.stop(); ampOffset.stop(); panLFO.stop() } catch {}
-    },
-  }
-}
-
-const factories = {
-  rain: makeRain,
-  ocean: makeOcean,
-  fire: makeFire,
-  bowl: makeBowl,
-  forest: makeForest,
-  wind: makeWind,
-}
-
-// ════════════════════════════════════════════════════════════════
 
 export default function AudioLibrary() {
   const [playingId, setPlayingId] = useState(null)
+  const [loadingId, setLoadingId] = useState(null)
   const [volume, setVolume] = useState(0.6)
   const [error, setError] = useState(null)
-  const ctxRef = useRef(null)
-  const handleRef = useRef(null)
+  const audioRef = useRef(null) // currently active <Audio>
+  const fadeIdRef = useRef(null)
 
-  const stop = useCallback(() => {
-    const h = handleRef.current
-    if (h && ctxRef.current) {
-      const ctx = ctxRef.current
-      const now = ctx.currentTime
-      try {
-        h.master.gain.cancelScheduledValues(now)
-        h.master.gain.setValueAtTime(h.master.gain.value, now)
-        h.master.gain.linearRampToValueAtTime(0.0001, now + 0.4)
-      } catch {}
-      setTimeout(() => {
-        try { h.stop() } catch {}
-      }, 500)
-      handleRef.current = null
-    }
+  const stop = useCallback((cb) => {
+    const audio = audioRef.current
+    if (!audio) { if (cb) cb(); return }
+    if (fadeIdRef.current) clearInterval(fadeIdRef.current)
+    audioRef.current = null
     setPlayingId(null)
+    fadeIdRef.current = fade(audio, 0, 400, () => {
+      try { audio.pause(); audio.src = '' } catch {}
+      if (cb) cb()
+    })
   }, [])
 
   async function play(sound) {
+    setError(null)
+
+    // Toggle off if clicking the active one
     if (playingId === sound.id) {
       stop()
       return
     }
-    setError(null)
-    stop()
+
+    // Fade old out, start new one in parallel
+    const old = audioRef.current
+    if (old) {
+      if (fadeIdRef.current) clearInterval(fadeIdRef.current)
+      audioRef.current = null
+      fade(old, 0, 350, () => {
+        try { old.pause(); old.src = '' } catch {}
+      })
+    }
+
+    setLoadingId(sound.id)
+    setPlayingId(null)
+
+    const audio = new Audio(sound.url)
+    audio.crossOrigin = 'anonymous'
+    audio.loop = true
+    audio.preload = 'auto'
+    audio.volume = 0
 
     try {
-      if (!ctxRef.current) {
-        const Ctx = window.AudioContext || window.webkitAudioContext
-        if (!Ctx) {
-          setError('Your browser doesn\'t support Web Audio.')
-          return
-        }
-        ctxRef.current = new Ctx()
-      }
-      const ctx = ctxRef.current
-      if (ctx.state === 'suspended') await ctx.resume()
-
-      const factory = factories[sound.factory]
-      if (!factory) {
-        setError(`No factory for ${sound.id}`)
-        return
-      }
-
-      // small delay so the previous fade-out can finish cleanly
-      await new Promise((r) => setTimeout(r, 50))
-
-      const handle = factory(ctx)
-      handle.master.gain.value = 0.0001
-      const now = ctx.currentTime
-      handle.master.gain.setValueAtTime(0.0001, now)
-      handle.master.gain.linearRampToValueAtTime(volume, now + 0.8)
-      handle.master.connect(ctx.destination)
-
-      handleRef.current = handle
+      // play() returns a Promise that rejects if autoplay blocked
+      await audio.play()
+      audioRef.current = audio
       setPlayingId(sound.id)
+      setLoadingId(null)
+      fadeIdRef.current = fade(audio, volume, 700)
     } catch (err) {
-      setError(err.message || 'Audio failed to start.')
+      setLoadingId(null)
+      setError(`Couldn't start "${sound.label}". ${err.message || ''}`)
       console.error('AudioLibrary:', err)
     }
   }
 
+  // Apply live volume changes to whatever is playing
   useEffect(() => {
-    if (handleRef.current && ctxRef.current) {
-      try {
-        const now = ctxRef.current.currentTime
-        handleRef.current.master.gain.cancelScheduledValues(now)
-        handleRef.current.master.gain.setValueAtTime(handleRef.current.master.gain.value, now)
-        handleRef.current.master.gain.linearRampToValueAtTime(volume, now + 0.2)
-      } catch {}
+    if (audioRef.current && !fadeIdRef.current) {
+      try { audioRef.current.volume = volume } catch {}
     }
   }, [volume])
 
-  useEffect(() => () => stop(), [stop])
+  // Clean up on unmount
+  useEffect(() => () => {
+    const a = audioRef.current
+    if (a) try { a.pause(); a.src = '' } catch {}
+  }, [])
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" id="audio-library">
@@ -569,7 +135,7 @@ export default function AudioLibrary() {
             Sounds for the <span className="display-italic text-clay">moment.</span>
           </h2>
           <p className="text-sm text-ink-soft mt-3 max-w-xl">
-            Six distinct audio textures, each its own synthesised graph — rain with droplets, ocean with swells, fire with crackles, singing-bowl harmonics, forest birds, wind gusts. Headphones recommended.
+            Six high-quality ambient loops streamed from Mixkit's free library. Plus three breathwork patterns with a visual timer. Headphones recommended.
           </p>
         </div>
       </Reveal>
@@ -586,20 +152,22 @@ export default function AudioLibrary() {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-px bg-ink/15 border border-ink/15 mb-6">
           {sounds.map((s) => {
             const active = playingId === s.id
+            const loading = loadingId === s.id
             return (
               <button
                 key={s.id}
                 onClick={() => play(s)}
-                className={`text-left p-5 transition-all ${active ? 'bg-ink text-cream' : 'bg-cream-light hover:bg-bone'}`}
-                data-cursor-label={active ? 'stop' : 'play'}
+                disabled={loading}
+                className={`text-left p-5 transition-all ${active ? 'bg-ink text-cream' : 'bg-cream-light hover:bg-bone'} ${loading ? 'opacity-70' : ''}`}
+                data-cursor-label={active ? 'stop' : loading ? 'loading' : 'play'}
               >
                 <div className="flex items-start justify-between mb-3">
                   <span className={`editorial-label ${active ? 'text-gold' : ''}`}>{s.cat}</span>
                   <span
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-base display-italic ${active ? 'bg-gold text-ink' : 'border border-ink/20'}`}
-                    style={active ? {} : { color: s.accent }}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-base display-italic ${active ? 'bg-gold text-ink' : loading ? 'border border-clay text-clay animate-pulse-soft' : 'border border-ink/20'}`}
+                    style={active ? {} : !loading ? { color: s.accent } : {}}
                   >
-                    {active ? '❚❚' : '▶'}
+                    {active ? '❚❚' : loading ? '◐' : '▶'}
                   </span>
                 </div>
                 <p className="font-display text-2xl leading-tight">{s.label}</p>
@@ -626,10 +194,14 @@ export default function AudioLibrary() {
               />
               <span className="num-display text-xs text-ink-soft w-8 text-right">{Math.round(volume * 100)}</span>
             </div>
-            <button onClick={stop} className="text-xs text-ink-soft hover:text-clay display-italic">stop</button>
+            <button onClick={() => stop()} className="text-xs text-ink-soft hover:text-clay display-italic">stop</button>
           </div>
         </Reveal>
       )}
+
+      <p className="text-[10px] text-ink-softer italic mt-2 mb-12">
+        Audio loops via <a href="https://mixkit.co/free-sound-effects/" target="_blank" rel="noopener noreferrer" className="underline hover:text-clay">Mixkit free sound library</a> · royalty-free under the Mixkit License.
+      </p>
 
       <Reveal>
         <h3 className="font-display text-3xl text-ink mt-12 mb-5 leading-tight">Breathwork timer</h3>
