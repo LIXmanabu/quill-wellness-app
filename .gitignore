@@ -3,3 +3,7 @@ dist/
 .DS_Store
 *.log
 .vite/
+
+# Locally-installed Claude Code skills (restore via: npx skills add pbakaus/impeccable)
+.agents/
+.claude/
