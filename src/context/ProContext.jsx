@@ -1,8 +1,6 @@
 import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 
-const STORAGE_KEY = 'quill.tier'
 const DEV_STORAGE_KEY = 'quill.devUnlocked'
-const RESET_FLAG_KEY = 'quill.tierResetV3'
 const TIERS = ['free', 'pro', 'max']
 
 export const DEV_CODE = 'I know Felix'
@@ -18,35 +16,31 @@ const ProContext = createContext({
 })
 
 export function ProProvider({ children }) {
-  const [tier, setTierState] = useState(() => {
-    try {
-      // One-time reset to Free for everyone who tested earlier builds with the
-      // tier toggle visible. After this fires, normal localStorage rules apply
-      // (the user can flip tiers via dev-mode or via the checkout flow).
-      if (!localStorage.getItem(RESET_FLAG_KEY)) {
-        localStorage.setItem(STORAGE_KEY, 'free')
-        localStorage.setItem(RESET_FLAG_KEY, '1')
-        return 'free'
-      }
-      const legacy = localStorage.getItem('quill.isPro')
-      const saved = localStorage.getItem(STORAGE_KEY)
-      if (saved && TIERS.includes(saved)) return saved
-      if (legacy === 'true') return 'pro'
-    } catch {}
-    return 'free'
-  })
+  // Tier is intentionally NOT persisted across reloads. Every page load
+  // starts at Free — users have to "upgrade" through the checkout flow
+  // again, which is the desired behaviour for this prototype.
+  const [tier, setTierState] = useState('free')
 
+  // Dev-mode unlock IS persisted — once you've entered the code, you
+  // stay unlocked until you explicitly lock again.
   const [devUnlocked, setDevUnlockedState] = useState(() => {
     try { return localStorage.getItem(DEV_STORAGE_KEY) === 'true' } catch { return false }
   })
 
   useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, tier) } catch {}
-  }, [tier])
-
-  useEffect(() => {
     try { localStorage.setItem(DEV_STORAGE_KEY, String(devUnlocked)) } catch {}
   }, [devUnlocked])
+
+  // One-time housekeeping: clear any tier value from previous builds
+  // so localStorage isn't polluted with stale keys.
+  useEffect(() => {
+    try {
+      localStorage.removeItem('quill.tier')
+      localStorage.removeItem('quill.isPro')
+      localStorage.removeItem('quill.tierResetV2')
+      localStorage.removeItem('quill.tierResetV3')
+    } catch {}
+  }, [])
 
   function setTier(next) {
     if (TIERS.includes(next)) setTierState(next)
