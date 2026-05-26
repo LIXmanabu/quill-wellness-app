@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 
-const TRAIL_LENGTH = 12
+const TRAIL_LENGTH = 10
 
 export default function CustomCursor() {
   const [hovering, setHovering] = useState(false)
@@ -82,17 +82,16 @@ export default function CustomCursor() {
   return (
     <>
       {Array.from({ length: TRAIL_LENGTH }).map((_, i) => {
-        // Fade size + opacity along the chain
-        const size = 16 - i * 0.7
-        const opacity = (1 - i / TRAIL_LENGTH) * 0.65
+        // Uniform small dots — a thin line of points following the cursor
+        const opacity = (1 - i / TRAIL_LENGTH) * 0.7
         return (
           <div
             key={i}
             ref={(el) => (trailRefs.current[i] = el)}
-            className="cursor-trail"
+            className={`cursor-trail ${hovering ? 'is-hover' : ''}`}
             style={{
-              width: `${Math.max(2, size)}px`,
-              height: `${Math.max(2, size)}px`,
+              width: '4px',
+              height: '4px',
               opacity,
             }}
             aria-hidden="true"

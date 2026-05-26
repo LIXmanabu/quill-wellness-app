@@ -165,6 +165,10 @@ export default {
           '55%': { transform: 'scaleX(1)', transformOrigin: 'right' },
           '100%': { transform: 'scaleX(0)', transformOrigin: 'right' },
         },
+        'eq-bar': {
+          '0%':   { transform: 'scaleY(0.3)' },
+          '100%': { transform: 'scaleY(1)' },
+        },
       },
       animation: {
         'slide-in-right': 'slide-in-right 0.3s ease-out',
