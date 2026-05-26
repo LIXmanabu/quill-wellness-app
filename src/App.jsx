@@ -35,7 +35,7 @@ function AppShell() {
   const [activePage, setActivePage] = useState('home')
   const [showOnboarding, setShowOnboarding] = useState(false)
   const { profile } = useUser()
-  const { isMax } = usePro()
+  const { tier, isMax, setTier } = usePro()
 
   // Always show onboarding on load (testing mode — comment out the setShowOnboarding
   // call to disable). Profile data is pre-filled from saved values.
@@ -86,6 +86,24 @@ function AppShell() {
       </main>
 
       {showOnboarding && <OnboardingQuiz onClose={() => setShowOnboarding(false)} />}
+
+      {/* Always-visible "exit upgraded tier" button — bottom-right, every page.
+          Only renders when the user is on Pro or Max so it's never in the
+          way for Free users. */}
+      {tier !== 'free' && (
+        <button
+          onClick={() => setTier('free')}
+          className={`fixed right-4 z-50 px-4 py-2.5 text-xs font-bold uppercase tracking-[0.18em] shadow-soft-lg transition-all border-2 ${
+            isMax
+              ? 'bottom-6 bg-cream text-ink border-gold hover:bg-gold hover:text-ink'
+              : 'bottom-4 bg-ink text-cream border-ink hover:bg-clay hover:border-clay'
+          }`}
+          aria-label="Switch back to Free mode"
+          data-cursor-label="back to free"
+        >
+          <span className="display-italic text-base mr-1">←</span> Back to Free
+        </button>
+      )}
     </div>
   )
 }
