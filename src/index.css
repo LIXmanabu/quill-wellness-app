@@ -205,17 +205,31 @@
     padding-right: 8px;
   }
 
-  /* Max-mode cursor: brighter gold-orange with stronger glow. Static
-     (no animation) so it doesn't tax scroll perf. Hover still purple. */
-  .max-mode .cursor-dot {
-    background: radial-gradient(circle at 40% 40%, #FFD27A 0%, #F0A35E 65%, #D4A744 100%);
-    box-shadow: 0 0 14px rgba(255, 210, 122, 0.85), 0 0 28px rgba(212, 167, 68, 0.5);
+  /* Max-mode cursor: pulses between warm yellow and bright green on a
+     ~4s cycle so it feels alive without being noisy. Trail stays a
+     static yellow-green blend (animating all 11 cursor nodes was a
+     known scroll-perf killer). Hover overrides everything with purple. */
+  .max-mode .cursor-dot:not(.is-hover) {
+    animation: max-cursor-pulse 4s ease-in-out infinite;
   }
-  .max-mode .cursor-trail {
-    background: #F0A35E;
+  @keyframes max-cursor-pulse {
+    0%, 100% {
+      background: radial-gradient(circle at 40% 40%, #FFD27A 0%, #F0B95E 65%, #D4A744 100%);
+      box-shadow: 0 0 14px rgba(255, 210, 122, 0.85), 0 0 28px rgba(212, 167, 68, 0.5);
+    }
+    50% {
+      background: radial-gradient(circle at 40% 40%, #DDEE7A 0%, #A8C95E 65%, #6B8744 100%);
+      box-shadow: 0 0 14px rgba(168, 201, 94, 0.85), 0 0 28px rgba(107, 135, 68, 0.5);
+    }
   }
+  .max-mode .cursor-trail:not(.is-hover) {
+    background: #BCC25F; /* static yellow-green — the blend between the two pulse ends */
+  }
+  /* Purple on hover — overrides the pulse animation cleanly because
+     :not(.is-hover) above means the keyframes don't apply here. */
   .max-mode .cursor-dot.is-hover {
     background: radial-gradient(circle at 40% 40%, #D9C7E8 0%, #A582D7 65%, #8B6BB8 100%);
+    box-shadow: 0 0 16px rgba(165, 130, 215, 0.85), 0 0 32px rgba(139, 107, 184, 0.55);
   }
   .max-mode .cursor-trail.is-hover {
     background: #A582D7;
