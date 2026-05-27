@@ -32,6 +32,13 @@ const stats = [
   { num: 7, label: 'Wellness areas', suffix: '' },
 ]
 
+function getTimeGreeting() {
+  const h = new Date().getHours()
+  if (h >= 5 && h < 12) return 'Good morning'
+  if (h >= 12 && h < 17) return 'Good afternoon'
+  return 'Good evening'
+}
+
 export default function Home({ onNavigate }) {
   const { profile } = useUser()
   const { isPro } = usePro()
@@ -40,82 +47,91 @@ export default function Home({ onNavigate }) {
 
   return (
     <div className="bg-cream">
-      {/* ════════════════════════════════════════ HERO ════════════════════════════════════════ */}
-      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-16 sm:pb-20">
-        {/* Top kicker */}
-        <div className="flex items-center justify-between border-b border-ink/15 pb-3 mb-10 sm:mb-14">
-          <span className="editorial-label">
-            {isReturning ? `Welcome back${profile.name ? `, ${profile.name}` : ''}` : 'A wellness companion'}
-          </span>
-          <span className="editorial-label hidden sm:inline">
-            Vol. 01 · Spring Edition
-          </span>
-        </div>
 
-        {/* Asymmetric two-column hero */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          {/* Headline column */}
-          <div className="lg:col-span-8">
-            <h1 className="font-display text-[15vw] sm:text-[12vw] lg:text-[9.5vw] xl:text-[8.5vw] text-ink leading-[0.92] tracking-tight">
-              <SplitText byChar stagger={28}>Feel good,</SplitText>
-              <br />
-              <span className="display-italic text-clay">
-                <SplitText byChar stagger={28} startDelay={400}>from the inside</SplitText>
-              </span>
-              <br />
-              <SplitText byChar stagger={28} startDelay={900}>out.</SplitText>
-            </h1>
-            <Reveal delay={1400} className="mt-8 max-w-md">
-              <p className="text-lg text-ink-soft leading-relaxed">
-                {isReturning && greeting
-                  ? greeting.line
-                  : 'A quiet, beginner-safe guide for fitness, skin, body, and the small things that build a whole self.'}
-              </p>
-            </Reveal>
-            <Reveal delay={1600} className="mt-8 flex flex-wrap items-center gap-3">
-              <MagneticButton onClick={() => onNavigate(greeting?.primary || 'body')} className="btn-ink">
-                {greeting?.primaryLabel || 'Open the Atlas'} <span className="display-italic">→</span>
-              </MagneticButton>
-              <button
-                onClick={() => onNavigate(isPro ? 'tips' : 'wellness')}
-                className="btn-ghost link-underline"
-              >
-                Or, browse {isPro ? 'today\'s tips' : 'wellness'}
-              </button>
-            </Reveal>
+      {/* ══════════════════════════════════════ HERO — dark ══════════════════════════════════════ */}
+      <section className="bg-ink">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-16 sm:pb-20">
+
+          {/* Top kicker */}
+          <div className="flex items-center justify-between border-b border-cream/10 pb-3 mb-10 sm:mb-14">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cream/50 font-sans">
+              {isReturning
+                ? `${getTimeGreeting()}${profile.name ? `, ${profile.name}` : ''}`
+                : 'A wellness companion'}
+            </span>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cream/30 font-sans hidden sm:inline">
+              Vol. 01 · Spring Edition
+            </span>
           </div>
 
-          {/* Right column: Index */}
-          <Reveal delay={400} direction="right" className="lg:col-span-4 lg:pt-4">
-            <div className="border-l border-ink/15 pl-6">
-              <p className="editorial-label mb-4">In this issue</p>
-              <ol className="space-y-2.5">
-                {sections.map((s) => (
-                  <li key={s.key}>
-                    <button
-                      onClick={() => onNavigate(s.key)}
-                      className="group flex items-baseline gap-3 text-left hover:text-clay transition-colors"
-                    >
-                      <span className="text-xs num-display text-ink-softer w-6 flex-shrink-0">
-                        {s.num}
-                      </span>
-                      <span className="font-display text-xl text-ink group-hover:text-clay transition-colors">
-                        {s.label}
-                      </span>
-                      <span className="display-italic text-sm text-ink-softer ml-auto group-hover:text-clay transition-colors">
-                        {s.kicker}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ol>
+          {/* Asymmetric two-column hero */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+
+            {/* Headline column */}
+            <div className="lg:col-span-8">
+              <h1 className="font-display text-[16vw] sm:text-[13vw] lg:text-[10.5vw] xl:text-[9.5vw] text-cream leading-[0.88] tracking-tight">
+                <SplitText byChar stagger={28}>Feel good,</SplitText>
+                <br />
+                <span className="display-italic text-clay">
+                  <SplitText byChar stagger={28} startDelay={400}>from the inside</SplitText>
+                </span>
+                <br />
+                <SplitText byChar stagger={28} startDelay={900}>out.</SplitText>
+              </h1>
+              <Reveal delay={1400} className="mt-8 max-w-md">
+                <p className="text-lg text-cream/55 leading-relaxed">
+                  {isReturning && greeting
+                    ? greeting.line
+                    : 'A quiet, beginner-safe guide for fitness, skin, body, and the small things that build a whole self.'}
+                </p>
+              </Reveal>
+              <Reveal delay={1600} className="mt-8 flex flex-wrap items-center gap-3">
+                <MagneticButton onClick={() => onNavigate(greeting?.primary || 'body')} className="btn-cream">
+                  {greeting?.primaryLabel || 'Open the Atlas'} <span className="display-italic">→</span>
+                </MagneticButton>
+                <button
+                  onClick={() => onNavigate(isPro ? 'tips' : 'wellness')}
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-cream/50 hover:text-cream transition-colors"
+                >
+                  Or, browse {isPro ? 'today\'s tips' : 'wellness'}
+                </button>
+              </Reveal>
             </div>
-          </Reveal>
+
+            {/* Right column: Index */}
+            <Reveal delay={400} direction="right" className="lg:col-span-4 lg:pt-4">
+              <div className="border-l border-cream/10 pl-6">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cream/35 font-sans mb-4">
+                  In this issue
+                </p>
+                <ol className="space-y-2.5">
+                  {sections.map((s) => (
+                    <li key={s.key}>
+                      <button
+                        onClick={() => onNavigate(s.key)}
+                        className="group flex items-baseline gap-3 text-left w-full"
+                      >
+                        <span className="text-xs num-display text-cream/25 w-6 flex-shrink-0">
+                          {s.num}
+                        </span>
+                        <span className="font-display text-xl text-cream/65 group-hover:text-cream transition-colors duration-200">
+                          {s.label}
+                        </span>
+                        <span className="display-italic text-sm text-cream/25 ml-auto group-hover:text-clay transition-colors duration-200">
+                          {s.kicker}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </Reveal>
+          </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════ MARQUEE BAND ════════════════════════════════════════ */}
-      <section className="bg-ink text-cream py-4 sm:py-5 border-y border-ink overflow-hidden">
+      {/* ══════════════════════════════════════ MARQUEE — flows from hero ══════════════════════════════════════ */}
+      <section className="bg-ink text-cream py-4 sm:py-5 border-t border-cream/8 overflow-hidden">
         <Marquee
           items={['Calm', 'Confident', 'Rooted', 'Curious', 'Soft strength', 'Body-positive', 'Slow over fast', 'Evidence over hype', 'No login', 'No tracking', 'No shame']}
           speed="slow"
@@ -125,31 +141,35 @@ export default function Home({ onNavigate }) {
         />
       </section>
 
-      {/* ════════════════════════════════════════ STATS STRIP ════════════════════════════════════════ */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-ink/15 border border-ink/15">
-          {stats.map((s, i) => (
-            <Reveal key={s.label} delay={i * 100} className="bg-cream p-6 sm:p-8">
-              <div className="flex items-baseline gap-1">
-                <AnimatedCounter to={s.num} className="text-5xl sm:text-6xl text-ink" />
-                <span className="text-2xl num-display text-clay">{s.suffix}</span>
-              </div>
-              <p className="editorial-label mt-2">{s.label}</p>
-            </Reveal>
-          ))}
+      {/* ══════════════════════════════════════ STATS STRIP ══════════════════════════════════════ */}
+      <section className="border-b border-ink/12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4">
+            {stats.map((s, i) => (
+              <Reveal key={s.label} delay={i * 100}>
+                <div className={`py-10 sm:py-16 pr-4 sm:pr-10 ${i !== 0 ? 'pl-4 sm:pl-10 border-l border-ink/10' : ''}`}>
+                  <div className="flex items-end gap-1 leading-none">
+                    <AnimatedCounter to={s.num} className="font-display text-7xl sm:text-8xl text-ink leading-none" />
+                    <span className="font-display text-4xl text-clay leading-none mb-2">{s.suffix}</span>
+                  </div>
+                  <p className="editorial-label mt-4">{s.label}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════ DAILY TIP — featured ════════════════════════════════════════ */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-6">
+      {/* ══════════════════════════════════════ DAILY TIP ══════════════════════════════════════ */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-8">
           <Reveal className="lg:col-span-7">
             <span className="editorial-label">Today, in your almanac</span>
-            <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
+            <h2 className="font-display text-6xl sm:text-7xl text-ink mt-2 leading-none">
               Tip of the <span className="display-italic text-clay">day</span>
             </h2>
           </Reveal>
-          <Reveal delay={150} className="lg:col-span-5 text-right">
+          <Reveal delay={150} className="lg:col-span-5 lg:text-right">
             <button onClick={() => onNavigate('tips')} className="btn-ghost link-underline">
               Browse all 60 tips →
             </button>
@@ -160,14 +180,14 @@ export default function Home({ onNavigate }) {
         </Reveal>
       </section>
 
-      {/* ════════════════════════════════════════ INDEX — bento grid ════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════ INDEX — bento grid ══════════════════════════════════════ */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <Reveal>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 pb-4 border-b border-ink/15">
             <div>
               <span className="editorial-label">The index</span>
               <h2 className="font-display text-5xl sm:text-6xl text-ink mt-2 leading-none">
-                Six chapters,<br/>
+                Six chapters,<br />
                 <span className="display-italic text-clay">one quiet life.</span>
               </h2>
             </div>
@@ -177,17 +197,15 @@ export default function Home({ onNavigate }) {
           </div>
         </Reveal>
 
-        {/* Bento grid — varied sizes */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4">
           {sections.map((s, i) => {
-            // Layout pattern: featured tall + small + small | wide | normal × 3
             const layoutClasses = [
-              'md:col-span-7 md:row-span-2',  // 01 Body — large featured
-              'md:col-span-5',                 // 02 Movement
-              'md:col-span-5',                 // 03 Skin
-              'md:col-span-4',                 // 04 Wellness
-              'md:col-span-4',                 // 05 Diet
-              'md:col-span-4',                 // 06 Tips
+              'md:col-span-7 md:row-span-2',
+              'md:col-span-5',
+              'md:col-span-5',
+              'md:col-span-4',
+              'md:col-span-4',
+              'md:col-span-4',
             ]
             const isFeatured = i === 0
             const isRecommended = profile.goal && (
@@ -197,31 +215,53 @@ export default function Home({ onNavigate }) {
               (profile.goal === 'calm' && s.key === 'wellness') ||
               (profile.goal === 'eat' && s.key === 'diet')
             )
+
             return (
               <Reveal key={s.key} delay={i * 80} className={layoutClasses[i]}>
                 <SpotlightCard
                   as="button"
                   onClick={() => onNavigate(s.key)}
-                  className={`group relative w-full h-full text-left p-6 sm:p-8 ${s.bg} border border-ink/10 hover:border-ink transition-all duration-500 hover:-translate-y-1 ${isFeatured ? 'min-h-[420px]' : 'min-h-[200px]'}`}
+                  style={{ viewTransitionName: `hero-${s.key}` }}
+                  className={`group relative w-full h-full text-left p-6 sm:p-8 border transition-all duration-500 hover:-translate-y-1 ${
+                    isFeatured
+                      ? 'bg-ink border-ink min-h-[420px]'
+                      : `${s.bg} border-ink/10 hover:border-ink/40 min-h-[200px]`
+                  }`}
                 >
                   {isRecommended && (
-                    <span className="absolute top-4 right-4 chip chip-ink text-[9px]">
+                    <span className={`absolute top-4 right-4 chip text-[9px] ${isFeatured ? 'bg-cream/10 text-cream border-cream/20' : 'chip-ink'}`}>
                       For you
                     </span>
                   )}
                   <div className="flex items-start justify-between mb-6">
-                    <span className="editorial-num text-3xl sm:text-4xl text-ink/30 group-hover:text-clay transition-colors">
+                    <span className={`editorial-num text-3xl sm:text-4xl leading-none transition-colors duration-300 ${
+                      isFeatured
+                        ? 'text-cream/25 group-hover:text-clay'
+                        : 'text-ink/30 group-hover:text-clay'
+                    }`}>
                       {s.num}
                     </span>
-                    <span className="editorial-label">{s.kicker}</span>
+                    <span className={`editorial-label ${isFeatured ? 'text-cream/40' : ''}`}>{s.kicker}</span>
                   </div>
-                  <h3 className={`font-display text-ink leading-none ${isFeatured ? 'text-6xl sm:text-7xl' : 'text-4xl sm:text-5xl'}`}>
+                  <h3 className={`font-display leading-none ${
+                    isFeatured
+                      ? 'text-6xl sm:text-7xl text-cream'
+                      : 'text-4xl sm:text-5xl text-ink'
+                  }`}>
                     {s.label}
                   </h3>
-                  <p className={`mt-4 text-ink-soft leading-relaxed ${isFeatured ? 'text-lg max-w-md' : 'text-sm'}`}>
+                  <p className={`mt-4 leading-relaxed break-words ${
+                    isFeatured
+                      ? 'text-lg text-cream/55 max-w-md'
+                      : 'text-sm text-ink-soft line-clamp-3'
+                  }`}>
                     {s.desc}
                   </p>
-                  <div className="mt-6 flex items-center gap-2 text-sm font-medium text-ink group-hover:text-clay transition-colors">
+                  <div className={`mt-6 flex items-center gap-2 text-sm font-medium transition-colors duration-300 ${
+                    isFeatured
+                      ? 'text-cream/50 group-hover:text-cream'
+                      : 'text-ink group-hover:text-clay'
+                  }`}>
                     <span className="link-underline">Read chapter</span>
                     <span className="display-italic transition-transform duration-300 group-hover:translate-x-1">→</span>
                   </div>
@@ -232,22 +272,30 @@ export default function Home({ onNavigate }) {
         </div>
       </section>
 
-      {/* ════════════════════════════════════════ EDITORIAL PULL QUOTE ════════════════════════════════════════ */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-        <Reveal>
-          <p className="display-italic text-3xl sm:text-5xl text-ink leading-tight text-balance">
-            "Self-care isn't a luxury.<br/>
-            It's how you stay in the same body for eighty years."
-          </p>
-          <div className="mt-6 flex items-center justify-center gap-3">
-            <span className="w-12 h-px bg-ink/30" />
-            <span className="editorial-label">A Quill principle</span>
-            <span className="w-12 h-px bg-ink/30" />
-          </div>
-        </Reveal>
+      {/* ══════════════════════════════════════ PULL QUOTE — dark band ══════════════════════════════════════ */}
+      <section className="bg-ink py-20 sm:py-32">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Reveal>
+            <div className="relative">
+              <span
+                className="absolute -top-8 sm:-top-14 left-1/2 -translate-x-1/2 font-display text-[160px] sm:text-[220px] leading-none text-cream/[0.04] select-none pointer-events-none"
+                aria-hidden="true"
+              >"</span>
+              <p className="display-italic text-3xl sm:text-5xl lg:text-[3.5rem] text-cream leading-[1.12] text-balance relative z-10">
+                Self-care isn't a luxury.<br />
+                It's how you stay in the same body<br className="hidden sm:block" /> for eighty years.
+              </p>
+              <div className="mt-8 flex items-center justify-center gap-4">
+                <span className="w-16 h-px bg-cream/20" />
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cream/35 font-sans">A Quill principle</span>
+                <span className="w-16 h-px bg-cream/20" />
+              </div>
+            </div>
+          </Reveal>
+        </div>
       </section>
 
-      {/* ════════════════════════════════════════ PRO UPSELL ════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════ PRO UPSELL ══════════════════════════════════════ */}
       {!isPro && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <Reveal>
@@ -271,7 +319,7 @@ export default function Home({ onNavigate }) {
         </section>
       )}
 
-      {/* ════════════════════════════════════════ COLOPHON ════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════ COLOPHON ══════════════════════════════════════ */}
       <section className="border-t border-ink/15 mt-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
@@ -304,6 +352,7 @@ export default function Home({ onNavigate }) {
           </div>
         </div>
       </section>
+
     </div>
   )
 }
