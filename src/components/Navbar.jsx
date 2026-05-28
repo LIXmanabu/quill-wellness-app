@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import ProToggle from './ProToggle.jsx'
 import { usePro } from '../context/ProContext.jsx'
 import { useUser } from '../context/UserContext.jsx'
+import { useAuth, DEV_MODE } from '../context/AuthContext.jsx'
 
 const tabs = [
   { key: 'home', label: 'Home' },
@@ -24,6 +25,7 @@ export default function Navbar({ activePage, onNavigate }) {
   const tierLabel = tier === 'max' ? 'Max Edition' : tier === 'pro' ? 'Pro Edition' : 'Free Edition'
   const { profile } = useUser()
   const favCount = profile.favorites.length
+  const { user, signOut } = useAuth()
 
   const navRef = useRef(null)
   const tabRefs = useRef({})
@@ -160,8 +162,22 @@ export default function Navbar({ activePage, onNavigate }) {
             })}
           </nav>
 
-          {/* Right side: Pro toggle (dev-only) + mobile menu */}
+          {/* Right side: account indicator + Pro toggle + mobile menu */}
           <div className="flex items-center gap-3">
+            {/* Show email initial + sign-out when logged in (production only) */}
+            {!DEV_MODE && user && (
+              <div className="hidden lg:flex items-center gap-2">
+                <span className="w-7 h-7 rounded-full bg-clay/20 flex items-center justify-center text-[11px] font-bold text-clay uppercase">
+                  {user.email?.[0] ?? '?'}
+                </span>
+                <button
+                  onClick={signOut}
+                  className="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-soft hover:text-ink transition-colors"
+                >
+                  Sign out
+                </button>
+              </div>
+            )}
             {devUnlocked && <ProToggle />}
 
             {/* Mobile hamburger */}

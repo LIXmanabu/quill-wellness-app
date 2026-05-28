@@ -2,11 +2,13 @@ import { useState, useEffect, lazy, Suspense } from 'react'
 import { flushSync } from 'react-dom'
 import Navbar from './components/Navbar.jsx'
 import OnboardingQuiz from './components/OnboardingQuiz.jsx'
+import AuthModal from './components/AuthModal.jsx'
 import CustomCursor from './components/interactive/CustomCursor.jsx'
 import NoiseOverlay from './components/interactive/NoiseOverlay.jsx'
 import Home from './pages/Home.jsx'
 import { ProProvider } from './context/ProContext.jsx'
 import { UserProvider, useUser } from './context/UserContext.jsx'
+import { AuthProvider, useAuth, DEV_MODE } from './context/AuthContext.jsx'
 import { usePro } from './context/ProContext.jsx'
 
 // Code-split: each route ships as its own chunk, loaded on demand.
@@ -48,14 +50,39 @@ function PageLoader({ page }) {
 function AppShell() {
   const [activePage, setActivePage] = useState('home')
   const [showOnboarding, setShowOnboarding] = useState(false)
+  const [showAuth,       setShowAuth]       = useState(false)
+  const [guestMode,      setGuestMode]      = useState(() =>
+    Boolean(localStorage.getItem('quill.guestMode'))
+  )
   const { profile } = useUser()
   const { tier, isMax, setTier } = usePro()
+  const { user, loading: authLoading } = useAuth()
 
-  // Always show onboarding on load (testing mode — comment out to disable).
   useEffect(() => {
-    const t = setTimeout(() => setShowOnboarding(true), 600)
-    return () => clearTimeout(t)
-  }, [])
+    if (DEV_MODE) {
+      // ── Developer mode: always show onboarding on every load ──
+      const t = setTimeout(() => setShowOnboarding(true), 600)
+      return () => clearTimeout(t)
+    }
+
+    if (authLoading) return
+
+    if (!user && !guestMode) {
+      // Not logged in and not a guest → show auth modal
+      setShowAuth(true)
+    } else if (!profile.dismissedOnboarding) {
+      // Logged-in first-timer OR guest who hasn't done onboarding
+      setShowOnboarding(true)
+    }
+  }, [user, authLoading, guestMode, profile.dismissedOnboarding])
+
+  function handleContinueAsGuest() {
+    localStorage.setItem('quill.guestMode', '1')
+    setGuestMode(true)
+    setShowAuth(false)
+    // Show onboarding for first-time guests too
+    if (!profile.dismissedOnboarding) setShowOnboarding(true)
+  }
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
@@ -108,6 +135,7 @@ function AppShell() {
         </div>
       </main>
 
+      {showAuth       && <AuthModal onGuest={handleContinueAsGuest} />}
       {showOnboarding && <OnboardingQuiz onClose={() => setShowOnboarding(false)} />}
 
       {/* Always-visible "exit upgraded tier" button — bottom-right, every page. */}
@@ -131,10 +159,12 @@ function AppShell() {
 
 export default function App() {
   return (
-    <ProProvider>
-      <UserProvider>
-        <AppShell />
-      </UserProvider>
-    </ProProvider>
+    <AuthProvider>
+      <ProProvider>
+        <UserProvider>
+          <AppShell />
+        </UserProvider>
+      </ProProvider>
+    </AuthProvider>
   )
 }
