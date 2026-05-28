@@ -108,7 +108,7 @@ export default function Pro({ onNavigate }) {
       {checkoutPlan && <CheckoutModal plan={checkoutPlan} onClose={closeCheckout} />}
 
       {/* ════════════════════════════════════════ HERO ════════════════════════════════════════ */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-16">
+      <section style={{ viewTransitionName: 'hero-pro' }} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-16">
         <div className="border-b border-ink/15 pb-3 mb-12 flex items-center justify-between">
           <span className="editorial-label">Pro Edition · Issue 01</span>
           <span className="editorial-label">{isMax ? 'Quill Max · active' : isPro ? 'Quill Pro · active' : 'Free reader'}</span>

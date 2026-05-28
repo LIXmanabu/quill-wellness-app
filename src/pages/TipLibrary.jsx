@@ -32,7 +32,7 @@ export default function TipLibrary({ onNavigate }) {
   return (
     <div className="bg-cream">
       {/* HERO */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-12">
+      <section style={{ viewTransitionName: 'hero-tips' }} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-12">
         <div className="border-b border-ink/15 pb-3 mb-10 flex items-center justify-between">
           <span className="editorial-label">Chapter 06 · Almanac</span>
           <span className="editorial-label">{isPro ? `${dailyTips.length} tips` : `${visibleTips.length} of ${dailyTips.length}`}</span>
@@ -110,15 +110,15 @@ export default function TipLibrary({ onNavigate }) {
 
                   {/* Foreground content */}
                   <div className="relative z-10 flex flex-col h-full">
-                    <div className="absolute top-0 right-0">
-                      <FavoriteButton id={`tip:${tip.id}`} label={tip.title} size="sm" />
-                    </div>
-                    <div className="flex items-baseline justify-between mb-4">
+                    <div className="flex items-center justify-between mb-4">
                       <span className="editorial-num text-2xl text-gold">{String(i + 1).padStart(3, '0')}</span>
-                      <span className="editorial-label text-cream/80">{meta.label}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="editorial-label text-cream/80">{meta.label}</span>
+                        <FavoriteButton id={`tip:${tip.id}`} label={tip.title} size="sm" />
+                      </div>
                     </div>
                     <div className="mt-auto">
-                      <h3 className="font-display text-2xl text-cream leading-tight pr-6 group-hover:translate-y-[-2px] transition-transform duration-500">{tip.title}</h3>
+                      <h3 className="font-display text-2xl text-cream leading-tight group-hover:translate-y-[-2px] transition-transform duration-500">{tip.title}</h3>
                       <p className="text-sm text-cream/80 mt-3 leading-relaxed">{tip.body}</p>
                     </div>
                   </div>

@@ -9,7 +9,7 @@
   body {
     @apply bg-cream font-sans antialiased;
     color: #1A1410;
-    font-feature-settings: 'ss01', 'ss02', 'cv01';
+    font-feature-settings: 'kern', 'liga';
   }
   /* Better selection */
   ::selection {
@@ -42,12 +42,13 @@
     font-style: normal;
   }
   .display-italic {
-    font-family: 'Instrument Serif', Fraunces, Georgia, serif;
+    font-family: 'Cormorant Garamond', 'Instrument Serif', Fraunces, Georgia, serif;
     font-style: italic;
     font-weight: 400;
+    letter-spacing: -0.01em;
   }
   .editorial-label {
-    @apply text-[10px] font-bold uppercase tracking-[0.2em] text-ink-soft font-sans;
+    @apply text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-soft font-sans;
   }
   .editorial-num {
     font-family: 'Instrument Serif', serif;
@@ -57,6 +58,7 @@
   /* ─── Cards ────────────────────────────────────────────────────── */
   .card-paper {
     @apply bg-cream-light border border-ink/10 transition-all duration-300;
+    box-shadow: inset 0 1px 0 rgba(255, 252, 248, 0.85);
   }
   .card-paper-hover {
     @apply hover:border-ink/30 hover:shadow-ink;
@@ -82,17 +84,26 @@
 
   /* ─── Buttons ──────────────────────────────────────────────────── */
   .btn-ink {
-    @apply inline-flex items-center gap-2 px-6 py-3.5 bg-ink text-cream text-sm font-medium tracking-wide transition-all duration-300 hover:bg-ink-light;
+    @apply inline-flex items-center gap-2 px-6 py-3.5 bg-ink text-cream text-sm font-medium tracking-wide transition-all duration-200 hover:bg-ink-light hover:-translate-y-px;
   }
+  .btn-ink:hover { box-shadow: 0 4px 14px rgba(26, 20, 16, 0.22); }
+  .btn-ink:active { transform: translateY(0); box-shadow: none; transition-duration: 80ms; }
+  .btn-ink:focus-visible { outline: 2px solid oklch(25% 0.02 60); outline-offset: 3px; }
   .btn-cream {
     @apply inline-flex items-center gap-2 px-6 py-3.5 bg-cream-light text-ink border border-ink/20 text-sm font-medium tracking-wide transition-all duration-300 hover:border-ink hover:-translate-y-0.5;
   }
+  .btn-cream:active { transform: translateY(0) !important; transition-duration: 80ms; }
+  .btn-cream:focus-visible { outline: 2px solid oklch(25% 0.02 60); outline-offset: 3px; }
   .btn-clay {
     @apply inline-flex items-center gap-2 px-6 py-3.5 bg-clay text-cream text-sm font-medium tracking-wide transition-all duration-300 hover:bg-clay-dark;
   }
+  .btn-clay:active { transform: translateY(1px); transition-duration: 80ms; }
+  .btn-clay:focus-visible { outline: 2px solid oklch(48% 0.12 35); outline-offset: 3px; }
   .btn-ghost {
     @apply inline-flex items-center gap-1.5 text-sm font-medium text-ink hover:text-clay transition-colors;
   }
+  .btn-ghost:active { opacity: 0.7; }
+  .btn-ghost:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 
   /* ─── Pills / chips ────────────────────────────────────────────── */
   .chip {
@@ -124,11 +135,32 @@
     max-width: 38rem;
   }
   .page-section {
-    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16;
+    max-width: 72rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: clamp(1rem, 4vw, 2rem);
+    padding-right: clamp(1rem, 4vw, 2rem);
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+    padding-bottom: clamp(2.5rem, 5vw, 4rem);
   }
   .page-section-wide {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16;
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: clamp(1rem, 4vw, 2rem);
+    padding-right: clamp(1rem, 4vw, 2rem);
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+    padding-bottom: clamp(2.5rem, 5vw, 4rem);
   }
+
+  /* ─── State badges ─────────────────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em];
+  }
+  .badge-success { background: oklch(91% 0.07 148); color: oklch(38% 0.14 148); }
+  .badge-error   { background: oklch(92% 0.06 25);  color: oklch(40% 0.16 25);  }
+  .badge-warning { background: oklch(93% 0.07 75);  color: oklch(42% 0.15 75);  }
+  .badge-info    { background: oklch(91% 0.05 245); color: oklch(40% 0.14 245); }
 
   /* ─── Max mode — colourful accents only when isMax ─────────────── */
   .max-rainbow-bar {
@@ -542,7 +574,7 @@
     inset: 0;
     pointer-events: none;
     z-index: 1;
-    opacity: 0.04;
+    opacity: 0.055;
     mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
@@ -645,6 +677,58 @@
     display: flex;
     width: max-content;
     will-change: transform;
+  }
+
+  /* ─── View Transitions ─────────────────────────────────────────── */
+  @supports (view-transition-name: none) {
+    /* Suppress fallback page-in animation — VT owns the entry */
+    .animate-page-in { animation: none !important; }
+
+    /* Root swap: clean opacity-only fade with slight timing asymmetry */
+    ::view-transition-old(root) {
+      animation: 200ms ease-out both _vt-out;
+    }
+    ::view-transition-new(root) {
+      animation: 360ms cubic-bezier(0.22, 1, 0.36, 1) 40ms both _vt-in;
+    }
+
+    /* Named hero morphs: let the browser FLIP the geometry automatically,
+       just tune the cross-fade timing for a more deliberate reveal. */
+    ::view-transition-old(hero-body),
+    ::view-transition-old(hero-sport),
+    ::view-transition-old(hero-skincare),
+    ::view-transition-old(hero-wellness),
+    ::view-transition-old(hero-diet),
+    ::view-transition-old(hero-tips),
+    ::view-transition-old(hero-about),
+    ::view-transition-old(hero-myquill),
+    ::view-transition-old(hero-pro) {
+      animation: 220ms ease-in both _vt-out;
+    }
+    ::view-transition-new(hero-body),
+    ::view-transition-new(hero-sport),
+    ::view-transition-new(hero-skincare),
+    ::view-transition-new(hero-wellness),
+    ::view-transition-new(hero-diet),
+    ::view-transition-new(hero-tips),
+    ::view-transition-new(hero-about),
+    ::view-transition-new(hero-myquill),
+    ::view-transition-new(hero-pro) {
+      animation: 520ms cubic-bezier(0.22, 1, 0.36, 1) both _vt-in;
+    }
+
+    /* Prevent blend artifacts on complex backgrounds */
+    ::view-transition-image-pair(root) { isolation: isolate; }
+
+    @keyframes _vt-out { to   { opacity: 0; } }
+    @keyframes _vt-in  { from { opacity: 0; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      ::view-transition-old(root),
+      ::view-transition-new(root),
+      ::view-transition-old(*),
+      ::view-transition-new(*) { animation: none; }
+    }
   }
 }
 

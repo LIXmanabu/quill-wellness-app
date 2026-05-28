@@ -12,7 +12,7 @@ export default function About() {
   return (
     <div className="bg-cream">
       {/* HERO */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-16">
+      <section style={{ viewTransitionName: 'hero-about' }} className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-16">
         <div className="border-b border-ink/15 pb-3 mb-10 flex items-center justify-between">
           <span className="editorial-label">Chapter · About</span>
           <span className="editorial-label">A wellness prototype</span>
@@ -84,11 +84,11 @@ export default function About() {
             </h2>
           </div>
         </Reveal>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-ink/15 border border-ink/15">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-0 border-t border-ink/15">
           {principles.map((p, i) => (
             <Reveal key={p.title} delay={i * 80}>
-              <div className="bg-cream-light p-8 h-full">
-                <span className="editorial-num text-3xl text-clay">{p.num}</span>
+              <div className="py-8 border-b border-ink/10">
+                <span className="editorial-num text-2xl text-clay">{p.num}</span>
                 <p className="font-display text-2xl text-ink mt-2 leading-tight">{p.title}</p>
                 <p className="text-sm text-ink-soft mt-3 leading-relaxed">{p.text}</p>
               </div>

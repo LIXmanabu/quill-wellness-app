@@ -90,10 +90,14 @@ export default function Navbar({ activePage, onNavigate }) {
           {/* Logo — Magazine masthead style */}
           <button
             onClick={() => handleNav('home')}
-            className="group flex items-baseline gap-2"
+            className="group"
+            aria-label="Quill — go to home"
           >
-            <span className="font-display text-3xl md:text-4xl text-ink leading-none tracking-tight">Quill</span>
-            <span className="display-italic text-xs text-ink-soft hidden sm:inline">— since '26</span>
+            <img
+              src="/quill-logo.png"
+              alt="Quill"
+              className="h-10 md:h-12 w-auto"
+            />
           </button>
 
           {/* Desktop tabs with sliding indicator */}

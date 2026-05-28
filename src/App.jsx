@@ -1,4 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
+import { flushSync } from 'react-dom'
 import Navbar from './components/Navbar.jsx'
 import OnboardingQuiz from './components/OnboardingQuiz.jsx'
 import CustomCursor from './components/interactive/CustomCursor.jsx'
@@ -20,12 +21,25 @@ const MyQuill = lazy(() => import('./pages/MyQuill.jsx'))
 const Pro = lazy(() => import('./pages/Pro.jsx'))
 const TipLibrary = lazy(() => import('./pages/TipLibrary.jsx'))
 
-function PageLoader() {
+const PAGE_LABELS = {
+  sport: 'Movement',
+  body: 'Body Atlas',
+  skincare: 'Skin ritual',
+  wellness: 'Wellness',
+  diet: 'Nourishment',
+  tips: 'Daily tips',
+  about: 'About Quill',
+  myquill: 'Your Quill',
+  pro: 'Pro edition',
+  home: 'Home',
+}
+
+function PageLoader({ page }) {
   return (
     <div className="min-h-[60vh] flex items-center justify-center">
       <div className="text-center">
         <p className="num-display text-5xl text-clay animate-pulse-soft">◐</p>
-        <p className="editorial-label text-ink-soft mt-3">Loading</p>
+        <p className="editorial-label text-ink-soft mt-3">{PAGE_LABELS[page] || 'Opening'}</p>
       </div>
     </div>
   )
@@ -37,8 +51,7 @@ function AppShell() {
   const { profile } = useUser()
   const { tier, isMax, setTier } = usePro()
 
-  // Always show onboarding on load (testing mode — comment out the setShowOnboarding
-  // call to disable). Profile data is pre-filled from saved values.
+  // Always show onboarding on load (testing mode — comment out to disable).
   useEffect(() => {
     const t = setTimeout(() => setShowOnboarding(true), 600)
     return () => clearTimeout(t)
@@ -50,7 +63,17 @@ function AppShell() {
 
   function handleNavigate(key) {
     if (key === activePage) return
-    setActivePage(key)
+
+    if (!document.startViewTransition) {
+      setActivePage(key)
+      return
+    }
+
+    document.startViewTransition(() => {
+      flushSync(() => {
+        setActivePage(key)
+      })
+    })
   }
 
   const pageMap = {
@@ -79,7 +102,7 @@ function AppShell() {
       <Navbar activePage={activePage} onNavigate={handleNavigate} />
       <main className="pt-20 md:pt-28 relative">
         <div key={activePage} className="animate-page-in">
-          <Suspense fallback={<PageLoader />}>
+          <Suspense fallback={<PageLoader page={activePage} />}>
             {pageMap[activePage] ?? <Home onNavigate={handleNavigate} />}
           </Suspense>
         </div>
@@ -87,9 +110,7 @@ function AppShell() {
 
       {showOnboarding && <OnboardingQuiz onClose={() => setShowOnboarding(false)} />}
 
-      {/* Always-visible "exit upgraded tier" button — bottom-right, every page.
-          Only renders when the user is on Pro or Max so it's never in the
-          way for Free users. */}
+      {/* Always-visible "exit upgraded tier" button — bottom-right, every page. */}
       {tier !== 'free' && (
         <button
           onClick={() => setTier('free')}

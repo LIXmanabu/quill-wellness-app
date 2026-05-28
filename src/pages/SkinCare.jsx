@@ -36,7 +36,7 @@ export default function SkinCare({ onNavigate }) {
   return (
     <div className="bg-cream">
       {/* HERO */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-12">
+      <section style={{ viewTransitionName: 'hero-skincare' }} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-12">
         <div className="border-b border-ink/15 pb-3 mb-10 flex items-center justify-between">
           <span className="editorial-label">Chapter 03 · Ritual</span>
           <span className="editorial-label hidden sm:inline">Daily & by skin type</span>

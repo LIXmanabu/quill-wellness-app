@@ -1,8 +1,16 @@
 import { useScrollReveal } from '../../hooks/useScrollReveal.js'
 
+const reducedMotion =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
 export default function SplitText({ children, className = '', wordClassName = '', stagger = 50, startDelay = 0, byChar = false }) {
   const [ref, visible] = useScrollReveal({ threshold: 0.1, once: true })
   const text = String(children)
+
+  if (reducedMotion) {
+    return <span ref={ref} className={`inline ${className}`}>{children}</span>
+  }
 
   if (byChar) {
     const chars = text.split('')

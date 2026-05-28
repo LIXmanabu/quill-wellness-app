@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import BodyMap from '../components/BodyMap.jsx'
+import BodyModel3D from '../components/BodyModel3D.jsx'
 import ConcernPanel from '../components/ConcernPanel.jsx'
 import { bodyData } from '../data/bodyData.js'
 import { usePro } from '../context/ProContext.jsx'
@@ -36,7 +36,6 @@ const relatedPairs = [
 
 export default function Body({ onNavigate }) {
   const { isPro } = usePro()
-  const [view, setView] = useState('front')
   const [selectedRegion, setSelectedRegion] = useState(null)
 
   function closePanel() { setSelectedRegion(null) }
@@ -44,7 +43,7 @@ export default function Body({ onNavigate }) {
   return (
     <div className="bg-cream">
       {/* HERO */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-10">
+      <section style={{ viewTransitionName: 'hero-body' }} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-10">
         <div className="border-b border-ink/15 pb-3 mb-10 flex items-center justify-between">
           <span className="editorial-label">Chapter 01 · Atlas</span>
           <span className="editorial-label hidden sm:inline">{regionList.length} regions</span>
@@ -81,37 +80,26 @@ export default function Body({ onNavigate }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left: body map */}
           <div className="lg:col-span-4 xl:col-span-4">
-            <div className="card-paper p-6 sticky top-28">
-              <div className="flex items-center justify-between mb-5">
+            <div className="card-paper sticky top-28 overflow-hidden">
+              <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-ink/10">
                 <p className="editorial-label">The map</p>
-                <div className="inline-flex border border-ink/20">
+                {selectedRegion && (
                   <button
-                    onClick={() => setView('front')}
-                    className={`px-4 py-1.5 text-xs font-medium tracking-wide transition-colors ${
-                      view === 'front' ? 'bg-ink text-cream' : 'bg-transparent text-ink-soft hover:text-ink'
-                    }`}
+                    onClick={closePanel}
+                    className="text-[10px] font-semibold uppercase tracking-[0.15em] text-ink-soft hover:text-ink transition-colors"
                   >
-                    Front
+                    Clear
                   </button>
-                  <button
-                    onClick={() => setView('back')}
-                    className={`px-4 py-1.5 text-xs font-medium tracking-wide transition-colors ${
-                      view === 'back' ? 'bg-ink text-cream' : 'bg-transparent text-ink-soft hover:text-ink'
-                    }`}
-                  >
-                    Back
-                  </button>
-                </div>
+                )}
               </div>
 
-              <BodyMap
-                view={view}
+              <BodyModel3D
                 selectedRegion={selectedRegion}
                 onRegionClick={(region) => setSelectedRegion(region === selectedRegion ? null : region)}
               />
 
               {selectedRegion && (
-                <div className="mt-4 p-3 bg-cream-dark border border-ink/15 text-center">
+                <div className="px-5 pb-4 pt-2 border-t border-ink/10 text-center">
                   <p className="editorial-label">Selected</p>
                   <p className="font-display text-xl text-ink mt-1">{bodyData[selectedRegion]?.label}</p>
                 </div>
